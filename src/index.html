@@ -4,11 +4,31 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
     <title>Stencil Component Starter</title>
-
     <script type="module" src="/build/stripe-elemnts.esm.js"></script>
     <script nomodule src="/build/stripe-elemnts.js"></script>
   </head>
   <body>
-    <my-component first="Stencil" last="'Don't call me a framework' JS"></my-component>
+    <div id="stripe"></div>
+    <script>
+      const targetElement = document.getElementById('stripe')
+      const stripeElement = document.createElement('my-component');
+      targetElement.appendChild(stripeElement)
+      customElements.whenDefined('my-component')
+        .then(() => {
+          stripeElement.initStripe('YOUR_STRIPE_PUBLISHABLE_API_KEY')
+        })
+        .catch(e => {
+          console.log(e)
+          const errorElement = document.createElement('p');
+          errorElement.innerText = e.message
+          targetElement.appendChild(errorElement)
+        })
+    </script>
+    <style>
+      body {
+        background-color: #e5e5e5;
+      }
+    </style>
+
   </body>
 </html>

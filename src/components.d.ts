@@ -7,18 +7,11 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 export namespace Components {
     interface MyComponent {
+        "initStripe": (publishableKey: string) => Promise<void>;
         /**
-          * The first name
+          * Your Stripe publishable API key.
          */
-        "first": string;
-        /**
-          * The last name
-         */
-        "last": string;
-        /**
-          * The middle name
-         */
-        "middle": string;
+        "publishableKey": string;
     }
 }
 declare global {
@@ -35,17 +28,9 @@ declare global {
 declare namespace LocalJSX {
     interface MyComponent {
         /**
-          * The first name
+          * Your Stripe publishable API key.
          */
-        "first"?: string;
-        /**
-          * The last name
-         */
-        "last"?: string;
-        /**
-          * The middle name
-         */
-        "middle"?: string;
+        "publishableKey"?: string;
     }
     interface IntrinsicElements {
         "my-component": MyComponent;
