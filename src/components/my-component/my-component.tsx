@@ -1,28 +1,13 @@
 import { Component, Prop, h, State, Method, Element } from '@stencil/core';
-import { loadStripe, Stripe } from '@stripe/stripe-js';
+import { loadStripe, Stripe, StripeCardCvcElement, StripeCardExpiryElement, StripeCardNumberElement } from '@stripe/stripe-js';
 
-const style = {
-  base: {
-    iconColor: '#666ee8',
-    color: '#31325f',
-    fontWeight: 400,
-    fontFamily:
-      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif',
-    fontSmoothing: 'antialiased',
-    fontSize: '15px',
-    '::placeholder': {
-      color: '#aab7c4',
-    },
-    ':-webkit-autofill': {
-      color: '#666ee8',
-    },
-  },
-};
+
+export type FormSubmitHandler = (event: Event, component: MyComponent) => Promise<void>
 
 @Component({
   tag: 'my-component',
   styleUrl: 'my-component.css',
-  shadow: true,
+  shadow: false,
 })
 export class MyComponent {
 
@@ -36,9 +21,11 @@ export class MyComponent {
 
   @State() stripe: Stripe
 
-  cardElement!: HTMLDivElement
-  cardErrorElement!: HTMLDivElement
+  @Prop() handleSubmit?: FormSubmitHandler;
 
+  private cardNumber!:StripeCardNumberElement
+  private cardExpiry!:StripeCardExpiryElement
+  private cardCVC!:StripeCardCvcElement
 
   constructor() {
     if (this.publishableKey) {
@@ -65,24 +52,37 @@ export class MyComponent {
       })
   }
 
+  @Method()
+  public async setFormSubmitHandler(handler: FormSubmitHandler) {
+    this.handleSubmit = handler
+  }
+
   private async initElement() {
     const elements = this.stripe.elements()
-    const card = elements.create('card', {
-      style,
-      hidePostalCode: false
-    });
-    const cardElement = this.el.shadowRoot.getElementById('card-element')
-    const cardErrorElement = this.el.shadowRoot.getElementById('card-errors')
-
-    card.on('change', ({error}) => {
+    const cardErrorElement = document.getElementById('card-errors')
+    const handleCardError =  ({error})  => {
       if (error) {
         cardErrorElement.textContent = error.message;
         cardErrorElement.classList.add('visible');
       } else {
         cardErrorElement.classList.remove('visible');
       }
-    });
-    card.mount(cardElement);
+    }
+
+    this.cardNumber = elements.create('cardNumber')
+    const cardNumberElement = document.getElementById('card-number')
+    this.cardNumber.mount(cardNumberElement)
+    this.cardNumber.on('change', handleCardError);
+    
+    this.cardExpiry = elements.create('cardExpiry')
+    const cardExpiryElement = document.getElementById('card-expiry')
+    this.cardExpiry.mount(cardExpiryElement)
+    this.cardExpiry.on('change', handleCardError);
+
+    this.cardCVC = elements.create('cardCvc')
+    const cardCVCElement = document.getElementById('card-cvc')
+    this.cardCVC.mount(cardCVCElement)
+    this.cardCVC.on('change', handleCardError);
   }
 
   render() {
@@ -90,19 +90,36 @@ export class MyComponent {
       return <p>Failed to load Stripe</p>
     }
     return (
-      <form onSubmit={e => e.preventDefault()}>
+      <form onSubmit={(e) => {
+        if (!this.handleSubmit) return;
+        this.handleSubmit(e, this)
+      }}>
+        <h1>Add your payment information</h1>
+        <div>
+          <h2>Card information</h2>
+        </div>
           <div class="payment-info card visible">
             <fieldset>
-              <label>
-                <span>Card</span>
-                <div
-                  id="card-element"
-                  class="field"
-                />
-              </label>
+              <div>
+                <label>
+                  <lenged>Card Number</lenged>
+                  <div id="card-number"/>
+                </label>
+                </div>
+              <div style={{display: 'flex'}}>
+                <label style={{width: '50%'}}>
+                  <lenged>MM / YY</lenged>
+                  <div id="card-expiry"/>
+                </label>
+                <label style={{width: '50%'}}>
+                  <lenged>CVC</lenged>
+                  <div id="card-cvc" />
+                </label>
+              </div>
+              <div id="card-errors" class="element-errors"></div>
             </fieldset>
           </div>
-          <div id="card-errors" class="element-errors"></div>
+          <button type="submit">Save</button>
       </form>
     );
   }

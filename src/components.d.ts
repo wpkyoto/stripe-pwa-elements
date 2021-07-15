@@ -5,13 +5,16 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { FormSubmitHandler } from "./components/my-component/my-component";
 export namespace Components {
     interface MyComponent {
+        "handleSubmit"?: FormSubmitHandler;
         "initStripe": (publishableKey: string) => Promise<void>;
         /**
           * Your Stripe publishable API key.
          */
         "publishableKey": string;
+        "setFormSubmitHandler": (handler: FormSubmitHandler) => Promise<void>;
     }
 }
 declare global {
@@ -27,6 +30,7 @@ declare global {
 }
 declare namespace LocalJSX {
     interface MyComponent {
+        "handleSubmit"?: FormSubmitHandler;
         /**
           * Your Stripe publishable API key.
          */

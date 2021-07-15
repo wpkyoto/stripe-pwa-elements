@@ -15,7 +15,19 @@
       targetElement.appendChild(stripeElement)
       customElements.whenDefined('my-component')
         .then(() => {
-          stripeElement.initStripe('YOUR_STRIPE_PUBLISHABLE_API_KEY')
+          stripeElement.initStripe('pk_test_XXXXXX')
+            .then(() => {
+              return stripeElement.setFormSubmitHandler(async (e, component) => {
+                e.preventDefault()
+                const result = await component.stripe.createPaymentMethod({
+                  type: 'card',
+                  card: component.cardNumber
+                })
+                const resultElement = document.createElement('pre');
+                resultElement.innerHTML =`<code>${JSON.stringify(result,null,2)}</code>` 
+                targetElement.appendChild(resultElement)
+              })
+            })
         })
         .catch(e => {
           console.log(e)
