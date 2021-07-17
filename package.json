@@ -32,6 +32,7 @@
   "license": "MIT",
   "devDependencies": {
     "@stencil/sass": "^1.4.1",
+    "@types/jest": "^26.0.24",
     "prettier": "^2.3.2"
   }
 }
