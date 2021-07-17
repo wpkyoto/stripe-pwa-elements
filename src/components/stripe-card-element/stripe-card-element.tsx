@@ -5,8 +5,8 @@ import { loadStripe, Stripe, StripeCardCvcElement, StripeCardExpiryElement, Stri
 export type FormSubmitHandler = (event: Event, component: MyComponent) => Promise<void>
 
 @Component({
-  tag: 'my-component',
-  styleUrl: 'my-component.css',
+  tag: 'stripe-card-element',
+  styleUrl: 'stripe-card-element.css',
   shadow: false,
 })
 export class MyComponent {
@@ -33,6 +33,19 @@ export class MyComponent {
     }
   }
 
+  /**
+   * Set form submit event function
+   * @param handler FormSubmitHandler
+   */
+   @Method()
+   public async setFormSubmitHandler(handler: FormSubmitHandler) {
+     this.handleSubmit = handler
+   }
+
+   /**
+    * Get Stripe.js, and initialize elements
+    * @param publishableKey 
+    */
   @Method()
   public async initStripe(publishableKey: string) {
     this.loadStripeStatus = 'loading'
@@ -52,11 +65,9 @@ export class MyComponent {
       })
   }
 
-  @Method()
-  public async setFormSubmitHandler(handler: FormSubmitHandler) {
-    this.handleSubmit = handler
-  }
-
+  /**
+   * Initialize Component using Stripe Element
+   */
   private async initElement() {
     const elements = this.stripe.elements()
     const cardErrorElement = document.getElementById('card-errors')
@@ -99,6 +110,13 @@ export class MyComponent {
           <h2>Card information</h2>
         </div>
           <div class="payment-info card visible">
+            <fieldset>
+
+              <label>
+                <span>Email</span>
+                <input name="email" type="email" class="field" placeholder="jenny@example.com" required />
+              </label>
+            </fieldset>
             <fieldset>
               <div>
                 <label>

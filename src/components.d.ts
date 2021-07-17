@@ -5,31 +5,39 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { FormSubmitHandler } from "./components/my-component/my-component";
+import { FormSubmitHandler } from "./components/stripe-card-element/stripe-card-element";
 export namespace Components {
-    interface MyComponent {
+    interface StripeCardElement {
         "handleSubmit"?: FormSubmitHandler;
+        /**
+          * Get Stripe.js, and initialize elements
+          * @param publishableKey
+         */
         "initStripe": (publishableKey: string) => Promise<void>;
         /**
           * Your Stripe publishable API key.
          */
         "publishableKey": string;
+        /**
+          * Set form submit event function
+          * @param handler FormSubmitHandler
+         */
         "setFormSubmitHandler": (handler: FormSubmitHandler) => Promise<void>;
     }
 }
 declare global {
-    interface HTMLMyComponentElement extends Components.MyComponent, HTMLStencilElement {
+    interface HTMLStripeCardElementElement extends Components.StripeCardElement, HTMLStencilElement {
     }
-    var HTMLMyComponentElement: {
-        prototype: HTMLMyComponentElement;
-        new (): HTMLMyComponentElement;
+    var HTMLStripeCardElementElement: {
+        prototype: HTMLStripeCardElementElement;
+        new (): HTMLStripeCardElementElement;
     };
     interface HTMLElementTagNameMap {
-        "my-component": HTMLMyComponentElement;
+        "stripe-card-element": HTMLStripeCardElementElement;
     }
 }
 declare namespace LocalJSX {
-    interface MyComponent {
+    interface StripeCardElement {
         "handleSubmit"?: FormSubmitHandler;
         /**
           * Your Stripe publishable API key.
@@ -37,14 +45,14 @@ declare namespace LocalJSX {
         "publishableKey"?: string;
     }
     interface IntrinsicElements {
-        "my-component": MyComponent;
+        "stripe-card-element": StripeCardElement;
     }
 }
 export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
-            "my-component": LocalJSX.MyComponent & JSXBase.HTMLAttributes<HTMLMyComponentElement>;
+            "stripe-card-element": LocalJSX.StripeCardElement & JSXBase.HTMLAttributes<HTMLStripeCardElementElement>;
         }
     }
 }

@@ -1,5 +1,5 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { MyComponent } from './my-component';
+import { MyComponent } from './stripe-card-element';
 
 describe('my-component', () => {
   it('renders', async () => {
