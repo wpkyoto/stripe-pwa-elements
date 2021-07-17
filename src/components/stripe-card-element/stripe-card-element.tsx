@@ -11,17 +11,17 @@ i18next.use(I18nextBrowserLanguageDetector).init({
     en: {
       translation: {},
     },
-    ja: {
-      translation: {
-        'Pay': '支払う',
-        'Failed to load Stripe': 'ライブラリの読み込みに失敗しました。',
-        'Add your payment information': 'カード情報を登録します。',
-        'Card information': 'カード情報',
-        'Card Number': 'カード番号',
-        'MM / YY': '月 / 年',
-        'CVC': 'セキュリティコード(CVC)',
-      },
-    },
+    // ja: {
+    //   translation: {
+    //     'Pay': '支払う',
+    //     'Failed to load Stripe': 'ライブラリの読み込みに失敗しました。',
+    //     'Add your payment information': 'カード情報を登録します。',
+    //     'Card information': 'カード情報',
+    //     'Card Number': 'カード番号',
+    //     'MM / YY': '月 / 年',
+    //     'CVC': 'セキュリティコード(CVC)',
+    //   },
+    // },
   },
 });
 
@@ -190,14 +190,14 @@ export class MyComponent {
             <h2>{i18next.t('Card information')}</h2>
           </div>
           <div class="payment-info card visible">
-            <fieldset>
+            <fieldset class="stripe-input-box">
               <div>
                 <label>
                   {this.showLabel ? <lenged>{i18next.t('Card Number')}</lenged> : null}
                   <div id="card-number" />
                 </label>
               </div>
-              <div style={{ display: 'flex' }}>
+              <div class="stripe-input-column" style={{ display: 'flex' }}>
                 <label style={{ width: '50%' }}>
                   {this.showLabel ? <lenged>{i18next.t('MM / YY')}</lenged> : null}
                   <div id="card-expiry" />
