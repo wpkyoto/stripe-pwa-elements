@@ -10,40 +10,42 @@
   <body>
     <div id="stripe"></div>
     <script>
-      const targetElement = document.getElementById('stripe')
-      const modalElement = document.createElement('stripe-element-modal')
-      modalElement.setAttribute('open', true)
+      const targetElement = document.getElementById('stripe');
+      const modalElement = document.createElement('stripe-element-modal');
+      modalElement.setAttribute('open', true);
       const stripeElement = document.createElement('stripe-card-element');
-      modalElement.appendChild(stripeElement)
-      targetElement.appendChild(modalElement)
-      customElements.whenDefined('stripe-card-element')
+      modalElement.appendChild(stripeElement);
+      targetElement.appendChild(modalElement);
+      customElements
+        .whenDefined('stripe-card-element')
         .then(() => {
-          stripeElement.initStripe('pk_test_51EMxG7KVC4SfzSeak35hZaAe91cpzKZE9eOQcVWpa7owYJeS30avCAF0lT1QUMKTbzepTIYgAgjly4AmgZuxxkcS00kQ40cBLe')
-            .then(() => {
-              return stripeElement.setFormSubmitHandler(async (e, component) => {
-                e.preventDefault()
-                const result = await component.stripe.createPaymentMethod({
-                  type: 'card',
-                  card: component.cardNumber
-                })
-                const resultElement = document.createElement('pre');
-                resultElement.innerHTML =`<code>${JSON.stringify(result,null,2)}</code>` 
-                targetElement.appendChild(resultElement)
-              })
-            })
+          stripeElement.initStripe('pk_test_51EMxG7KVC4SfzSeak35hZaAe91cpzKZE9eOQcVWpa7owYJeS30avCAF0lT1QUMKTbzepTIYgAgjly4AmgZuxxkcS00kQ40cBLe').then(() => {
+            stripeElement.addEventListener('formSubmit', async props => {
+              const {
+                detail: { stripe, cardNumber, event },
+              } = props;
+              const result = await stripe.createPaymentMethod({
+                type: 'card',
+                card: cardNumber,
+              });
+              console.log(result);
+            });
+            stripeElement.addEventListener('stripeLoaded', async ({ detail: stripe }) => {
+              console.log(stripe);
+            });
+          });
         })
         .catch(e => {
-          console.log(e)
+          console.log(e);
           const errorElement = document.createElement('p');
-          errorElement.innerText = e.message
-          targetElement.appendChild(errorElement)
-        })
+          errorElement.innerText = e.message;
+          targetElement.appendChild(errorElement);
+        });
     </script>
     <style>
       body {
         background-color: #e5e5e5;
       }
     </style>
-
   </body>
 </html>

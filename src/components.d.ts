@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { FormSubmitHandler, StripeDidLoadedHandler } from "./components/stripe-card-element/stripe-card-element";
+import { FormSubmitEvent, FormSubmitHandler, StripeDidLoadedHandler, StripeLoadedEvent } from "./components/stripe-card-element/stripe-card-element";
 export namespace Components {
     interface StripeCardElement {
         "handleSubmit"?: FormSubmitHandler;
@@ -18,12 +18,7 @@ export namespace Components {
           * Your Stripe publishable API key.
          */
         "publishableKey": string;
-        /**
-          * Set form submit event function
-          * @param handler FormSubmitHandler
-         */
-        "setFormSubmitHandler": (handler: FormSubmitHandler) => Promise<this>;
-        "setStripeDidLoadedHandler": (handler: StripeDidLoadedHandler) => Promise<this>;
+        "showLabel": boolean;
         "stripeDidLoaded"?: StripeDidLoadedHandler;
     }
     interface StripeElementModal {
@@ -67,10 +62,13 @@ declare global {
 declare namespace LocalJSX {
     interface StripeCardElement {
         "handleSubmit"?: FormSubmitHandler;
+        "onFormSubmit"?: (event: CustomEvent<FormSubmitEvent>) => void;
+        "onStripeLoaded"?: (event: CustomEvent<StripeLoadedEvent>) => void;
         /**
           * Your Stripe publishable API key.
          */
         "publishableKey"?: string;
+        "showLabel"?: boolean;
         "stripeDidLoaded"?: StripeDidLoadedHandler;
     }
     interface StripeElementModal {
