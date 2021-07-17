@@ -80,17 +80,10 @@
             await customElements.whenDefined('stripe-element-modal')
             await customElements.whenDefined('stripe-payment-request-button')
             await customElements.whenDefined('stripe-card-element')
-            
-            /**
-             * Load Stripe Client
-             **/
-            await stripePaymentRequestElement.initStripe(stripePublishableAPIKey)
-            await stripeElement.initStripe(stripePublishableAPIKey)
-
             /**
              * Lauch Payment request button if possible to use
              **/
-            const paymentRequest = await stripePaymentRequestElement.setPaymentRequestOption({
+            await stripePaymentRequestElement.setPaymentRequestOption({
                 country: 'JP',
                 currency: 'jpy',
                 total: {
@@ -100,6 +93,13 @@
                 requestShipping: false,
                 requestPayerEmail: false,
             });
+            
+            /**
+             * Load Stripe Client
+             **/
+            await stripePaymentRequestElement.initStripe(stripePublishableAPIKey)
+            await stripeElement.initStripe(stripePublishableAPIKey)
+
 
             /**
              * Set the payment intent client secret
