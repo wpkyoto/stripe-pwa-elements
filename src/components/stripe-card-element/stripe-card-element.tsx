@@ -31,6 +31,8 @@ export class MyComponent {
    */
   @Prop() publishableKey: string;
 
+  @Prop() showLabel: boolean = false;
+
   @Prop({
     mutable: true
   }) handleSubmit?: FormSubmitHandler;
@@ -109,7 +111,9 @@ export class MyComponent {
       }
     }
 
-    this.cardNumber = elements.create('cardNumber')
+    this.cardNumber = elements.create('cardNumber', {
+      placeholder: 'Card number'
+    })
     const cardNumberElement = document.getElementById('card-number')
     this.cardNumber.mount(cardNumberElement)
     this.cardNumber.on('change', handleCardError);
@@ -152,17 +156,17 @@ export class MyComponent {
             <fieldset>
               <div>
                 <label>
-                  <lenged>Card Number</lenged>
+                  {this.showLabel ? <lenged>Card Number</lenged>: null}
                   <div id="card-number"/>
                 </label>
                 </div>
               <div style={{display: 'flex'}}>
                 <label style={{width: '50%'}}>
-                  <lenged>MM / YY</lenged>
+                {this.showLabel ? <lenged>MM / YY</lenged>: null}
                   <div id="card-expiry"/>
                 </label>
                 <label style={{width: '50%'}}>
-                  <lenged>CVC</lenged>
+                  {this.showLabel ? <lenged>CVC</lenged>: null}
                   <div id="card-cvc" />
                 </label>
               </div>

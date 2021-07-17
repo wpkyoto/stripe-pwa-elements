@@ -18,6 +18,7 @@ export namespace Components {
           * Your Stripe publishable API key.
          */
         "publishableKey": string;
+        "showLabel": boolean;
         "stripeDidLoaded"?: StripeDidLoadedHandler;
     }
     interface StripeElementModal {
@@ -67,6 +68,7 @@ declare namespace LocalJSX {
           * Your Stripe publishable API key.
          */
         "publishableKey"?: string;
+        "showLabel"?: boolean;
         "stripeDidLoaded"?: StripeDidLoadedHandler;
     }
     interface StripeElementModal {
