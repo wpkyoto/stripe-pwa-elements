@@ -6,7 +6,6 @@ import { Component, Host, h, Prop, Method } from '@stencil/core';
   shadow: true,
 })
 export class StripeElementModal {
-
   @Prop() showCloseButton: boolean = true;
 
   /**
@@ -20,7 +19,7 @@ export class StripeElementModal {
    */
   @Method()
   public async toggleModal() {
-    this.open = !this.open
+    this.open = !this.open;
   }
 
   /**
@@ -28,7 +27,7 @@ export class StripeElementModal {
    */
   @Method()
   public async openModal() {
-    this.open = true
+    this.open = true;
   }
 
   /**
@@ -36,24 +35,24 @@ export class StripeElementModal {
    */
   @Method()
   public async closeModal() {
-    this.open = false
+    this.open = false;
   }
 
-
   render() {
-    const { open, showCloseButton } = this
+    const { open, showCloseButton } = this;
     return (
       <Host>
-        <div class={`modal-row${open ? ' open': ''}`} onClick={() => this.closeModal()}>
+        <div class={`modal-row${open ? ' open' : ''}`} onClick={() => this.closeModal()}>
           <div class="modal-child" onClick={e => e.stopPropagation()}>
             <slot></slot>
             {showCloseButton ? (
-              <button class="modal-close-button" onClick={() => this.closeModal()}>Close</button>
-            ): null}
+              <button class="modal-close-button" onClick={() => this.closeModal()}>
+                Close
+              </button>
+            ) : null}
           </div>
         </div>
       </Host>
     );
   }
-
 }

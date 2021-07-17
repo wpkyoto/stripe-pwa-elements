@@ -19,11 +19,17 @@
     "start": "stencil build --dev --watch --serve",
     "test": "stencil test --spec --e2e",
     "test.watch": "stencil test --spec --e2e --watchAll",
-    "generate": "stencil generate"
+    "generate": "stencil generate",
+    "format": "prettier --write src"
   },
   "dependencies": {
     "@stencil/core": "^2.0.1",
-    "@stripe/stripe-js": "^1.16.0"
+    "@stripe/stripe-js": "^1.16.0",
+    "i18next": "^20.3.3",
+    "i18next-browser-languagedetector": "^6.1.2"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "^2.3.2"
+  }
 }
