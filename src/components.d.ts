@@ -57,6 +57,8 @@ export namespace Components {
          */
         "toggleModal": () => Promise<void>;
     }
+    interface StripePaymentRequestButton {
+    }
 }
 declare global {
     interface HTMLStripeCardElementElement extends Components.StripeCardElement, HTMLStencilElement {
@@ -71,9 +73,16 @@ declare global {
         prototype: HTMLStripeElementModalElement;
         new (): HTMLStripeElementModalElement;
     };
+    interface HTMLStripePaymentRequestButtonElement extends Components.StripePaymentRequestButton, HTMLStencilElement {
+    }
+    var HTMLStripePaymentRequestButtonElement: {
+        prototype: HTMLStripePaymentRequestButtonElement;
+        new (): HTMLStripePaymentRequestButtonElement;
+    };
     interface HTMLElementTagNameMap {
         "stripe-card-element": HTMLStripeCardElementElement;
         "stripe-element-modal": HTMLStripeElementModalElement;
+        "stripe-payment-request-button": HTMLStripePaymentRequestButtonElement;
     }
 }
 declare namespace LocalJSX {
@@ -120,9 +129,12 @@ declare namespace LocalJSX {
         "open"?: boolean;
         "showCloseButton"?: boolean;
     }
+    interface StripePaymentRequestButton {
+    }
     interface IntrinsicElements {
         "stripe-card-element": StripeCardElement;
         "stripe-element-modal": StripeElementModal;
+        "stripe-payment-request-button": StripePaymentRequestButton;
     }
 }
 export { LocalJSX as JSX };
@@ -131,6 +143,7 @@ declare module "@stencil/core" {
         interface IntrinsicElements {
             "stripe-card-element": LocalJSX.StripeCardElement & JSXBase.HTMLAttributes<HTMLStripeCardElementElement>;
             "stripe-element-modal": LocalJSX.StripeElementModal & JSXBase.HTMLAttributes<HTMLStripeElementModalElement>;
+            "stripe-payment-request-button": LocalJSX.StripePaymentRequestButton & JSXBase.HTMLAttributes<HTMLStripePaymentRequestButtonElement>;
         }
     }
 }

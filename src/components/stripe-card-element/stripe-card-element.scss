@@ -5,24 +5,28 @@
   background: none;
   border: none;
   font-family: 'Roboto', suns-serif;
+  box-sizing: border-box;
 }
 :root {
   --color-label: #565656;
   --color-placeholder: #acacac;
   --color-heading-text: #333;
   --color-input-border: #e4e4e6;
+  --color-button-text: rgba(255, 255, 255, 0.95);
+  --color-button-text-disabled: rgba(255, 255, 255, 0.4);
+  --color-primary: #0074d4;
 }
-:host {
+
+.stripe-payment-wrap {
   display: block;
   width: 100%;
   background: #fff;
   padding: 32px 16px;
 }
-//.stripe-payment-wrap {}
 
 .StripeElement {
   padding: 8px 16px;
-  min-height: 42px;
+  min-height: 64px;
   border-bottom: 1px solid var(--color-input-border);
   border-radius: 4px;
   display: flex;
@@ -60,4 +64,18 @@
 }
 .payment-info label {
   color: var(--color-label);
+}
+button {
+  display: block;
+  color: var(--color-button-text);
+  background-color: var(--color-primary);
+  width: 100%;
+  text-align: center;
+  padding: 16px 16px;
+  font-size: 18px;
+  border-radius: 8px;
+  min-height: 42px;
+  &:disabled {
+    color: var(--color-button-text-disabled);
+  }
 }

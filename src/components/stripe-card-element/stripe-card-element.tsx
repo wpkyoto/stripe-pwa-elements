@@ -257,11 +257,11 @@ export class MyComponent {
     }
 
     return (
-      <Host>
+      <div class="stripe-payment-wrap">
         <form id="stripe-card-element">
-          <h1>{i18next.t('Add your payment information')}</h1>
+          <div class="stripe-heading">{i18next.t('Add your payment information')}</div>
           <div>
-            <h2>{i18next.t('Card information')}</h2>
+            <div class="stripe-section-title">{i18next.t('Card information')}</div>
           </div>
           <div class="payment-info card visible">
             <fieldset class="stripe-input-box">
@@ -284,9 +284,11 @@ export class MyComponent {
               <div id="card-errors" class="element-errors"></div>
             </fieldset>
           </div>
-          <button type="submit">{i18next.t('Pay')}</button>
+          <div style={{ marginTop: '32px' }}>
+            <button type="submit">{i18next.t('Pay')}</button>
+          </div>
         </form>
-      </Host>
+      </div>
     );
   }
 }
