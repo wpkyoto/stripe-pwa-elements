@@ -77,7 +77,7 @@ export class MyComponent {
   @Prop({
     mutable: true,
   })
-  handleSubmit: FormSubmitHandler
+  handleSubmit: FormSubmitHandler;
 
   /**
    * Stripe.js class loaded handler
@@ -111,30 +111,30 @@ export class MyComponent {
    *   });
    * ```
    */
-   @Event() stripeLoaded: EventEmitter<StripeLoadedEvent>;
-   stripeLoadedEventHandler() {
-     if (this.stripeDidLoaded) {
-       this.stripeDidLoaded(this.stripe);
-     }
-     this.stripeLoaded.emit({ stripe: this.stripe });
-   }
- 
-   /**
-    * Form submit event
-    * @example
-    * ```
-    * stripeElement
-    *   .addEventListener('formSubmit', async props => {
-    *     const {
-    *       detail: { stripe, cardNumber, event },
-    *     } = props;
-    *     const result = await stripe.createPaymentMethod({
-    *       type: 'card',
-    *       card: cardNumber,
-    *     });
-    *     console.log(result);
-    *   })
-    */
+  @Event() stripeLoaded: EventEmitter<StripeLoadedEvent>;
+  stripeLoadedEventHandler() {
+    if (this.stripeDidLoaded) {
+      this.stripeDidLoaded(this.stripe);
+    }
+    this.stripeLoaded.emit({ stripe: this.stripe });
+  }
+
+  /**
+   * Form submit event
+   * @example
+   * ```
+   * stripeElement
+   *   .addEventListener('formSubmit', async props => {
+   *     const {
+   *       detail: { stripe, cardNumber, event },
+   *     } = props;
+   *     const result = await stripe.createPaymentMethod({
+   *       type: 'card',
+   *       card: cardNumber,
+   *     });
+   *     console.log(result);
+   *   })
+   */
   @Event() formSubmit: EventEmitter<FormSubmitEvent>;
   formSubmitEventHandler() {
     const { cardCVC, cardExpiry, cardNumber, stripe } = this;
@@ -153,24 +153,24 @@ export class MyComponent {
   /**
    * Default form submit action (just call a confirmCardPayment).
    * If you don't want use it, please set `should-use-default-form-submit-action="false"`
-   * @param event 
-   * @param param1 
+   * @param event
+   * @param param1
    */
-  private async defaultFormSubitAction(event: Event, {stripe, cardNumber, paymentIntentClientSecret}: FormSubmitEvent) {
-      event.preventDefault()
-      const result = await stripe.confirmCardPayment(paymentIntentClientSecret, {
-        payment_method: {
-          card: cardNumber
-        }
-      })
-      console.log(result)
+  private async defaultFormSubitAction(event: Event, { stripe, cardNumber, paymentIntentClientSecret }: FormSubmitEvent) {
+    event.preventDefault();
+    const result = await stripe.confirmCardPayment(paymentIntentClientSecret, {
+      payment_method: {
+        card: cardNumber,
+      },
+    });
+    console.log(result);
   }
 
   constructor() {
     if (this.publishableKey) {
       this.initStripe(this.publishableKey);
     } else {
-      this.loadStripeStatus = 'failure'
+      this.loadStripeStatus = 'failure';
     }
   }
 
@@ -235,12 +235,12 @@ export class MyComponent {
     this.cardCVC.on('change', handleCardError);
 
     document.getElementById('stripe-card-element').addEventListener('submit', e => {
-      const { cardCVC, cardExpiry, cardNumber, stripe,paymentIntentClientSecret } = this;
-      const submitEventProps: FormSubmitEvent = {cardCVC, cardExpiry, cardNumber, stripe,paymentIntentClientSecret}
+      const { cardCVC, cardExpiry, cardNumber, stripe, paymentIntentClientSecret } = this;
+      const submitEventProps: FormSubmitEvent = { cardCVC, cardExpiry, cardNumber, stripe, paymentIntentClientSecret };
       if (this.handleSubmit) {
         this.handleSubmit(e, submitEventProps);
       } else if (this.shouldUseDefaultFormSubmitAction === true) {
-        this.defaultFormSubitAction(e,  submitEventProps) 
+        this.defaultFormSubitAction(e, submitEventProps);
       } else {
         e.preventDefault();
       }
