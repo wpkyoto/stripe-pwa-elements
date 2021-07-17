@@ -32,10 +32,12 @@
             <button type="submit">Launch</button>
         </form>
       <div id="stripe"></div>
+      <div id="result"></div>
 
     
     <script>
         const form = document.getElementById('open-modal-form')
+        const resultElement = document.getElementById('result')
         const errorMessage = document.getElementById('error-message')
         const targetElement = document.getElementById('stripe');
         const modalElement = document.createElement('stripe-element-modal');
@@ -120,7 +122,9 @@
                 type: 'card',
                 card: cardNumber,
               });
+              resultElement.innerHTML = `<pre><code>${JSON.stringify(result,null,2)}</code></pre>`
               stripeElement.updateProgress('success');
+              await modalElement.closeModal()
             });
 
             /**
