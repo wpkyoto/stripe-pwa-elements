@@ -1,6 +1,6 @@
 import { Component, Prop, h, State, Method, Element, Host } from '@stencil/core';
 import { loadStripe, Stripe, StripeCardCvcElement, StripeCardExpiryElement, StripeCardNumberElement } from '@stripe/stripe-js';
-import { getPlatforms } from '@ionic/core';
+import { checkPlatform } from '../../utils/utils';
 
 export type FormSubmitHandler = (event: Event, component: MyComponent) => Promise<void>;
 export type StripeDidLoadedHandler = (stripe: Stripe) => Promise<void>;
@@ -38,13 +38,6 @@ export class MyComponent {
   constructor() {
     if (this.publishableKey) {
       this.initStripe(this.publishableKey);
-    }
-    const device = getPlatforms();
-    if (device.includes('ios')) {
-      this.el.classList.add('ios');
-    }
-    if (device.includes('android')) {
-      this.el.classList.add('android');
     }
   }
 
@@ -122,6 +115,10 @@ export class MyComponent {
     const cardCVCElement = document.getElementById('card-cvc');
     this.cardCVC.mount(cardCVCElement);
     this.cardCVC.on('change', handleCardError);
+  }
+
+  componentDidLoad() {
+    this.el.classList.add(checkPlatform());
   }
 
   render() {

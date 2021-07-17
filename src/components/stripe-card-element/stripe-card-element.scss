@@ -4,17 +4,20 @@
   display: revert;
   background: none;
   border: none;
+  font-family: 'Roboto', suns-serif;
 }
 :root {
-  --color-label: #adadad;
+  --color-label: #565656;
   --color-placeholder: #adadad;
   --color-heading-text: #333;
-  --color-input-border: #aba9b8;
+  --color-input-border: #acacac;
 }
-.stripe-payment-wrap {
+:host {
+  display: block;
   background: #fff;
   padding: 32px 16px;
 }
+//.stripe-payment-wrap {}
 
 .StripeElement {
   padding: 8px;
@@ -24,13 +27,14 @@
 }
 
 .stripe-heading {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: bold;
   color: var(--color-heading-text);
   margin-bottom: 24px;
 }
 .stripe-section-title {
-  font-size: 20px;
+  font-size: 14px;
+  font-weight: bold;
   color: var(--color-label);
   margin-bottom: 8px;
 }
