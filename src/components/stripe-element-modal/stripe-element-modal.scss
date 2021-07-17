@@ -2,11 +2,11 @@
   display: block;
 }
 
-:host .modal-row {
+.modal-row {
   display: none;
 }
 
-:host .modal-row.open {
+.modal-row.open {
   position: fixed;
   top: 0;
   left: 0;
@@ -15,11 +15,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   gap: 1ch;
   background: rgba(0, 0, 0, 0.3);
 }
-:host .modal-child {
+.modal-child {
+  box-sizing: border-box;
   padding: 1.5rem;
   background-color: #fff;
+  width: 100%;
 }

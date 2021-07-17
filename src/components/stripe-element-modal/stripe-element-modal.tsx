@@ -3,7 +3,7 @@ import { checkPlatform } from '../../utils/utils';
 
 @Component({
   tag: 'stripe-element-modal',
-  styleUrl: 'stripe-element-modal.css',
+  styleUrl: 'stripe-element-modal.scss',
   shadow: true,
 })
 export class StripeElementModal {
