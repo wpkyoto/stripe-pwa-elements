@@ -24,6 +24,25 @@ export namespace Components {
          */
         "setFormSubmitHandler": (handler: FormSubmitHandler) => Promise<void>;
     }
+    interface StripeElementModal {
+        /**
+          * Close the modal
+         */
+        "closeModal": () => Promise<void>;
+        /**
+          * Modal state. If true, the modal will open
+         */
+        "open": boolean;
+        /**
+          * Open the modal
+         */
+        "openModal": () => Promise<void>;
+        "showCloseButton": boolean;
+        /**
+          * Toggle modal state
+         */
+        "toggleModal": () => Promise<void>;
+    }
 }
 declare global {
     interface HTMLStripeCardElementElement extends Components.StripeCardElement, HTMLStencilElement {
@@ -32,8 +51,15 @@ declare global {
         prototype: HTMLStripeCardElementElement;
         new (): HTMLStripeCardElementElement;
     };
+    interface HTMLStripeElementModalElement extends Components.StripeElementModal, HTMLStencilElement {
+    }
+    var HTMLStripeElementModalElement: {
+        prototype: HTMLStripeElementModalElement;
+        new (): HTMLStripeElementModalElement;
+    };
     interface HTMLElementTagNameMap {
         "stripe-card-element": HTMLStripeCardElementElement;
+        "stripe-element-modal": HTMLStripeElementModalElement;
     }
 }
 declare namespace LocalJSX {
@@ -44,8 +70,16 @@ declare namespace LocalJSX {
          */
         "publishableKey"?: string;
     }
+    interface StripeElementModal {
+        /**
+          * Modal state. If true, the modal will open
+         */
+        "open"?: boolean;
+        "showCloseButton"?: boolean;
+    }
     interface IntrinsicElements {
         "stripe-card-element": StripeCardElement;
+        "stripe-element-modal": StripeElementModal;
     }
 }
 export { LocalJSX as JSX };
@@ -53,6 +87,7 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "stripe-card-element": LocalJSX.StripeCardElement & JSXBase.HTMLAttributes<HTMLStripeCardElementElement>;
+            "stripe-element-modal": LocalJSX.StripeElementModal & JSXBase.HTMLAttributes<HTMLStripeElementModalElement>;
         }
     }
 }
