@@ -1,0 +1,43 @@
+/* Remove all the styles of the "User-Agent-Stylesheet", except for the 'display' property */
+*:where(:not(iframe, canvas, img, svg, video):not(svg *)) {
+  all: unset;
+  display: revert;
+  background: none;
+  border: none;
+}
+:root {
+  --color-label: #adadad;
+  --color-placeholder: #adadad;
+  --color-heading-text: #333;
+  --color-input-border: #aba9b8;
+}
+.stripe-payment-wrap {
+  background: #fff;
+  padding: 32px 16px;
+}
+
+.StripeElement {
+  padding: 8px;
+  min-height: 42px;
+  border: 1px solid var(--color-input-border);
+  border-radius: 4px;
+}
+
+.stripe-heading {
+  font-size: 26px;
+  font-weight: bold;
+  color: var(--color-heading-text);
+  margin-bottom: 24px;
+}
+.stripe-section-title {
+  font-size: 20px;
+  color: var(--color-label);
+  margin-bottom: 8px;
+}
+.payment-info label {
+  color: var(--color-label);
+  margin-bottom: 8px;
+}
+.payment-info fieldset > div {
+  margin-bottom: 8px;
+}
