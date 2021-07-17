@@ -11,16 +11,24 @@ export namespace Components {
         /**
           * Form submit event handler
          */
-        "handleSubmit"?: FormSubmitHandler;
+        "handleSubmit": FormSubmitHandler;
         /**
           * Get Stripe.js, and initialize elements
           * @param publishableKey
          */
         "initStripe": (publishableKey: string) => Promise<void>;
         /**
+          * The client secret from paymentIntent.create response
+         */
+        "paymentIntentClientSecret"?: string;
+        /**
           * Your Stripe publishable API key.
          */
         "publishableKey": string;
+        /**
+          * The component will provide a function to call the `stripe.confirmCardPayment`API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element
+         */
+        "shouldUseDefaultFormSubmitAction": boolean;
         /**
           * Show the form label
          */
@@ -74,12 +82,28 @@ declare namespace LocalJSX {
           * Form submit event handler
          */
         "handleSubmit"?: FormSubmitHandler;
+        /**
+          * Form submit event
+          * @example ``` stripeElement   .addEventListener('formSubmit', async props => {     const {       detail: { stripe, cardNumber, event },     } = props;     const result = await stripe.createPaymentMethod({       type: 'card',       card: cardNumber,     });     console.log(result);   })
+         */
         "onFormSubmit"?: (event: CustomEvent<FormSubmitEvent>) => void;
+        /**
+          * Stripe Client loaded event
+          * @example ``` stripeElement  .addEventListener('stripeLoaded', async ({ detail: {stripe} }) => {   stripe     .createSource({       type: 'ideal',       amount: 1099,       currency: 'eur',       owner: {         name: 'Jenny Rosen',       },       redirect: {         return_url: 'https://shop.example.com/crtA6B28E1',       },     })     .then(function(result) {       // Handle result.error or result.source     });   }); ```
+         */
         "onStripeLoaded"?: (event: CustomEvent<StripeLoadedEvent>) => void;
+        /**
+          * The client secret from paymentIntent.create response
+         */
+        "paymentIntentClientSecret"?: string;
         /**
           * Your Stripe publishable API key.
          */
         "publishableKey"?: string;
+        /**
+          * The component will provide a function to call the `stripe.confirmCardPayment`API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element
+         */
+        "shouldUseDefaultFormSubmitAction"?: boolean;
         /**
           * Show the form label
          */

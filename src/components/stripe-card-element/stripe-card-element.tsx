@@ -32,6 +32,7 @@ export type FormSubmitEvent = {
   cardNumber: StripeCardNumberElement;
   cardExpiry: StripeCardExpiryElement;
   cardCVC: StripeCardCvcElement;
+  paymentIntentClientSecret?: string;
 };
 export type StripeLoadedEvent = {
   stripe: Stripe;
@@ -59,12 +60,24 @@ export class MyComponent {
   @Prop() showLabel: boolean = false;
 
   /**
+   * The client secret from paymentIntent.create response
+   */
+  @Prop() paymentIntentClientSecret?: string;
+
+  /**
+   * The component will provide a function to call the `stripe.confirmCardPayment`API.
+   * If you want to customize the behavior, should set false.
+   * And listen the 'formSubmit' event on the element
+   */
+  @Prop() shouldUseDefaultFormSubmitAction: boolean = true;
+
+  /**
    * Form submit event handler
    */
   @Prop({
     mutable: true,
   })
-  handleSubmit?: FormSubmitHandler;
+  handleSubmit: FormSubmitHandler;
 
   /**
    * Stripe.js class loaded handler
@@ -74,6 +87,30 @@ export class MyComponent {
   })
   stripeDidLoaded?: StripeDidLoadedHandler;
 
+  /**
+   * Stripe Client loaded event
+   * @example
+   * ```
+   * stripeElement
+   *  .addEventListener('stripeLoaded', async ({ detail: {stripe} }) => {
+   *   stripe
+   *     .createSource({
+   *       type: 'ideal',
+   *       amount: 1099,
+   *       currency: 'eur',
+   *       owner: {
+   *         name: 'Jenny Rosen',
+   *       },
+   *       redirect: {
+   *         return_url: 'https://shop.example.com/crtA6B28E1',
+   *       },
+   *     })
+   *     .then(function(result) {
+   *       // Handle result.error or result.source
+   *     });
+   *   });
+   * ```
+   */
   @Event() stripeLoaded: EventEmitter<StripeLoadedEvent>;
   stripeLoadedEventHandler() {
     if (this.stripeDidLoaded) {
@@ -82,6 +119,22 @@ export class MyComponent {
     this.stripeLoaded.emit({ stripe: this.stripe });
   }
 
+  /**
+   * Form submit event
+   * @example
+   * ```
+   * stripeElement
+   *   .addEventListener('formSubmit', async props => {
+   *     const {
+   *       detail: { stripe, cardNumber, event },
+   *     } = props;
+   *     const result = await stripe.createPaymentMethod({
+   *       type: 'card',
+   *       card: cardNumber,
+   *     });
+   *     console.log(result);
+   *   })
+   */
   @Event() formSubmit: EventEmitter<FormSubmitEvent>;
   formSubmitEventHandler() {
     const { cardCVC, cardExpiry, cardNumber, stripe } = this;
@@ -97,9 +150,27 @@ export class MyComponent {
   private cardExpiry!: StripeCardExpiryElement;
   private cardCVC!: StripeCardCvcElement;
 
+  /**
+   * Default form submit action (just call a confirmCardPayment).
+   * If you don't want use it, please set `should-use-default-form-submit-action="false"`
+   * @param event
+   * @param param1
+   */
+  private async defaultFormSubitAction(event: Event, { stripe, cardNumber, paymentIntentClientSecret }: FormSubmitEvent) {
+    event.preventDefault();
+    const result = await stripe.confirmCardPayment(paymentIntentClientSecret, {
+      payment_method: {
+        card: cardNumber,
+      },
+    });
+    console.log(result);
+  }
+
   constructor() {
     if (this.publishableKey) {
       this.initStripe(this.publishableKey);
+    } else {
+      this.loadStripeStatus = 'failure';
     }
   }
 
@@ -164,9 +235,12 @@ export class MyComponent {
     this.cardCVC.on('change', handleCardError);
 
     document.getElementById('stripe-card-element').addEventListener('submit', e => {
+      const { cardCVC, cardExpiry, cardNumber, stripe, paymentIntentClientSecret } = this;
+      const submitEventProps: FormSubmitEvent = { cardCVC, cardExpiry, cardNumber, stripe, paymentIntentClientSecret };
       if (this.handleSubmit) {
-        const { cardCVC, cardExpiry, cardNumber, stripe } = this;
-        this.handleSubmit(e, { cardCVC, cardExpiry, cardNumber, stripe });
+        this.handleSubmit(e, submitEventProps);
+      } else if (this.shouldUseDefaultFormSubmitAction === true) {
+        this.defaultFormSubitAction(e, submitEventProps);
       } else {
         e.preventDefault();
       }
