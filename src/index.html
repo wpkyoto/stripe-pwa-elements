@@ -30,12 +30,6 @@
               });
               console.log(result);
             });
-            stripeElement.addEventListener('stripeLoaded', async ({ detail: stripe }) => {
-              stripe.createPaymentMethod({
-                type: 'card',
-                card: '',
-              });
-            });
           });
         })
         .catch(e => {
