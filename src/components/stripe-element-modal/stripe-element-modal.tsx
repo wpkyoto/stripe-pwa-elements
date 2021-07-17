@@ -1,4 +1,5 @@
-import { Component, Host, h, Prop, Method } from '@stencil/core';
+import { Component, Host, h, Prop, Method, Element } from '@stencil/core';
+import { checkPlatform } from '../../utils/utils';
 
 @Component({
   tag: 'stripe-element-modal',
@@ -6,6 +7,7 @@ import { Component, Host, h, Prop, Method } from '@stencil/core';
   shadow: true,
 })
 export class StripeElementModal {
+  @Element() el: HTMLElement;
   @Prop() showCloseButton: boolean = true;
 
   /**
@@ -36,6 +38,10 @@ export class StripeElementModal {
   @Method()
   public async closeModal() {
     this.open = false;
+  }
+
+  componentDidLoad() {
+    this.el.classList.add(checkPlatform());
   }
 
   render() {

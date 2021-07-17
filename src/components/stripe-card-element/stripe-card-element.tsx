@@ -1,5 +1,6 @@
-import { Component, Prop, h, State, Method, EventEmitter, Event } from '@stencil/core';
+import { Component, Prop, h, State, Method, EventEmitter, Event, Element, Host } from '@stencil/core';
 import { loadStripe, Stripe, StripeCardCvcElement, StripeCardExpiryElement, StripeCardNumberElement } from '@stripe/stripe-js';
+import { checkPlatform } from '../../utils/utils';
 
 export type FormSubmitHandler = (event: Event, props: FormSubmitEvent) => Promise<void>;
 export type StripeDidLoadedHandler = (stripe: Stripe) => Promise<void>;
@@ -16,10 +17,11 @@ export type StripeLoadedEvent = {
 
 @Component({
   tag: 'stripe-card-element',
-  styleUrl: 'stripe-card-element.css',
+  styleUrl: 'stripe-card-element.scss',
   shadow: false,
 })
 export class MyComponent {
+  @Element() el: HTMLElement;
   @State() loadStripeStatus: '' | 'loading' | 'success' | 'failure' = '';
 
   @State() stripe: Stripe;
@@ -139,6 +141,9 @@ export class MyComponent {
       this.formSubmitEventHandler();
     });
   }
+  componentDidLoad() {
+    this.el.classList.add(checkPlatform());
+  }
 
   render() {
     if (this.loadStripeStatus === 'failure') {
@@ -146,34 +151,36 @@ export class MyComponent {
     }
 
     return (
-      <form id="stripe-card-element">
-        <h1>Add your payment information</h1>
-        <div>
-          <h2>Card information</h2>
-        </div>
-        <div class="payment-info card visible">
-          <fieldset>
-            <div>
-              <label>
-                {this.showLabel ? <lenged>Card Number</lenged> : null}
-                <div id="card-number" />
-              </label>
-            </div>
-            <div style={{ display: 'flex' }}>
-              <label style={{ width: '50%' }}>
-                {this.showLabel ? <lenged>MM / YY</lenged> : null}
-                <div id="card-expiry" />
-              </label>
-              <label style={{ width: '50%' }}>
-                {this.showLabel ? <lenged>CVC</lenged> : null}
-                <div id="card-cvc" />
-              </label>
-            </div>
-            <div id="card-errors" class="element-errors"></div>
-          </fieldset>
-        </div>
-        <button type="submit">Save</button>
-      </form>
+      <Host>
+        <form id="stripe-card-element">
+          <h1>Add your payment information</h1>
+          <div>
+            <h2>Card information</h2>
+          </div>
+          <div class="payment-info card visible">
+            <fieldset>
+              <div>
+                <label>
+                  {this.showLabel ? <lenged>Card Number</lenged> : null}
+                  <div id="card-number" />
+                </label>
+              </div>
+              <div style={{ display: 'flex' }}>
+                <label style={{ width: '50%' }}>
+                  {this.showLabel ? <lenged>MM / YY</lenged> : null}
+                  <div id="card-expiry" />
+                </label>
+                <label style={{ width: '50%' }}>
+                  {this.showLabel ? <lenged>CVC</lenged> : null}
+                  <div id="card-cvc" />
+                </label>
+              </div>
+              <div id="card-errors" class="element-errors"></div>
+            </fieldset>
+          </div>
+          <button type="submit">Save</button>
+        </form>
+      </Host>
     );
   }
 }
