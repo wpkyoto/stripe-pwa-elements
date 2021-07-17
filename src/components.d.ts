@@ -5,7 +5,8 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { FormSubmitEvent, FormSubmitHandler, StripeDidLoadedHandler, StripeLoadedEvent } from "./components/stripe-card-element/stripe-card-element";
+import { FormSubmitEvent, FormSubmitHandler, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
+import { PaymentRequestOptions } from "@stripe/stripe-js";
 export namespace Components {
     interface StripeCardElement {
         /**
@@ -57,6 +58,22 @@ export namespace Components {
          */
         "toggleModal": () => Promise<void>;
     }
+    interface StripePaymentRequestButton {
+        /**
+          * Get Stripe.js, and initialize elements
+          * @param publishableKey
+         */
+        "initStripe": (publishableKey: string) => Promise<void>;
+        /**
+          * Your Stripe publishable API key.
+         */
+        "publishableKey": string;
+        "setPaymentRequestOption": (option: PaymentRequestOptions) => Promise<this>;
+        /**
+          * Stripe.js class loaded handler
+         */
+        "stripeDidLoaded"?: StripeDidLoadedHandler;
+    }
 }
 declare global {
     interface HTMLStripeCardElementElement extends Components.StripeCardElement, HTMLStencilElement {
@@ -71,9 +88,16 @@ declare global {
         prototype: HTMLStripeElementModalElement;
         new (): HTMLStripeElementModalElement;
     };
+    interface HTMLStripePaymentRequestButtonElement extends Components.StripePaymentRequestButton, HTMLStencilElement {
+    }
+    var HTMLStripePaymentRequestButtonElement: {
+        prototype: HTMLStripePaymentRequestButtonElement;
+        new (): HTMLStripePaymentRequestButtonElement;
+    };
     interface HTMLElementTagNameMap {
         "stripe-card-element": HTMLStripeCardElementElement;
         "stripe-element-modal": HTMLStripeElementModalElement;
+        "stripe-payment-request-button": HTMLStripePaymentRequestButtonElement;
     }
 }
 declare namespace LocalJSX {
@@ -120,9 +144,25 @@ declare namespace LocalJSX {
         "open"?: boolean;
         "showCloseButton"?: boolean;
     }
+    interface StripePaymentRequestButton {
+        /**
+          * Stripe Client loaded event
+          * @example ``` stripeElement  .addEventListener('stripeLoaded', async ({ detail: {stripe} }) => {   stripe     .createSource({       type: 'ideal',       amount: 1099,       currency: 'eur',       owner: {         name: 'Jenny Rosen',       },       redirect: {         return_url: 'https://shop.example.com/crtA6B28E1',       },     })     .then(function(result) {       // Handle result.error or result.source     });   }); ```
+         */
+        "onStripeLoaded"?: (event: CustomEvent<StripeLoadedEvent>) => void;
+        /**
+          * Your Stripe publishable API key.
+         */
+        "publishableKey"?: string;
+        /**
+          * Stripe.js class loaded handler
+         */
+        "stripeDidLoaded"?: StripeDidLoadedHandler;
+    }
     interface IntrinsicElements {
         "stripe-card-element": StripeCardElement;
         "stripe-element-modal": StripeElementModal;
+        "stripe-payment-request-button": StripePaymentRequestButton;
     }
 }
 export { LocalJSX as JSX };
@@ -131,6 +171,7 @@ declare module "@stencil/core" {
         interface IntrinsicElements {
             "stripe-card-element": LocalJSX.StripeCardElement & JSXBase.HTMLAttributes<HTMLStripeCardElementElement>;
             "stripe-element-modal": LocalJSX.StripeElementModal & JSXBase.HTMLAttributes<HTMLStripeElementModalElement>;
+            "stripe-payment-request-button": LocalJSX.StripePaymentRequestButton & JSXBase.HTMLAttributes<HTMLStripePaymentRequestButtonElement>;
         }
     }
 }

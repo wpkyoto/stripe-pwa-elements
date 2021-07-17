@@ -14,8 +14,28 @@
       const modalElement = document.createElement('stripe-element-modal');
       modalElement.setAttribute('open', true);
       const stripeElement = document.createElement('stripe-card-element');
+      const stripePaymentRequestElement = document.createElement('stripe-payment-request-button');
+      modalElement.appendChild(stripePaymentRequestElement);
       modalElement.appendChild(stripeElement);
       targetElement.appendChild(modalElement);
+
+      customElements
+        .whenDefined('stripe-payment-request-button')
+        .then(() => {
+          return stripePaymentRequestElement.initStripe('pk_test_51EMxG7KVC4SfzSeak35hZaAe91cpzKZE9eOQcVWpa7owYJeS30avCAF0lT1QUMKTbzepTIYgAgjly4AmgZuxxkcS00kQ40cBLe');
+        })
+        .then(() => {
+          stripePaymentRequestElement.setPaymentRequestOption({
+            country: 'JP',
+            currency: 'jpy',
+            total: {
+              label: 'Total',
+              amount: 100,
+            },
+            requestShipping: false,
+            requestPayerEmail: true,
+          });
+        });
       customElements
         .whenDefined('stripe-card-element')
         .then(() => {
