@@ -31,7 +31,10 @@
               console.log(result);
             });
             stripeElement.addEventListener('stripeLoaded', async ({ detail: stripe }) => {
-              console.log(stripe);
+              stripe.createPaymentMethod({
+                type: 'card',
+                card: ''
+              })
             });
           });
         })

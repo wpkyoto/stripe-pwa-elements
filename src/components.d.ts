@@ -8,6 +8,9 @@ import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { FormSubmitEvent, FormSubmitHandler, StripeDidLoadedHandler, StripeLoadedEvent } from "./components/stripe-card-element/stripe-card-element";
 export namespace Components {
     interface StripeCardElement {
+        /**
+          * Form submit event handler
+         */
         "handleSubmit"?: FormSubmitHandler;
         /**
           * Get Stripe.js, and initialize elements
@@ -18,7 +21,13 @@ export namespace Components {
           * Your Stripe publishable API key.
          */
         "publishableKey": string;
+        /**
+          * Show the form label
+         */
         "showLabel": boolean;
+        /**
+          * Stripe.js class loaded handler
+         */
         "stripeDidLoaded"?: StripeDidLoadedHandler;
     }
     interface StripeElementModal {
@@ -61,6 +70,9 @@ declare global {
 }
 declare namespace LocalJSX {
     interface StripeCardElement {
+        /**
+          * Form submit event handler
+         */
         "handleSubmit"?: FormSubmitHandler;
         "onFormSubmit"?: (event: CustomEvent<FormSubmitEvent>) => void;
         "onStripeLoaded"?: (event: CustomEvent<StripeLoadedEvent>) => void;
@@ -68,7 +80,13 @@ declare namespace LocalJSX {
           * Your Stripe publishable API key.
          */
         "publishableKey"?: string;
+        /**
+          * Show the form label
+         */
         "showLabel"?: boolean;
+        /**
+          * Stripe.js class loaded handler
+         */
         "stripeDidLoaded"?: StripeDidLoadedHandler;
     }
     interface StripeElementModal {

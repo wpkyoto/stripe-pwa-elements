@@ -55,13 +55,22 @@ export class MyComponent {
    */
   @Prop() publishableKey: string;
 
+  /**
+   * Show the form label
+   */
   @Prop() showLabel: boolean = false;
 
+  /**
+   * Form submit event handler
+   */
   @Prop({
     mutable: true,
   })
   handleSubmit?: FormSubmitHandler;
 
+  /**
+   * Stripe.js class loaded handler
+   */
   @Prop({
     mutable: true,
   })
@@ -160,8 +169,9 @@ export class MyComponent {
       if (this.handleSubmit) {
         const { cardCVC, cardExpiry, cardNumber, stripe } = this;
         this.handleSubmit(e, { cardCVC, cardExpiry, cardNumber, stripe });
+      } else {
+        e.preventDefault();
       }
-      e.preventDefault();
       this.formSubmitEventHandler();
     });
   }
