@@ -53,10 +53,13 @@ export class StripePaymentRequestButton {
    */
   @Event() stripeLoaded: EventEmitter<StripeLoadedEvent>;
   stripeLoadedEventHandler() {
+    const event: StripeLoadedEvent = {
+      stripe: this.stripe,
+    };
     if (this.stripeDidLoaded) {
-      this.stripeDidLoaded(this.stripe);
+      this.stripeDidLoaded(event);
     }
-    this.stripeLoaded.emit({ stripe: this.stripe });
+    this.stripeLoaded.emit(event);
   }
 
   constructor() {

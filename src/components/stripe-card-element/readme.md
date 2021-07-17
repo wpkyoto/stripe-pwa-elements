@@ -2,7 +2,6 @@
 
 <!-- Auto Generated Below -->
 
-
 ## Properties
 
 | Property                           | Attribute                               | Description                                                                                                                                                                                 | Type                                                      | Default     |
@@ -14,14 +13,12 @@
 | `showLabel`                        | `show-label`                            | Show the form label                                                                                                                                                                         | `boolean`                                                 | `false`     |
 | `stripeDidLoaded`                  | --                                      | Stripe.js class loaded handler                                                                                                                                                              | `(stripe: Stripe) => Promise<void>`                       | `undefined` |
 
-
 ## Events
 
 | Event          | Description                | Type                                                                                                                                                                            |
 | -------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `formSubmit`   | Form submit event          | `CustomEvent<{ stripe: Stripe; cardNumber: StripeCardNumberElement; cardExpiry: StripeCardExpiryElement; cardCVC: StripeCardCvcElement; paymentIntentClientSecret?: string; }>` |
 | `stripeLoaded` | Stripe Client loaded event | `CustomEvent<{ stripe: Stripe; }>`                                                                                                                                              |
-
 
 ## Methods
 
@@ -33,9 +30,6 @@ Get Stripe.js, and initialize elements
 
 Type: `Promise<void>`
 
+---
 
-
-
-----------------------------------------------
-
-*Built with [StencilJS](https://stenciljs.com/)*
+_Built with [StencilJS](https://stenciljs.com/)_
