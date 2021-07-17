@@ -11,11 +11,14 @@
     <div id="stripe"></div>
     <script>
       const targetElement = document.getElementById('stripe')
-      const stripeElement = document.createElement('my-component');
-      targetElement.appendChild(stripeElement)
-      customElements.whenDefined('my-component')
+      const modalElement = document.createElement('stripe-element-modal')
+      modalElement.setAttribute('open', true)
+      const stripeElement = document.createElement('stripe-card-element');
+      modalElement.appendChild(stripeElement)
+      targetElement.appendChild(modalElement)
+      customElements.whenDefined('stripe-card-element')
         .then(() => {
-          stripeElement.initStripe('pk_test_XXXXXX')
+          stripeElement.initStripe('pk_test_51EMxG7KVC4SfzSeak35hZaAe91cpzKZE9eOQcVWpa7owYJeS30avCAF0lT1QUMKTbzepTIYgAgjly4AmgZuxxkcS00kQ40cBLe')
             .then(() => {
               return stripeElement.setFormSubmitHandler(async (e, component) => {
                 e.preventDefault()

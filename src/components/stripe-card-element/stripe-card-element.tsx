@@ -3,10 +3,11 @@ import { loadStripe, Stripe, StripeCardCvcElement, StripeCardExpiryElement, Stri
 import { getPlatforms } from '@ionic/core';
 
 export type FormSubmitHandler = (event: Event, component: MyComponent) => Promise<void>;
+export type StripeDidLoadedHandler = (stripe: Stripe) => Promise<void>;
 
 @Component({
-  tag: 'my-component',
-  styleUrl: 'my-component.scss',
+  tag: 'stripe-card-element',
+  styleUrl: 'stripe-card-element.scss',
   shadow: false,
 })
 export class MyComponent {
@@ -20,7 +21,15 @@ export class MyComponent {
 
   @State() stripe: Stripe;
 
-  @Prop() handleSubmit?: FormSubmitHandler;
+  @Prop({
+    mutable: true,
+  })
+  handleSubmit?: FormSubmitHandler;
+
+  @Prop({
+    mutable: true,
+  })
+  stripeDidLoaded?: StripeDidLoadedHandler;
 
   private cardNumber!: StripeCardNumberElement;
   private cardExpiry!: StripeCardExpiryElement;
@@ -30,7 +39,6 @@ export class MyComponent {
     if (this.publishableKey) {
       this.initStripe(this.publishableKey);
     }
-
     const device = getPlatforms();
     if (device.includes('ios')) {
       this.el.classList.add('ios');
@@ -40,6 +48,26 @@ export class MyComponent {
     }
   }
 
+  /**
+   * Set form submit event function
+   * @param handler FormSubmitHandler
+   */
+  @Method()
+  public async setFormSubmitHandler(handler: FormSubmitHandler): Promise<this> {
+    this.handleSubmit = handler;
+    return this;
+  }
+
+  @Method()
+  public async setStripeDidLoadedHandler(handler: StripeDidLoadedHandler): Promise<this> {
+    this.stripeDidLoaded = handler;
+    return this;
+  }
+
+  /**
+   * Get Stripe.js, and initialize elements
+   * @param publishableKey
+   */
   @Method()
   public async initStripe(publishableKey: string) {
     this.loadStripeStatus = 'loading';
@@ -57,14 +85,17 @@ export class MyComponent {
       .then(() => {
         if (!this.stripe) return;
         return this.initElement();
+      })
+      .then(() => {
+        if (!this.stripe) return;
+        if (!this.stripeDidLoaded) return;
+        return this.stripeDidLoaded(this.stripe);
       });
   }
 
-  @Method()
-  public async setFormSubmitHandler(handler: FormSubmitHandler) {
-    this.handleSubmit = handler;
-  }
-
+  /**
+   * Initialize Component using Stripe Element
+   */
   private async initElement() {
     const elements = this.stripe.elements();
     const cardErrorElement = document.getElementById('card-errors');
@@ -98,7 +129,7 @@ export class MyComponent {
       return <p>Failed to load Stripe</p>;
     }
     return (
-      <Host class="stripe-payment-information">
+      <Host>
         <div class="stripe-payment-wrap">
           <form
             onSubmit={e => {
@@ -108,9 +139,15 @@ export class MyComponent {
           >
             <div class="stripe-heading">Add your payment information</div>
             <div>
-              <div class="stripe-section-title">Card information</div>
+              <h2 class="stripe-section-title">Card information</h2>
             </div>
             <div class="payment-info card visible">
+              <fieldset>
+                <label>
+                  <span>Email</span>
+                  <input name="email" type="email" class="field" placeholder="jenny@example.com" required />
+                </label>
+              </fieldset>
               <fieldset>
                 <div>
                   <label>

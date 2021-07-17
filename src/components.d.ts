@@ -5,46 +5,92 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { FormSubmitHandler } from "./components/my-component/my-component";
+import { FormSubmitHandler, StripeDidLoadedHandler } from "./components/stripe-card-element/stripe-card-element";
 export namespace Components {
-    interface MyComponent {
+    interface StripeCardElement {
         "handleSubmit"?: FormSubmitHandler;
+        /**
+          * Get Stripe.js, and initialize elements
+          * @param publishableKey
+         */
         "initStripe": (publishableKey: string) => Promise<void>;
         /**
           * Your Stripe publishable API key.
          */
         "publishableKey": string;
-        "setFormSubmitHandler": (handler: FormSubmitHandler) => Promise<void>;
+        /**
+          * Set form submit event function
+          * @param handler FormSubmitHandler
+         */
+        "setFormSubmitHandler": (handler: FormSubmitHandler) => Promise<this>;
+        "setStripeDidLoadedHandler": (handler: StripeDidLoadedHandler) => Promise<this>;
+        "stripeDidLoaded"?: StripeDidLoadedHandler;
+    }
+    interface StripeElementModal {
+        /**
+          * Close the modal
+         */
+        "closeModal": () => Promise<void>;
+        /**
+          * Modal state. If true, the modal will open
+         */
+        "open": boolean;
+        /**
+          * Open the modal
+         */
+        "openModal": () => Promise<void>;
+        "showCloseButton": boolean;
+        /**
+          * Toggle modal state
+         */
+        "toggleModal": () => Promise<void>;
     }
 }
 declare global {
-    interface HTMLMyComponentElement extends Components.MyComponent, HTMLStencilElement {
+    interface HTMLStripeCardElementElement extends Components.StripeCardElement, HTMLStencilElement {
     }
-    var HTMLMyComponentElement: {
-        prototype: HTMLMyComponentElement;
-        new (): HTMLMyComponentElement;
+    var HTMLStripeCardElementElement: {
+        prototype: HTMLStripeCardElementElement;
+        new (): HTMLStripeCardElementElement;
+    };
+    interface HTMLStripeElementModalElement extends Components.StripeElementModal, HTMLStencilElement {
+    }
+    var HTMLStripeElementModalElement: {
+        prototype: HTMLStripeElementModalElement;
+        new (): HTMLStripeElementModalElement;
     };
     interface HTMLElementTagNameMap {
-        "my-component": HTMLMyComponentElement;
+        "stripe-card-element": HTMLStripeCardElementElement;
+        "stripe-element-modal": HTMLStripeElementModalElement;
     }
 }
 declare namespace LocalJSX {
-    interface MyComponent {
+    interface StripeCardElement {
         "handleSubmit"?: FormSubmitHandler;
         /**
           * Your Stripe publishable API key.
          */
         "publishableKey"?: string;
+        "stripeDidLoaded"?: StripeDidLoadedHandler;
+    }
+    interface StripeElementModal {
+        /**
+          * Modal state. If true, the modal will open
+         */
+        "open"?: boolean;
+        "showCloseButton"?: boolean;
     }
     interface IntrinsicElements {
-        "my-component": MyComponent;
+        "stripe-card-element": StripeCardElement;
+        "stripe-element-modal": StripeElementModal;
     }
 }
 export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
-            "my-component": LocalJSX.MyComponent & JSXBase.HTMLAttributes<HTMLMyComponentElement>;
+            "stripe-card-element": LocalJSX.StripeCardElement & JSXBase.HTMLAttributes<HTMLStripeCardElementElement>;
+            "stripe-element-modal": LocalJSX.StripeElementModal & JSXBase.HTMLAttributes<HTMLStripeElementModalElement>;
         }
     }
 }
