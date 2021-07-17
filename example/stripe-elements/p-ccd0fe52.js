@@ -1,0 +1,1 @@
+import{g as o}from"./p-8c01dd96.js";const d=()=>{const d=o();return d.includes("ios")?"ios":d.includes("android")?"android":void 0};export{d as c}

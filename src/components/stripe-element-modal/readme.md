@@ -9,6 +9,12 @@
 | `open`            | `open`              | Modal state. If true, the modal will open | `boolean` | `false` |
 | `showCloseButton` | `show-close-button` |                                           | `boolean` | `true`  |
 
+## Events
+
+| Event   | Description | Type               |
+| ------- | ----------- | ------------------ |
+| `close` |             | `CustomEvent<any>` |
+
 ## Methods
 
 ### `closeModal() => Promise<void>`

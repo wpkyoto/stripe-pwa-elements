@@ -365,6 +365,12 @@ export class MyComponent {
     this.el.classList.add(checkPlatform());
   }
 
+  disconnectedCallback() {
+    if (this.cardNumber) this.cardNumber.unmount();
+    if (this.cardExpiry) this.cardExpiry.unmount();
+    if (this.cardCVC) this.cardCVC.unmount();
+  }
+
   render() {
     const { errorMessage } = this;
     if (this.loadStripeStatus === 'failure') {

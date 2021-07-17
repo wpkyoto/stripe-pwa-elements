@@ -4,10 +4,10 @@
 
 ## Properties
 
-| Property          | Attribute         | Description                      | Type                                | Default     |
-| ----------------- | ----------------- | -------------------------------- | ----------------------------------- | ----------- |
-| `publishableKey`  | `publishable-key` | Your Stripe publishable API key. | `string`                            | `undefined` |
-| `stripeDidLoaded` | --                | Stripe.js class loaded handler   | `(stripe: Stripe) => Promise<void>` | `undefined` |
+| Property          | Attribute         | Description                      | Type                                          | Default     |
+| ----------------- | ----------------- | -------------------------------- | --------------------------------------------- | ----------- |
+| `publishableKey`  | `publishable-key` | Your Stripe publishable API key. | `string`                                      | `undefined` |
+| `stripeDidLoaded` | --                | Stripe.js class loaded handler   | `(event: StripeLoadedEvent) => Promise<void>` | `undefined` |
 
 ## Events
 

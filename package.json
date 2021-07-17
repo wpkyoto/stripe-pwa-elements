@@ -1,5 +1,5 @@
 {
-  "name": "stripe-elemnts",
+  "name": "stripe-elements",
   "version": "0.0.1",
   "description": "Stencil Component Starter",
   "main": "dist/index.cjs.js",
@@ -9,7 +9,7 @@
   "types": "dist/custom-elements/index.d.ts",
   "collection": "dist/collection/collection-manifest.json",
   "collection:main": "dist/collection/index.js",
-  "unpkg": "dist/stripe-elemnts/stripe-elemnts.esm.js",
+  "unpkg": "dist/stripe-elements/stripe-elements.esm.js",
   "files": [
     "dist/",
     "loader/"
@@ -20,7 +20,9 @@
     "test": "stencil test --spec --e2e",
     "test.watch": "stencil test --spec --e2e --watchAll",
     "generate": "stencil generate",
-    "format": "prettier --write src"
+    "format": "prettier --write src",
+    "example:copy": "stencil build --docs && cp -R dist/stripe-elements example/",
+    "example:serve": "npx serve example"
   },
   "dependencies": {
     "@ionic/core": "^5.6.11",
