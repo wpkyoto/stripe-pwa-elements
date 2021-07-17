@@ -3,6 +3,7 @@ import { loadStripe, Stripe, StripeCardCvcElement, StripeCardExpiryElement, Stri
 import i18next from 'i18next';
 import I18nextBrowserLanguageDetector from 'i18next-browser-languagedetector';
 import { checkPlatform } from '../../utils/utils';
+import { StripeDidLoadedHandler, StripeLoadedEvent, FormSubmitEvent, FormSubmitHandler } from '../../interfaces';
 
 i18next.use(I18nextBrowserLanguageDetector).init({
   fallbackLng: 'en',
@@ -24,19 +25,6 @@ i18next.use(I18nextBrowserLanguageDetector).init({
     },
   },
 });
-
-export type FormSubmitHandler = (event: Event, props: FormSubmitEvent) => Promise<void>;
-export type StripeDidLoadedHandler = (stripe: Stripe) => Promise<void>;
-export type FormSubmitEvent = {
-  stripe: Stripe;
-  cardNumber: StripeCardNumberElement;
-  cardExpiry: StripeCardExpiryElement;
-  cardCVC: StripeCardCvcElement;
-  paymentIntentClientSecret?: string;
-};
-export type StripeLoadedEvent = {
-  stripe: Stripe;
-};
 
 @Component({
   tag: 'stripe-card-element',
