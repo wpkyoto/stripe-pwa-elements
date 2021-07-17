@@ -20,15 +20,16 @@
         .then(() => {
           stripeElement.initStripe('pk_test_51EMxG7KVC4SfzSeak35hZaAe91cpzKZE9eOQcVWpa7owYJeS30avCAF0lT1QUMKTbzepTIYgAgjly4AmgZuxxkcS00kQ40cBLe')
             .then(() => {
-              return stripeElement.setFormSubmitHandler(async (e, component) => {
-                e.preventDefault()
-                const result = await component.stripe.createPaymentMethod({
+              stripeElement.addEventListener('formSubmit', async (props) => {
+                const {detail :{stripe, cardNumber, event}} = props
+                const result = await stripe.createPaymentMethod({
                   type: 'card',
-                  card: component.cardNumber
+                  card: cardNumber
                 })
-                const resultElement = document.createElement('pre');
-                resultElement.innerHTML =`<code>${JSON.stringify(result,null,2)}</code>` 
-                targetElement.appendChild(resultElement)
+                console.log(result)
+              })
+              stripeElement.addEventListener('stripeLoaded', async({detail: stripe}) => {
+                console.log(stripe)
               })
             })
         })

@@ -1,9 +1,19 @@
-import { Component, Prop, h, State, Method, Element } from '@stencil/core';
+import { Component, Prop, h, State, Method, EventEmitter, Event } from '@stencil/core';
 import { loadStripe, Stripe, StripeCardCvcElement, StripeCardExpiryElement, StripeCardNumberElement } from '@stripe/stripe-js';
 
 
-export type FormSubmitHandler = (event: Event, component: MyComponent) => Promise<void>
+export type FormSubmitHandler = (event: Event, props: FormSubmitEvent) => Promise<void>
 export type StripeDidLoadedHandler = (stripe: Stripe) => Promise<void>
+
+export type FormSubmitEvent = {
+  stripe: Stripe;
+  cardNumber: StripeCardNumberElement;
+  cardExpiry: StripeCardExpiryElement;
+  cardCVC: StripeCardCvcElement;
+}
+export type StripeLoadedEvent = {
+  stripe: Stripe
+}
 
 @Component({
   tag: 'stripe-card-element',
@@ -12,15 +22,14 @@ export type StripeDidLoadedHandler = (stripe: Stripe) => Promise<void>
 })
 export class MyComponent {
 
-  @Element() el: HTMLElement;
+  @State() loadStripeStatus: '' | 'loading' | 'success' | 'failure' =  ''
+
+  @State() stripe: Stripe
+
   /**
    * Your Stripe publishable API key.
    */
   @Prop() publishableKey: string;
-
-  @State() loadStripeStatus: '' | 'loading' | 'success' | 'failure' =  ''
-
-  @State() stripe: Stripe
 
   @Prop({
     mutable: true
@@ -29,6 +38,24 @@ export class MyComponent {
   @Prop({
     mutable: true
   }) stripeDidLoaded?: StripeDidLoadedHandler;
+
+  @Event() stripeLoaded: EventEmitter<StripeLoadedEvent>;
+  stripeLoadedEventHandler() {
+    if (this.stripeDidLoaded) {
+      this.stripeDidLoaded(this.stripe)
+    }
+    this.stripeLoaded.emit({stripe: this.stripe})
+  }
+
+  @Event() formSubmit: EventEmitter<FormSubmitEvent>;
+  formSubmitEventHandler() {
+    const {
+      cardCVC, cardExpiry, cardNumber, stripe
+    } = this
+    this.formSubmit.emit({
+      cardCVC, cardExpiry, cardNumber, stripe
+    })
+  }
 
   private cardNumber!:StripeCardNumberElement
   private cardExpiry!:StripeCardExpiryElement
@@ -39,22 +66,6 @@ export class MyComponent {
       this.initStripe(this.publishableKey)
     }
   }
-
-  /**
-   * Set form submit event function
-   * @param handler FormSubmitHandler
-   */
-   @Method()
-   public async setFormSubmitHandler(handler: FormSubmitHandler): Promise<this> {
-     this.handleSubmit = handler
-     return this
-   }
-
-   @Method()
-   public async setStripeDidLoadedHandler(handler: StripeDidLoadedHandler): Promise<this> {
-     this.stripeDidLoaded = handler
-     return this
-   }
 
    /**
     * Get Stripe.js, and initialize elements
@@ -79,8 +90,7 @@ export class MyComponent {
       })
       .then(() => {
         if (!this.stripe) return
-        if (!this.stripeDidLoaded) return;
-        return this.stripeDidLoaded(this.stripe)
+        this.stripeLoadedEventHandler();
       })
   }
 
@@ -90,7 +100,7 @@ export class MyComponent {
   private async initElement() {
     const elements = this.stripe.elements()
     const cardErrorElement = document.getElementById('card-errors')
-    const handleCardError =  ({error})  => {
+    const handleCardError = ({error})  => {
       if (error) {
         cardErrorElement.textContent = error.message;
         cardErrorElement.classList.add('visible');
@@ -113,28 +123,32 @@ export class MyComponent {
     const cardCVCElement = document.getElementById('card-cvc')
     this.cardCVC.mount(cardCVCElement)
     this.cardCVC.on('change', handleCardError);
+
+    document.getElementById('stripe-card-element')
+    .addEventListener('submit',e => {
+      if (this.handleSubmit) {
+        const {
+          cardCVC, cardExpiry, cardNumber, stripe
+        } = this
+        this.handleSubmit(e, {cardCVC, cardExpiry, cardNumber, stripe})
+      }
+      e.preventDefault()
+      this.formSubmitEventHandler()
+    })
   }
 
   render() {
     if (this.loadStripeStatus === 'failure') {
       return <p>Failed to load Stripe</p>
     }
+    
     return (
-      <form onSubmit={(e) => {
-        if (!this.handleSubmit) return;
-        this.handleSubmit(e, this)
-      }}>
+      <form id="stripe-card-element">
         <h1>Add your payment information</h1>
         <div>
           <h2>Card information</h2>
         </div>
           <div class="payment-info card visible">
-            <fieldset>
-              <label>
-                <span>Email</span>
-                <input name="email" type="email" class="field" placeholder="jenny@example.com" required />
-              </label>
-            </fieldset>
             <fieldset>
               <div>
                 <label>
