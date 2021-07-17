@@ -1,9 +1,35 @@
 import { Component, Prop, h, State, Method, EventEmitter, Event } from '@stencil/core';
 import { loadStripe, Stripe, StripeCardCvcElement, StripeCardExpiryElement, StripeCardNumberElement } from '@stripe/stripe-js';
+import i18next from 'i18next';
+import I18nextBrowserLanguageDetector from 'i18next-browser-languagedetector';
+
+
+i18next
+  .use(I18nextBrowserLanguageDetector)
+  .init({
+    fallbackLng: 'en',
+    debug: false,
+    resources: {
+      en: {
+        translation: {
+        }
+      },
+      ja: {
+        translation: {
+          'Pay': '支払う',
+          'Failed to load Stripe': 'ライブラリの読み込みに失敗しました。',
+          'Add your payment information': 'カード情報を登録します。',
+          'Card information': 'カード情報',
+          'Card Number': 'カード番号',
+          'MM / YY': '月 / 年',
+          'CVC': 'セキュリティコード(CVC)'
+        }
+      }
+    }
+  })
 
 export type FormSubmitHandler = (event: Event, props: FormSubmitEvent) => Promise<void>;
 export type StripeDidLoadedHandler = (stripe: Stripe) => Promise<void>;
-
 export type FormSubmitEvent = {
   stripe: Stripe;
   cardNumber: StripeCardNumberElement;
@@ -114,7 +140,7 @@ export class MyComponent {
     };
 
     this.cardNumber = elements.create('cardNumber', {
-      placeholder: 'Card number',
+      placeholder: i18next.t('Card Number'),
     });
     const cardNumberElement = document.getElementById('card-number');
     this.cardNumber.mount(cardNumberElement);
@@ -142,37 +168,37 @@ export class MyComponent {
 
   render() {
     if (this.loadStripeStatus === 'failure') {
-      return <p>Failed to load Stripe</p>;
+      return <p>{i18next.t('Failed to load Stripe')}</p>;
     }
 
     return (
       <form id="stripe-card-element">
-        <h1>Add your payment information</h1>
+        <h1>{i18next.t('Add your payment information')}</h1>
         <div>
-          <h2>Card information</h2>
+          <h2>{i18next.t('Card information')}</h2>
         </div>
         <div class="payment-info card visible">
           <fieldset>
             <div>
               <label>
-                {this.showLabel ? <lenged>Card Number</lenged> : null}
+                {this.showLabel ? <lenged>{i18next.t('Card Number')}</lenged> : null}
                 <div id="card-number" />
               </label>
             </div>
             <div style={{ display: 'flex' }}>
               <label style={{ width: '50%' }}>
-                {this.showLabel ? <lenged>MM / YY</lenged> : null}
+                {this.showLabel ? <lenged>{i18next.t('MM / YY')}</lenged> : null}
                 <div id="card-expiry" />
               </label>
               <label style={{ width: '50%' }}>
-                {this.showLabel ? <lenged>CVC</lenged> : null}
+                {this.showLabel ? <lenged>{i18next.t('CVC')}</lenged> : null}
                 <div id="card-cvc" />
               </label>
             </div>
             <div id="card-errors" class="element-errors"></div>
           </fieldset>
         </div>
-        <button type="submit">Save</button>
+        <button type="submit">{i18next.t('Pay')}</button>
       </form>
     );
   }
