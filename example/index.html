@@ -8,6 +8,8 @@
     <script nomodule src="/stripe-elements/stripe-elements.js"></script>
   </head>
   <body>
+      <h1>Example2: Launch form as a Modal window</h1>
+      <p>Use modal component and controle these component from JavaScript.</p>
         <form id="open-modal-form" name="open-modal-form">
             <div id="error-message"></div>
             <fieldset>
@@ -18,8 +20,13 @@
             </fieldset>
             <fieldset>
                 <label>
-                    <lenged>Payment Intent id</lenged>
-                    <input name="payment-intent-id" type="text" />
+                    <lenged>Payment Intent Client Secret</lenged>
+                    <p>
+                        <small>You can get this attributes by running the Stripe CLI command.</small>
+                        <br/>
+                        <code>stripe payment_intents create --amount=100 --currency=jpy | jq .client_secret -r</code>
+                    </p>
+                    <input name="payment-intent-client-secret" type="text" />
                 </label>
             </fieldset>
             <button type="submit">Launch</button>
@@ -50,13 +57,11 @@
                 errorMessage.innerText = 'Stripe Publishable API Key is required'
                 return
             }
-            const paymentIntentId = document['open-modal-form']['payment-intent-id'].value
-            /*
-            if (!paymentIntentId) {
-                errorMessage.innerText = 'Payment Intent Id is required'
+            const paymentIntentClientSecret = document['open-modal-form']['payment-intent-client-secret'].value
+            if (!paymentIntentClientSecret) {
+                errorMessage.innerText = 'Payment Intent Client Secret is required'
                 return
             }
-            */
 
             /**
              * Define and launch Web Components
@@ -93,6 +98,11 @@
                 requestShipping: false,
                 requestPayerEmail: false,
             });
+
+            /**
+             * Set the payment intent client secret
+             **/
+            stripeElement.setAttribute('payment-intent-client-secret', paymentIntentClientSecret)
 
             /**
              * Disable default form submit event
