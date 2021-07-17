@@ -1,4 +1,4 @@
-import { Component, Prop, h, State, Method, EventEmitter, Event, Element, Host } from '@stencil/core';
+import { Component, Prop, h, State, Method, EventEmitter, Event, Element } from '@stencil/core';
 import { loadStripe, Stripe, StripeCardCvcElement, StripeCardExpiryElement, StripeCardNumberElement } from '@stripe/stripe-js';
 import i18next from 'i18next';
 import I18nextBrowserLanguageDetector from 'i18next-browser-languagedetector';
