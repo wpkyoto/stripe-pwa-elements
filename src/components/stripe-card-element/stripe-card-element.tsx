@@ -3,6 +3,7 @@ import { loadStripe, Stripe, StripeCardCvcElement, StripeCardExpiryElement, Stri
 
 
 export type FormSubmitHandler = (event: Event, component: MyComponent) => Promise<void>
+export type StripeDidLoadedHandler = (stripe: Stripe) => Promise<void>
 
 @Component({
   tag: 'stripe-card-element',
@@ -21,7 +22,13 @@ export class MyComponent {
 
   @State() stripe: Stripe
 
-  @Prop() handleSubmit?: FormSubmitHandler;
+  @Prop({
+    mutable: true
+  }) handleSubmit?: FormSubmitHandler;
+
+  @Prop({
+    mutable: true
+  }) stripeDidLoaded?: StripeDidLoadedHandler;
 
   private cardNumber!:StripeCardNumberElement
   private cardExpiry!:StripeCardExpiryElement
@@ -38,8 +45,15 @@ export class MyComponent {
    * @param handler FormSubmitHandler
    */
    @Method()
-   public async setFormSubmitHandler(handler: FormSubmitHandler) {
+   public async setFormSubmitHandler(handler: FormSubmitHandler): Promise<this> {
      this.handleSubmit = handler
+     return this
+   }
+
+   @Method()
+   public async setStripeDidLoadedHandler(handler: StripeDidLoadedHandler): Promise<this> {
+     this.stripeDidLoaded = handler
+     return this
    }
 
    /**
@@ -62,6 +76,11 @@ export class MyComponent {
       .then(() => {
         if (!this.stripe) return
         return this.initElement()
+      })
+      .then(() => {
+        if (!this.stripe) return
+        if (!this.stripeDidLoaded) return;
+        return this.stripeDidLoaded(this.stripe)
       })
   }
 
@@ -111,7 +130,6 @@ export class MyComponent {
         </div>
           <div class="payment-info card visible">
             <fieldset>
-
               <label>
                 <span>Email</span>
                 <input name="email" type="email" class="field" placeholder="jenny@example.com" required />
