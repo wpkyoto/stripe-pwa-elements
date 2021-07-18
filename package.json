@@ -27,7 +27,8 @@
     "@stencil/core": "^2.0.1",
     "@stripe/stripe-js": "^1.16.0",
     "i18next": "^20.3.3",
-    "i18next-browser-languagedetector": "^6.1.2"
+    "i18next-browser-languagedetector": "^6.1.2",
+    "ionicons": "^5.5.2"
   },
   "license": "MIT",
   "devDependencies": {

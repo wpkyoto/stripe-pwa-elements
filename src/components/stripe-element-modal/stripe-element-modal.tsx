@@ -50,12 +50,12 @@ export class StripeElementModal {
       <Host>
         <div class={`modal-row${open ? ' open' : ''}`} onClick={() => this.closeModal()}>
           <div class="modal-child" onClick={e => e.stopPropagation()}>
-            <slot></slot>
             {showCloseButton ? (
-              <button class="modal-close-button" onClick={() => this.closeModal()}>
-                Close
-              </button>
+              <div class="modal-close-button-wrap">
+                <ion-icon name="close" size="large" class="modal-close-button" onClick={() => this.closeModal()}></ion-icon>
+              </div>
             ) : null}
+            <slot></slot>
           </div>
         </div>
       </Host>
