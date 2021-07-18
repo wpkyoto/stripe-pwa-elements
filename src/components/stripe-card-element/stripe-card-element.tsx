@@ -404,9 +404,11 @@ export class MyComponent {
                   <div id="card-cvc" />
                 </label>
               </div>
-              <div id="card-errors" class="element-errors">
-                {errorMessage}
-              </div>
+              {errorMessage && (
+                <div id="card-errors" class="stripe-element-errors">
+                  {errorMessage}
+                </div>
+              )}
             </fieldset>
           </div>
           <div style={{ marginTop: '32px' }}>
