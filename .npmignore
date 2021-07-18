@@ -1,0 +1,16 @@
+index.html
+www/
+node_modules/
+src/
+.editorconfig
+.gitignore
+.prettierrc.json
+*.lock
+*-lock.json
+test/
+tests/
+*.spec.ts
+*.test.ts
+.stories/
+*.stories.*
+example/

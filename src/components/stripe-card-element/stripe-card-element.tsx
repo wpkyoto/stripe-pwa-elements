@@ -1,30 +1,8 @@
 import { Component, Prop, h, State, Method, EventEmitter, Event, Element } from '@stencil/core';
-import { loadStripe, Stripe, StripeCardCvcElement, StripeCardExpiryElement, StripeCardNumberElement } from '@stripe/stripe-js';
-import i18next from 'i18next';
-import I18nextBrowserLanguageDetector from 'i18next-browser-languagedetector';
+import { loadStripe, PaymentIntentResult, Stripe, StripeCardCvcElement, StripeCardExpiryElement, StripeCardNumberElement } from '@stripe/stripe-js';
 import { checkPlatform } from '../../utils/utils';
-import { StripeDidLoadedHandler, StripeLoadedEvent, FormSubmitEvent, FormSubmitHandler } from '../../interfaces';
-
-i18next.use(I18nextBrowserLanguageDetector).init({
-  fallbackLng: 'en',
-  debug: false,
-  resources: {
-    en: {
-      translation: {},
-    },
-    ja: {
-      translation: {
-        'Pay': '支払う',
-        'Failed to load Stripe': 'ライブラリの読み込みに失敗しました。',
-        'Add your payment information': 'カード情報を登録します。',
-        'Card information': 'カード情報',
-        'Card Number': 'カード番号',
-        'MM / YY': '月 / 年',
-        'CVC': 'セキュリティコード(CVC)',
-      },
-    },
-  },
-});
+import { StripeDidLoadedHandler, StripeLoadedEvent, FormSubmitEvent, FormSubmitHandler, ProgressStatus } from '../../interfaces';
+import { i18n } from '../../utils/i18n';
 
 @Component({
   tag: 'stripe-card-element',
@@ -33,9 +11,123 @@ i18next.use(I18nextBrowserLanguageDetector).init({
 })
 export class MyComponent {
   @Element() el: HTMLElement;
-  @State() loadStripeStatus: '' | 'loading' | 'success' | 'failure' = '';
 
+  /**
+   * Status of the Stripe client initilizing process
+   */
+  @State() loadStripeStatus: ProgressStatus = '';
+
+  /**
+   * Stripe client class
+   */
   @State() stripe: Stripe;
+
+  /**
+   * Get Stripe.js, and initialize elements
+   * @param publishableKey
+   * @example
+   * ```
+   * const stripeElement = document.createElement('stripe-card-element');
+   * customElements
+   *  .whenDefined('stripe-card-element')
+   *  .then(() => {
+   *    tripeElement.initStripe('pk_test_XXXXXXXXX')
+   *  })
+   * ```
+   */
+  @Method()
+  public async initStripe(publishableKey: string) {
+    this.loadStripeStatus = 'loading';
+    loadStripe(publishableKey)
+      .then(stripe => {
+        this.loadStripeStatus = 'success';
+        this.stripe = stripe;
+        return;
+      })
+      .catch(e => {
+        console.log(e);
+        this.errorMessage = e.message;
+        this.loadStripeStatus = 'failure';
+        return;
+      })
+      .then(() => {
+        if (!this.stripe) return;
+        return this.initElement();
+      })
+      .then(() => {
+        if (!this.stripe) return;
+        this.stripeLoadedEventHandler();
+      });
+  }
+
+  /**
+   * The progress status of the checkout process
+   */
+  @State() progress: ProgressStatus = '';
+
+  /**
+   * Update the form submit progress
+   * @param progress
+   * @returns
+   * @example
+   * ```
+   * const stripeElement = document.createElement('stripe-card-element');
+   * customElements
+   *  .whenDefined('stripe-card-element')
+   *  .then(() => {
+   *    // You must set the attributes to stop running default form submit action when you want to listen the 'formSubmit' event.
+   *    stripeElement.setAttribute('should-use-default-form-submit-action', false)
+   *    stripeElement.addEventListener('formSubmit', async props => {
+   *      const {
+   *        detail: { stripe, cardNumber, event },
+   *      } = props;
+   *      const result = await stripe.createPaymentMethod({
+   *        type: 'card',
+   *        card: cardNumber,
+   *      });
+   *      console.log(result);
+   *      stripeElement.updateProgress('success')
+   *    });
+   * })
+   */
+  @Method()
+  public async updateProgress(progress: ProgressStatus) {
+    this.progress = progress;
+    return this;
+  }
+
+  /**
+   * Error message
+   */
+  @State() errorMessage: string = '';
+
+  /**
+   * Set error message
+   * @param errorMessage string
+   * @returns
+   * @example
+   * ```
+   * const stripeElement = document.createElement('stripe-card-element');
+   * customElements
+   *  .whenDefined('stripe-card-element')
+   *  .then(() => {
+   *    // You must set the attributes to stop running default form submit action when you want to listen the 'formSubmit' event.
+   *    stripeElement.setAttribute('should-use-default-form-submit-action', false)
+   *    stripeElement.addEventListener('formSubmit', async props => {
+   *      try {
+   *        throw new Error('debug')
+   *      } catch (e) {
+   *        stripeElement.setErrorMessage(`Error: ${e.message}`)
+   *        stripeElement.updateProgress('failure')
+   *      }
+   *   });
+   * })
+   */
+  @Method()
+  public async setErrorMessage(errorMessage: string) {
+    this.errorMessage = errorMessage;
+    return this;
+  }
 
   /**
    * Your Stripe publishable API key.
@@ -49,6 +141,21 @@ export class MyComponent {
 
   /**
    * The client secret from paymentIntent.create response
+   *
+   * @example
+   * ```
+   * const stripeElement = document.createElement('stripe-card-element');
+   * customElements
+   *  .whenDefined('stripe-card-element')
+   *  .then(() => {
+   *     stripeElement.setAttribute('payment-intent-client-secret', 'dummy')
+   *   })
+   * ```
+   *
+   * @example
+   * ```
+   * <stripe-card-element payment-intent-client-secret="dummy" />
+   * ```
    */
   @Prop() paymentIntentClientSecret?: string;
 
@@ -79,52 +186,65 @@ export class MyComponent {
    * Stripe Client loaded event
    * @example
    * ```
-   * stripeElement
-   *  .addEventListener('stripeLoaded', async ({ detail: {stripe} }) => {
-   *   stripe
-   *     .createSource({
-   *       type: 'ideal',
-   *       amount: 1099,
-   *       currency: 'eur',
-   *       owner: {
-   *         name: 'Jenny Rosen',
-   *       },
-   *       redirect: {
-   *         return_url: 'https://shop.example.com/crtA6B28E1',
-   *       },
-   *     })
-   *     .then(function(result) {
-   *       // Handle result.error or result.source
-   *     });
-   *   });
+   * const stripeElement = document.createElement('stripe-card-element');
+   * customElements
+   *  .whenDefined('stripe-card-element')
+   *  .then(() => {
+   *     stripeElement
+   *      .addEventListener('stripeLoaded', async ({ detail: {stripe} }) => {
+   *       stripe
+   *         .createSource({
+   *           type: 'ideal',
+   *           amount: 1099,
+   *           currency: 'eur',
+   *           owner: {
+   *             name: 'Jenny Rosen',
+   *           },
+   *           redirect: {
+   *             return_url: 'https://shop.example.com/crtA6B28E1',
+   *           },
+   *         })
+   *         .then(function(result) {
+   *           // Handle result.error or result.source
+   *         });
+   *       });
+   *   })
    * ```
    */
   @Event() stripeLoaded: EventEmitter<StripeLoadedEvent>;
   stripeLoadedEventHandler() {
+    const event: StripeLoadedEvent = {
+      stripe: this.stripe,
+    };
     if (this.stripeDidLoaded) {
-      this.stripeDidLoaded(this.stripe);
+      this.stripeDidLoaded(event);
     }
-    this.stripeLoaded.emit({ stripe: this.stripe });
+    this.stripeLoaded.emit(event);
   }
 
   /**
    * Form submit event
    * @example
    * ```
-   * stripeElement
-   *   .addEventListener('formSubmit', async props => {
-   *     const {
-   *       detail: { stripe, cardNumber, event },
-   *     } = props;
-   *     const result = await stripe.createPaymentMethod({
-   *       type: 'card',
-   *       card: cardNumber,
-   *     });
-   *     console.log(result);
+   * const stripeElement = document.createElement('stripe-card-element');
+   * customElements
+   *  .whenDefined('stripe-card-element')
+   *  .then(() => {
+   *     stripeElement
+   *       .addEventListener('formSubmit', async props => {
+   *         const {
+   *           detail: { stripe, cardNumber, event },
+   *         } = props;
+   *         const result = await stripe.createPaymentMethod({
+   *           type: 'card',
+   *           card: cardNumber,
+   *         });
+   *         console.log(result);
+   *       })
    *   })
    */
   @Event() formSubmit: EventEmitter<FormSubmitEvent>;
-  formSubmitEventHandler() {
+  async formSubmitEventHandler() {
     const { cardCVC, cardExpiry, cardNumber, stripe } = this;
     this.formSubmit.emit({
       cardCVC,
@@ -132,6 +252,28 @@ export class MyComponent {
       cardNumber,
       stripe,
     });
+  }
+
+  /**
+   * Recieve the result of defaultFormSubmit event
+   * @example
+   * ```
+   * const stripeElement = document.createElement('stripe-card-element');
+   * customElements
+   *  .whenDefined('stripe-card-element')
+   *  .then(() => {
+   *     stripeElement.addEventListener('defaultFormSubmitResult', async ({detail}) => {
+   *       if (detail instanceof Error) {
+   *         console.error(detail)
+   *       } else {
+   *         console.log(detail)
+   *       }
+   *     })
+   *   })
+   */
+  @Event() defaultFormSubmitResult: EventEmitter<PaymentIntentResult | Error>;
+  async defaultFormSubmitResultHandler(result: PaymentIntentResult | Error) {
+    this.defaultFormSubmitResult.emit(result);
   }
 
   private cardNumber!: StripeCardNumberElement;
@@ -146,12 +288,17 @@ export class MyComponent {
    */
   private async defaultFormSubitAction(event: Event, { stripe, cardNumber, paymentIntentClientSecret }: FormSubmitEvent) {
     event.preventDefault();
-    const result = await stripe.confirmCardPayment(paymentIntentClientSecret, {
-      payment_method: {
-        card: cardNumber,
-      },
-    });
-    console.log(result);
+    try {
+      const result = await stripe.confirmCardPayment(paymentIntentClientSecret, {
+        payment_method: {
+          card: cardNumber,
+        },
+      });
+      this.defaultFormSubmitResultHandler(result);
+    } catch (e) {
+      this.defaultFormSubmitResultHandler(e);
+      throw e;
+    }
   }
 
   constructor() {
@@ -163,50 +310,20 @@ export class MyComponent {
   }
 
   /**
-   * Get Stripe.js, and initialize elements
-   * @param publishableKey
-   */
-  @Method()
-  public async initStripe(publishableKey: string) {
-    this.loadStripeStatus = 'loading';
-    loadStripe(publishableKey)
-      .then(stripe => {
-        this.loadStripeStatus = 'success';
-        this.stripe = stripe;
-        return;
-      })
-      .catch(e => {
-        console.log(e);
-        this.loadStripeStatus = 'failure';
-        return;
-      })
-      .then(() => {
-        if (!this.stripe) return;
-        return this.initElement();
-      })
-      .then(() => {
-        if (!this.stripe) return;
-        this.stripeLoadedEventHandler();
-      });
-  }
-
-  /**
    * Initialize Component using Stripe Element
    */
   private async initElement() {
     const elements = this.stripe.elements();
-    const cardErrorElement = document.getElementById('card-errors');
     const handleCardError = ({ error }) => {
       if (error) {
-        cardErrorElement.textContent = error.message;
-        cardErrorElement.classList.add('visible');
+        this.errorMessage = error.message;
       } else {
-        cardErrorElement.classList.remove('visible');
+        this.errorMessage = '';
       }
     };
 
     this.cardNumber = elements.create('cardNumber', {
-      placeholder: i18next.t('Card Number'),
+      placeholder: i18n.t('Card Number'),
     });
     const cardNumberElement = document.getElementById('card-number');
     this.cardNumber.mount(cardNumberElement);
@@ -222,58 +339,80 @@ export class MyComponent {
     this.cardCVC.mount(cardCVCElement);
     this.cardCVC.on('change', handleCardError);
 
-    document.getElementById('stripe-card-element').addEventListener('submit', e => {
+    document.getElementById('stripe-card-element').addEventListener('submit', async e => {
       const { cardCVC, cardExpiry, cardNumber, stripe, paymentIntentClientSecret } = this;
       const submitEventProps: FormSubmitEvent = { cardCVC, cardExpiry, cardNumber, stripe, paymentIntentClientSecret };
-      if (this.handleSubmit) {
-        this.handleSubmit(e, submitEventProps);
-      } else if (this.shouldUseDefaultFormSubmitAction === true) {
-        this.defaultFormSubitAction(e, submitEventProps);
-      } else {
-        e.preventDefault();
+      this.progress = 'loading';
+      try {
+        if (this.handleSubmit) {
+          await this.handleSubmit(e, submitEventProps);
+        } else if (this.shouldUseDefaultFormSubmitAction === true && paymentIntentClientSecret) {
+          await this.defaultFormSubitAction(e, submitEventProps);
+        } else {
+          e.preventDefault();
+        }
+        await this.formSubmitEventHandler();
+        if (this.handleSubmit || this.shouldUseDefaultFormSubmitAction === true) {
+          this.progress = 'success';
+        }
+      } catch (e) {
+        this.errorMessage = e.message;
+        this.progress = 'failure';
       }
-      this.formSubmitEventHandler();
     });
   }
   componentDidLoad() {
     this.el.classList.add(checkPlatform());
   }
 
+  disconnectedCallback() {
+    if (this.cardNumber) this.cardNumber.unmount();
+    if (this.cardExpiry) this.cardExpiry.unmount();
+    if (this.cardCVC) this.cardCVC.unmount();
+  }
+
   render() {
+    const { errorMessage } = this;
     if (this.loadStripeStatus === 'failure') {
-      return <p>{i18next.t('Failed to load Stripe')}</p>;
+      return <p>{i18n.t('Failed to load Stripe')}</p>;
     }
+
+    const disabled = this.progress === 'loading';
 
     return (
       <div class="stripe-payment-wrap">
         <form id="stripe-card-element">
-          <div class="stripe-heading">{i18next.t('Add your payment information')}</div>
+          <div class="stripe-heading">{i18n.t('Add your payment information')}</div>
           <div>
-            <div class="stripe-section-title">{i18next.t('Card information')}</div>
+            <div class="stripe-section-title">{i18n.t('Card information')}</div>
           </div>
           <div class="payment-info card visible">
             <fieldset class="stripe-input-box">
               <div>
                 <label>
-                  {this.showLabel ? <lenged>{i18next.t('Card Number')}</lenged> : null}
+                  {this.showLabel ? <lenged>{i18n.t('Card Number')}</lenged> : null}
                   <div id="card-number" />
                 </label>
               </div>
               <div class="stripe-input-column" style={{ display: 'flex' }}>
                 <label style={{ width: '50%' }}>
-                  {this.showLabel ? <lenged>{i18next.t('MM / YY')}</lenged> : null}
+                  {this.showLabel ? <lenged>{i18n.t('MM / YY')}</lenged> : null}
                   <div id="card-expiry" />
                 </label>
                 <label style={{ width: '50%' }}>
-                  {this.showLabel ? <lenged>{i18next.t('CVC')}</lenged> : null}
+                  {this.showLabel ? <lenged>{i18n.t('CVC')}</lenged> : null}
                   <div id="card-cvc" />
                 </label>
               </div>
-              <div id="card-errors" class="element-errors"></div>
+              <div id="card-errors" class="element-errors">
+                {errorMessage}
+              </div>
             </fieldset>
           </div>
           <div style={{ marginTop: '32px' }}>
-            <button type="submit">{i18next.t('Pay')}</button>
+            <button type="submit" disabled={disabled}>
+              {this.progress === 'loading' ? i18n.t('Loading') : i18n.t('Pay')}
+            </button>
           </div>
         </form>
       </div>
