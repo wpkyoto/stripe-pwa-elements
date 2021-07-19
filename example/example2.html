@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
+    <title>Stencil Component Starter</title>
+    <script type="module" src="/stripe-elements/stripe-elements.esm.js"></script>
+    <script nomodule src="/stripe-elements/stripe-elements.js"></script>
+  </head>
+  <body>
+      <h1>Example2: Simple HTML element</h1>
+      <p>Use component as HTML tag</p>
+      <nav>
+        <ul>
+          <li><a href="/">Example1</a></li>
+          <li><a href="/example2.html">Example2</a></li>
+        </ul>
+      </nav>
+      <div id="result"></div>
+
+      <stripe-element-modal open="true">
+          <stripe-payment-sheet
+            publishable-key="pk_test_xxxxx"
+            show-label="false"
+            payment-intent-client-secret="pi-xxxxxx"
+            should-use-default-form-submit-action="false"
+          ></stripe-payment-sheet>
+      </stripe-element-modal>
+    
+    <script>
+        customElements.whenDefined('stripe-payment-sheet')
+            .then(() => {
+                const elements = document.getElementsByTagName('stripe-payment-sheet')
+                if (elements.length < 1) return;
+                const element = elements[0]
+                element.addEventListener('formSubmit', async props => {
+                const {
+                    detail: { stripe, cardNumber, event },
+                } = props;
+                const result = await stripe.createPaymentMethod({
+                    type: 'card',
+                    card: cardNumber,
+                });
+                element.updateProgress('success');
+
+                const resultElement = document.getElementById('result')
+                resultElement.innerHTML = `<pre><code>${JSON.stringify(result,null,2)}</code></pre>`
+            });
+
+        })
+        
+    </script>
+    <style>
+      body {
+        background-color: #e5e5e5;
+      }
+    </style>
+  </body>
+</html>

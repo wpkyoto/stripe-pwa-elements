@@ -1,7 +1,7 @@
 {
   "name": "@stripe-elements/stripe-elements",
   "version": "0.0.1",
-  "description": "Stencil Component Starter",
+  "description": "Web component of Stripe elements",
   "main": "dist/index.cjs.js",
   "module": "dist/custom-elements/index.js",
   "es2015": "dist/esm/index.mjs",
@@ -34,6 +34,26 @@
     "i18next-browser-languagedetector": "^6.1.2",
     "ionicons": "^5.5.2"
   },
+  "keywords": [
+    "stripe",
+    "web component"
+  ],
+  "bugs": {
+    "url": "https://github.com/stripe-elements/stripe-elements/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stripe-elements/stripe-elements.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "contributors": [
+    "contiki9",
+    "rdlabo",
+    "hideokamoto"
+  ],
+  "author": "Hidetaka Okamoto <info@wp-kyoto.net> (https://wp-kyoto.net)",
   "license": "MIT",
   "devDependencies": {
     "@stencil/eslint-plugin": "^0.3.1",
