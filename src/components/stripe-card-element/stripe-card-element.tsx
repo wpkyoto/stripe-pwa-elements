@@ -9,7 +9,7 @@ import { i18n } from '../../utils/i18n';
   styleUrl: 'stripe-card-element.scss',
   shadow: false,
 })
-export class MyComponent {
+export class StripeCardElement {
   @Element() el: HTMLStripeCardElementElement;
 
   /**

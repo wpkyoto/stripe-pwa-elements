@@ -69,6 +69,9 @@ export namespace Components {
           * Open the modal
          */
         "openModal": () => Promise<void>;
+        /**
+          * If true, the modal display close button
+         */
         "showCloseButton": boolean;
         /**
           * Toggle modal state
@@ -85,6 +88,10 @@ export namespace Components {
           * Your Stripe publishable API key.
          */
         "publishableKey": string;
+        /**
+          * @param option
+          * @private
+         */
         "setPaymentRequestOption": (option: PaymentRequestOptions) => Promise<this>;
         /**
           * Stripe.js class loaded handler
@@ -167,6 +174,9 @@ declare namespace LocalJSX {
           * Modal state. If true, the modal will open
          */
         "open"?: boolean;
+        /**
+          * If true, the modal display close button
+         */
         "showCloseButton"?: boolean;
     }
     interface StripePaymentRequestButton {
