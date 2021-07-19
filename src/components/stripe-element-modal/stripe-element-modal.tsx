@@ -26,7 +26,9 @@ export class StripeElementModal {
   @Method()
   public async toggleModal() {
     this.open = !this.open;
-    if (this.open === false) {this.close.emit();}
+    if (this.open === false) {
+      this.close.emit();
+    }
   }
 
   /**

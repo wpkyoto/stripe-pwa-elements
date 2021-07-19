@@ -7,6 +7,7 @@ describe('my-component', () => {
       components: [StripeCardElement],
       html: '<stripe-card-element></stripe-card-element>',
     });
+
     expect(root).toEqualHtml(`
 <stripe-card-element class="undefined">
       <div class="stripe-payment-wrap">

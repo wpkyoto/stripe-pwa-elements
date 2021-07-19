@@ -18,6 +18,7 @@
     "build": "stencil build --docs",
     "start": "stencil build --dev --watch --serve",
     "lint": "eslint src/**/*{.ts,.tsx}",
+    "fmt": "prettier-eslint --write $PWD/'src/{components, utils}/**/*{.ts,.tsx,.js}'",
     "test": "stencil test --spec --e2e",
     "test.watch": "stencil test --spec --e2e --watchAll",
     "generate": "stencil generate",
@@ -47,6 +48,8 @@
     "jest-cli": "^26.6.3",
     "np": "^7.5.0",
     "prettier": "^2.3.2",
+    "prettier-eslint": "^12.0.0",
+    "prettier-eslint-cli": "^5.0.1",
     "puppeteer": "^5.5.0",
     "typescript": "^4.3.5"
   }

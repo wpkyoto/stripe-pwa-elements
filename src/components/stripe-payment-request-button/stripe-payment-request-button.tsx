@@ -102,12 +102,16 @@ export class StripePaymentRequestButton {
         return;
       })
       .then(() => {
-        if (!this.stripe) {return;}
+        if (!this.stripe) {
+          return;
+        }
 
         return this.initElement();
       })
       .then(() => {
-        if (!this.stripe) {return;}
+        if (!this.stripe) {
+          return;
+        }
 
         this.stripeLoadedEventHandler();
       });

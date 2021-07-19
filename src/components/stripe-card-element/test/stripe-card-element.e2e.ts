@@ -6,6 +6,7 @@ describe('stripe-card-element', () => {
 
     await page.setContent('<stripe-card-element></stripe-card-element>');
     const element = await page.find('stripe-card-element');
+
     expect(element).toHaveClass('hydrated');
   });
 });
