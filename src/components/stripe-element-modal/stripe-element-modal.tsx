@@ -7,14 +7,18 @@ import { checkPlatform } from '../../utils/utils';
   shadow: true,
 })
 export class StripeElementModal {
-  @Element() el: HTMLElement;
-  @Prop() showCloseButton: boolean = true;
+  @Element() el: HTMLStripeElementModalElement;
+
+  /**
+   * If true, the modal display close button
+   */
+  @Prop() showCloseButton = true;
 
   /**
    * Modal state.
    * If true, the modal will open
    */
-  @Prop() open: boolean = false;
+  @Prop() open = false;
 
   /**
    * Toggle modal state
@@ -22,7 +26,7 @@ export class StripeElementModal {
   @Method()
   public async toggleModal() {
     this.open = !this.open;
-    if (this.open === false) this.close.emit();
+    if (this.open === false) {this.close.emit();}
   }
 
   /**
@@ -42,6 +46,9 @@ export class StripeElementModal {
     this.close.emit();
   }
 
+  /**
+   *
+   */
   @Event() close: EventEmitter;
 
   componentDidLoad() {
@@ -50,6 +57,7 @@ export class StripeElementModal {
 
   render() {
     const { open, showCloseButton } = this;
+
     return (
       <Host>
         <div class={`modal-row${open ? ' open' : ''}`} onClick={() => this.closeModal()}>

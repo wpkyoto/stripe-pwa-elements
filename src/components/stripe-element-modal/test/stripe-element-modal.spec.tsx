@@ -7,6 +7,7 @@ describe('stripe-element-modal', () => {
       components: [StripeElementModal],
       html: `<stripe-element-modal></stripe-element-modal>`,
     });
+
     expect(page.root).toEqualHtml(`
       <stripe-element-modal>
         <mock:shadow-root>
