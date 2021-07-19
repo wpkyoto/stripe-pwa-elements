@@ -1,12 +1,5 @@
 /* Remove all the styles of the "User-Agent-Stylesheet", except for the 'display' property */
-*:where(:not(iframe, canvas, img, svg, video):not(svg *)) {
-  all: unset;
-  display: revert;
-  background: none;
-  border: none;
-  font-family: 'Roboto', suns-serif;
-  box-sizing: border-box;
-}
+
 :root {
   --color-label: #565656;
   --color-placeholder: #acacac;
@@ -17,65 +10,73 @@
   --color-primary: #0074d4;
 }
 
-.stripe-payment-wrap {
+.stripe-payment-sheet-wrap {
+  *:where(:not(iframe, canvas, img, svg, video):not(svg *)) {
+    all: unset;
+    display: revert;
+    background: none;
+    border: none;
+    font-family: 'Roboto', suns-serif;
+    box-sizing: border-box;
+  }
   display: block;
   width: 100%;
   background: #fff;
   padding: 32px 16px;
-}
-
-.StripeElement {
-  padding: 8px 16px;
-  min-height: 64px;
-  border-bottom: 1px solid var(--color-input-border);
-  border-radius: 4px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  > .__PrivateStripeElement {
-    width: 100%;
-  }
-}
-.stripe-input-box {
-  background-color: #fff;
-  border-radius: 2px;
-  filter: drop-shadow(0 0 1px var(--color-input-border));
-}
-.stripe-input-column {
   .StripeElement {
-    border-right: 1px solid var(--color-input-border);
-    &:last-child {
-      border-right: none;
+    padding: 8px 16px;
+    min-height: 64px;
+    border-bottom: 1px solid var(--color-input-border);
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    > .__PrivateStripeElement {
+      width: 100%;
     }
   }
-}
-
-.stripe-heading {
-  font-size: 24px;
-  font-weight: bold;
-  color: var(--color-heading-text);
-  margin-bottom: 24px;
-}
-.stripe-section-title {
-  font-size: 14px;
-  font-weight: bold;
-  color: var(--color-label);
-  margin-bottom: 8px;
-}
-.payment-info label {
-  color: var(--color-label);
-}
-button {
-  display: block;
-  color: var(--color-button-text);
-  background-color: var(--color-primary);
-  width: 100%;
-  text-align: center;
-  padding: 16px 16px;
-  font-size: 18px;
-  border-radius: 8px;
-  min-height: 42px;
-  &:disabled {
-    color: var(--color-button-text-disabled);
+  .stripe-input-box {
+    background-color: #fff;
+    border-radius: 2px;
+    filter: drop-shadow(0 0 1px var(--color-input-border));
   }
+  .stripe-input-column {
+    .StripeElement {
+      border-right: 1px solid var(--color-input-border);
+      &:last-child {
+        border-right: none;
+      }
+    }
+  }
+  
+  .stripe-heading {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--color-heading-text);
+    margin-bottom: 24px;
+  }
+  .stripe-section-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--color-label);
+    margin-bottom: 8px;
+  }
+  .payment-info label {
+    color: var(--color-label);
+  }
+  button {
+    display: block;
+    color: var(--color-button-text);
+    background-color: var(--color-primary);
+    width: 100%;
+    text-align: center;
+    padding: 16px 16px;
+    font-size: 18px;
+    border-radius: 8px;
+    min-height: 42px;
+    &:disabled {
+      color: var(--color-button-text-disabled);
+    }
+  }
+  
 }

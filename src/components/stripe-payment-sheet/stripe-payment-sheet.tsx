@@ -380,7 +380,7 @@ export class StripePaymentSheet {
     const disabled = this.progress === 'loading';
 
     return (
-      <div class="stripe-payment-wrap">
+      <div class="stripe-payment-sheet-wrap">
         <form id="stripe-card-element">
           <div class="stripe-heading">{i18n.t('Add your payment information')}</div>
           <div>
