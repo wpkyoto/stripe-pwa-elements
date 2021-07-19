@@ -7,12 +7,20 @@ describe('stripe-element-modal', () => {
       components: [StripeElementModal],
       html: `<stripe-element-modal></stripe-element-modal>`,
     });
+
     expect(page.root).toEqualHtml(`
-      <stripe-element-modal>
-        <mock:shadow-root>
-          <slot></slot>
-        </mock:shadow-root>
-      </stripe-element-modal>
+    <stripe-element-modal class="undefined">
+      <mock:shadow-root>
+        <div class="modal-row">
+          <div class="modal-child">
+            <div class="modal-close-button-wrap">
+              <ion-icon class="modal-close-button" name="close" size="large"></ion-icon>
+            </div>
+            <slot></slot>
+          </div>
+        </div>
+      </mock:shadow-root>
+    </stripe-element-modal>
     `);
   });
 });

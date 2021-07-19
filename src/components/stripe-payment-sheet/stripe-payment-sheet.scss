@@ -1,24 +1,6 @@
-/* Remove all the styles of the "User-Agent-Stylesheet", except for the 'display' property */
-
-:root {
-  --color-label: #565656;
-  --color-placeholder: #acacac;
-  --color-heading-text: #333;
-  --color-input-border: #e4e4e6;
-  --color-button-text: rgba(255, 255, 255, 0.95);
-  --color-button-text-disabled: rgba(255, 255, 255, 0.4);
-  --color-primary: #0074d4;
-}
-
+@import '../../style/theme';
 .stripe-payment-sheet-wrap {
-  *:where(:not(iframe, canvas, img, svg, video):not(svg *)) {
-    all: unset;
-    display: revert;
-    background: none;
-    border: none;
-    font-family: 'Roboto', suns-serif;
-    box-sizing: border-box;
-  }
+  @import '../../style/rest';
   display: block;
   width: 100%;
   background: #fff;
@@ -48,7 +30,7 @@
       }
     }
   }
-  
+
   .stripe-heading {
     font-size: 24px;
     font-weight: bold;
@@ -64,6 +46,11 @@
   .payment-info label {
     color: var(--color-label);
   }
+  .stripe-element-errors {
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--color-text-error);
+  }
   button {
     display: block;
     color: var(--color-button-text);
@@ -78,5 +65,4 @@
       color: var(--color-button-text-disabled);
     }
   }
-  
 }

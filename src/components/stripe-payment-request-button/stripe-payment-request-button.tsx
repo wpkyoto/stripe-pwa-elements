@@ -8,7 +8,7 @@ import { StripeDidLoadedHandler, StripeLoadedEvent } from '../../interfaces';
   shadow: false,
 })
 export class StripePaymentRequestButton {
-  @Element() el: HTMLElement;
+  @Element() el: HTMLStripePaymentRequestButtonElement;
   @State() loadStripeStatus: '' | 'loading' | 'success' | 'failure' = '';
 
   @State() stripe: Stripe;
@@ -52,13 +52,16 @@ export class StripePaymentRequestButton {
    * ```
    */
   @Event() stripeLoaded: EventEmitter<StripeLoadedEvent>;
-  stripeLoadedEventHandler() {
+
+  private stripeLoadedEventHandler() {
     const event: StripeLoadedEvent = {
       stripe: this.stripe,
     };
+
     if (this.stripeDidLoaded) {
       this.stripeDidLoaded(event);
     }
+
     this.stripeLoaded.emit(event);
   }
 
@@ -70,6 +73,10 @@ export class StripePaymentRequestButton {
     }
   }
 
+  /**
+   * @param option
+   * @private
+   */
   @Method()
   public async setPaymentRequestOption(option: PaymentRequestOptions) {
     this.paymentRequestOption = option;
@@ -95,11 +102,17 @@ export class StripePaymentRequestButton {
         return;
       })
       .then(() => {
-        if (!this.stripe) return;
+        if (!this.stripe) {
+          return;
+        }
+
         return this.initElement();
       })
       .then(() => {
-        if (!this.stripe) return;
+        if (!this.stripe) {
+          return;
+        }
+
         this.stripeLoadedEventHandler();
       });
   }
@@ -116,6 +129,7 @@ export class StripePaymentRequestButton {
     const paymentRequestButtonElement = document.getElementById('payment-request-button');
     // Check if the Payment Request is available (or Apple Pay on the Web).
     const paymentRequestSupport = await paymentRequest.canMakePayment();
+
     if (paymentRequestSupport) {
       // Display the Pay button by mounting the Element in the DOM.
       paymentRequestButton.mount(paymentRequestButtonElement);

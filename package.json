@@ -1,5 +1,5 @@
 {
-  "name": "stripe-elements",
+  "name": "@stripe-elements/stripe-elements",
   "version": "0.0.1",
   "description": "Stencil Component Starter",
   "main": "dist/index.cjs.js",
@@ -17,6 +17,8 @@
   "scripts": {
     "build": "stencil build --docs",
     "start": "stencil build --dev --watch --serve",
+    "lint": "eslint src/**/*{.ts,.tsx}",
+    "fmt": "prettier-eslint --write $PWD/'src/{components, utils}/**/*{.ts,.tsx,.js}'",
     "test": "stencil test --spec --e2e",
     "test.watch": "stencil test --spec --e2e --watchAll",
     "generate": "stencil generate",
@@ -29,12 +31,26 @@
     "@stencil/core": "^2.0.1",
     "@stripe/stripe-js": "^1.16.0",
     "i18next": "^20.3.3",
-    "i18next-browser-languagedetector": "^6.1.2"
+    "i18next-browser-languagedetector": "^6.1.2",
+    "ionicons": "^5.5.2"
   },
   "license": "MIT",
   "devDependencies": {
+    "@stencil/eslint-plugin": "^0.3.1",
     "@stencil/sass": "^1.4.1",
     "@types/jest": "^26.0.24",
-    "prettier": "^2.3.2"
+    "@types/puppeteer": "^5.4.3",
+    "@typescript-eslint/eslint-plugin": "^4.28.3",
+    "@typescript-eslint/parser": "^4.28.3",
+    "eslint": "^7.31.0",
+    "eslint-plugin-react": "^7.24.0",
+    "jest": "^26.6.3",
+    "jest-cli": "^26.6.3",
+    "np": "^7.5.0",
+    "prettier": "^2.3.2",
+    "prettier-eslint": "^12.0.0",
+    "prettier-eslint-cli": "^5.0.1",
+    "puppeteer": "^5.5.0",
+    "typescript": "^4.3.5"
   }
 }

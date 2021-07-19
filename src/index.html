@@ -10,11 +10,14 @@
   <body>
     <div id="stripe"></div>
 
-    <script>
+
+
+
+      <script>
       const targetElement = document.getElementById('stripe');
       const modalElement = document.createElement('stripe-element-modal');
       modalElement.setAttribute('open', true);
-      const stripeElement = document.createElement('stripe-card-element');
+      const stripeElement = document.createElement('stripe-payment-sheet');
       const stripePaymentRequestElement = document.createElement('stripe-payment-request-button');
       modalElement.appendChild(stripePaymentRequestElement);
       modalElement.appendChild(stripeElement);
@@ -38,7 +41,7 @@
           });
         });
       customElements
-        .whenDefined('stripe-card-element')
+        .whenDefined('stripe-payment-sheet')
         .then(() => {
           stripeElement.initStripe('pk_test_51EMxG7KVC4SfzSeak35hZaAe91cpzKZE9eOQcVWpa7owYJeS30avCAF0lT1QUMKTbzepTIYgAgjly4AmgZuxxkcS00kQ40cBLe').then(() => {
             stripeElement.setAttribute('should-use-default-form-submit-action', false);

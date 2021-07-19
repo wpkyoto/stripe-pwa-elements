@@ -1,3 +1,6 @@
+@import '../../style/rest';
+@import '../../style/theme';
+
 :host {
   display: block;
 }
@@ -23,4 +26,14 @@
   padding: 1.5rem;
   background-color: #fff;
   width: 100%;
+}
+
+.modal-close-button-wrap {
+  padding-left: 8px;
+  .modal-close-button {
+    width: 32px;
+    display: block;
+    fill: var(--color-label);
+    cursor: pointer;
+  }
 }

@@ -1,0 +1,54 @@
+{
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@stencil/recommended"
+  ],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "rules": {
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/no-empty-function": "off",
+    "no-prototype-builtins": "off",
+    "@stencil/async-methods": "error",
+    "@stencil/ban-prefix": ["error", ["stencil", "stnl"]],
+    "@stencil/decorators-context": "error",
+    "@stencil/decorators-style": [
+      "warn", {
+        "prop": "inline",
+        "state": "inline",
+        "element": "inline",
+        "event": "inline",
+        "method": "multiline",
+        "watch": "multiline",
+        "listen": "multiline"
+      }],
+    "@stencil/element-type": "error",
+    "@stencil/host-data-deprecated": "error",
+    "@stencil/methods-must-be-public": "error",
+    "@stencil/no-unused-watch": "error",
+    "@stencil/own-methods-must-be-private": "error",
+    "@stencil/own-props-must-be-private": "error",
+    "@stencil/prefer-vdom-listener": "error",
+    "@stencil/props-must-be-public": "error",
+    "@stencil/props-must-be-readonly": "off",
+    "@stencil/render-returns-host": "error",
+    "@stencil/required-jsdoc": "error",
+    "@stencil/reserved-member-names": "error",
+    "@stencil/single-export": "error",
+    "@stencil/strict-mutable": "warn",
+    "padding-line-between-statements": [
+      "error",
+      { "blankLine": "always", "prev": ["const", "let", "var", "block", "block-like"], "next": "*" },
+      { "blankLine": "any", "prev": ["const", "let", "var"], "next": ["const", "let", "var"] }
+    ],
+    "curly": "error"
+  }
+}

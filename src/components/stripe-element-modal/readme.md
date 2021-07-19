@@ -51,6 +51,19 @@ Type: `Promise<void>`
 
 
 
+## Dependencies
+
+### Depends on
+
+- ion-icon
+
+### Graph
+```mermaid
+graph TD;
+  stripe-element-modal --> ion-icon
+  style stripe-element-modal fill:#f9f,stroke:#333,stroke-width:4px
+```
+
 ----------------------------------------------
 
 *Built with [StencilJS](https://stenciljs.com/)*

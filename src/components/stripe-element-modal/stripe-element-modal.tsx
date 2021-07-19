@@ -7,14 +7,18 @@ import { checkPlatform } from '../../utils/utils';
   shadow: true,
 })
 export class StripeElementModal {
-  @Element() el: HTMLElement;
-  @Prop() showCloseButton: boolean = true;
+  @Element() el: HTMLStripeElementModalElement;
+
+  /**
+   * If true, the modal display close button
+   */
+  @Prop() showCloseButton = true;
 
   /**
    * Modal state.
    * If true, the modal will open
    */
-  @Prop() open: boolean = false;
+  @Prop() open = false;
 
   /**
    * Toggle modal state
@@ -22,7 +26,9 @@ export class StripeElementModal {
   @Method()
   public async toggleModal() {
     this.open = !this.open;
-    if (this.open === false) this.close.emit();
+    if (this.open === false) {
+      this.close.emit();
+    }
   }
 
   /**
@@ -42,6 +48,9 @@ export class StripeElementModal {
     this.close.emit();
   }
 
+  /**
+   *
+   */
   @Event() close: EventEmitter;
 
   componentDidLoad() {
@@ -50,16 +59,17 @@ export class StripeElementModal {
 
   render() {
     const { open, showCloseButton } = this;
+
     return (
       <Host>
         <div class={`modal-row${open ? ' open' : ''}`} onClick={() => this.closeModal()}>
           <div class="modal-child" onClick={e => e.stopPropagation()}>
-            <slot></slot>
             {showCloseButton ? (
-              <button class="modal-close-button" onClick={() => this.closeModal()}>
-                Close
-              </button>
+              <div class="modal-close-button-wrap">
+                <ion-icon name="close" size="large" class="modal-close-button" onClick={() => this.closeModal()}></ion-icon>
+              </div>
             ) : null}
+            <slot></slot>
           </div>
         </div>
       </Host>

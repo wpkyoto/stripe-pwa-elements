@@ -7,11 +7,12 @@ describe('stripe-payment-request-button', () => {
       components: [StripePaymentRequestButton],
       html: `<stripe-payment-request-button></stripe-payment-request-button>`,
     });
+
     expect(page.root).toEqualHtml(`
       <stripe-payment-request-button>
-        <mock:shadow-root>
-          <slot></slot>
-        </mock:shadow-root>
+        <div id="payment-request">
+            <div id="payment-request-button"></div>
+        </div>
       </stripe-payment-request-button>
     `);
   });
