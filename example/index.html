@@ -68,7 +68,7 @@
             /**
              * Define and launch Web Components
              **/
-            const stripeElement = document.createElement('stripe-card-element');
+            const stripeElement = document.createElement('stripe-payment-sheet');
             const stripePaymentRequestElement = document.createElement('stripe-payment-request-button');
             modalElement.appendChild(stripePaymentRequestElement);
             modalElement.appendChild(stripeElement);
@@ -79,7 +79,7 @@
              **/
             await customElements.whenDefined('stripe-element-modal')
             await customElements.whenDefined('stripe-payment-request-button')
-            await customElements.whenDefined('stripe-card-element')
+            await customElements.whenDefined('stripe-payment-sheet')
             /**
              * Lauch Payment request button if possible to use
              **/
