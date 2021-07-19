@@ -38,6 +38,41 @@ https://github.com/stripe-elements/stripe-elements/blob/main/src/components/stri
 
 ### HTML
 
+```html
+      <div id="result"></div>
+
+      <stripe-element-modal open="true">
+          <stripe-payment-sheet
+            publishable-key="pk_test_xxxxx"
+            show-label="false"
+            payment-intent-client-secret="pi-xxxxxx"
+            should-use-default-form-submit-action="false"
+          ></stripe-payment-sheet>
+      </stripe-element-modal>
+    
+    <script>
+        customElements.whenDefined('stripe-payment-sheet')
+            .then(() => {
+                const elements = document.getElementsByTagName('stripe-payment-sheet')
+                if (elements.length < 1) return;
+                const element = elements[0]
+                element.addEventListener('formSubmit', async props => {
+                const {
+                    detail: { stripe, cardNumber, event },
+                } = props;
+                const result = await stripe.createPaymentMethod({
+                    type: 'card',
+                    card: cardNumber,
+                });
+                element.updateProgress('success');
+
+                const resultElement = document.getElementById('result')
+                resultElement.innerHTML = `<pre><code>${JSON.stringify(result,null,2)}</code></pre>`
+            });
+
+        })
+    </script>
+```
 
 ### JavaScript
 
