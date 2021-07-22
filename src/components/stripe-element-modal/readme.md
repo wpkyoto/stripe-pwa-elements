@@ -8,7 +8,7 @@
 | Property          | Attribute           | Description                               | Type      | Default |
 | ----------------- | ------------------- | ----------------------------------------- | --------- | ------- |
 | `open`            | `open`              | Modal state. If true, the modal will open | `boolean` | `false` |
-| `showCloseButton` | `show-close-button` |                                           | `boolean` | `true`  |
+| `showCloseButton` | `show-close-button` | If true, the modal display close button   | `boolean` | `true`  |
 
 
 ## Events
