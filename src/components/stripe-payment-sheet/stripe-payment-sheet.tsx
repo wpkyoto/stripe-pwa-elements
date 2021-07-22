@@ -10,7 +10,7 @@ import { i18n } from '../../utils/i18n';
   shadow: false,
 })
 export class StripePaymentSheet {
-  @Element() el: HTMLElement;
+  @Element() el: HTMLStripePaymentSheetElement;
 
   /**
    * Status of the Stripe client initilizing process
@@ -51,11 +51,13 @@ export class StripePaymentSheet {
         return;
       })
       .then(() => {
-        if (!this.stripe) return;
+        if (!this.stripe) {return;}
+
         return this.initElement();
       })
       .then(() => {
-        if (!this.stripe) return;
+        if (!this.stripe) {return;}
+
         this.stripeLoadedEventHandler();
       });
   }
@@ -99,7 +101,7 @@ export class StripePaymentSheet {
   /**
    * Error message
    */
-  @State() errorMessage: string = '';
+  @State() errorMessage = '';
 
   /**
    * Set error message
@@ -137,7 +139,7 @@ export class StripePaymentSheet {
   /**
    * Show the form label
    */
-  @Prop() showLabel: boolean = false;
+  @Prop() showLabel = false;
 
   /**
    * The client secret from paymentIntent.create response
@@ -164,7 +166,7 @@ export class StripePaymentSheet {
    * If you want to customize the behavior, should set false.
    * And listen the 'formSubmit' event on the element
    */
-  @Prop() shouldUseDefaultFormSubmitAction: boolean = true;
+  @Prop() shouldUseDefaultFormSubmitAction = true;
 
   /**
    * Form submit event handler
@@ -216,9 +218,11 @@ export class StripePaymentSheet {
     const event: StripeLoadedEvent = {
       stripe: this.stripe,
     };
+
     if (this.stripeDidLoaded) {
       this.stripeDidLoaded(event);
     }
+
     this.stripeLoaded.emit(event);
   }
 
@@ -246,6 +250,7 @@ export class StripePaymentSheet {
   @Event() formSubmit: EventEmitter<FormSubmitEvent>;
   async formSubmitEventHandler() {
     const { cardCVC, cardExpiry, cardNumber, stripe } = this;
+
     this.formSubmit.emit({
       cardCVC,
       cardExpiry,
@@ -294,6 +299,7 @@ export class StripePaymentSheet {
           card: cardNumber,
         },
       });
+
       this.defaultFormSubmitResultHandler(result);
     } catch (e) {
       this.defaultFormSubmitResultHandler(e);
@@ -326,22 +332,26 @@ export class StripePaymentSheet {
       placeholder: i18n.t('Card Number'),
     });
     const cardNumberElement = document.getElementById('card-number');
+
     this.cardNumber.mount(cardNumberElement);
     this.cardNumber.on('change', handleCardError);
 
     this.cardExpiry = elements.create('cardExpiry');
     const cardExpiryElement = document.getElementById('card-expiry');
+
     this.cardExpiry.mount(cardExpiryElement);
     this.cardExpiry.on('change', handleCardError);
 
     this.cardCVC = elements.create('cardCvc');
     const cardCVCElement = document.getElementById('card-cvc');
+
     this.cardCVC.mount(cardCVCElement);
     this.cardCVC.on('change', handleCardError);
 
     document.getElementById('stripe-card-element').addEventListener('submit', async e => {
       const { cardCVC, cardExpiry, cardNumber, stripe, paymentIntentClientSecret } = this;
       const submitEventProps: FormSubmitEvent = { cardCVC, cardExpiry, cardNumber, stripe, paymentIntentClientSecret };
+
       this.progress = 'loading';
       try {
         if (this.handleSubmit) {
@@ -351,6 +361,7 @@ export class StripePaymentSheet {
         } else {
           e.preventDefault();
         }
+
         await this.formSubmitEventHandler();
         if (this.handleSubmit || this.shouldUseDefaultFormSubmitAction === true) {
           this.progress = 'success';
@@ -366,13 +377,16 @@ export class StripePaymentSheet {
   }
 
   disconnectedCallback() {
-    if (this.cardNumber) this.cardNumber.unmount();
-    if (this.cardExpiry) this.cardExpiry.unmount();
-    if (this.cardCVC) this.cardCVC.unmount();
+    if (this.cardNumber) {this.cardNumber.unmount();}
+
+    if (this.cardExpiry) {this.cardExpiry.unmount();}
+
+    if (this.cardCVC) {this.cardCVC.unmount();}
   }
 
   render() {
     const { errorMessage } = this;
+
     if (this.loadStripeStatus === 'failure') {
       return <p>{i18n.t('Failed to load Stripe')}</p>;
     }

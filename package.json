@@ -27,7 +27,6 @@
     "example:serve": "npx serve example"
   },
   "dependencies": {
-    "@ionic/core": "^5.6.11",
     "@stencil/core": "^2.0.1",
     "@stripe/stripe-js": "^1.16.0",
     "i18next": "^20.3.3",

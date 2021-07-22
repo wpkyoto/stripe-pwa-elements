@@ -7,12 +7,45 @@ describe('stripe-payment-sheet', () => {
       components: [StripePaymentSheet],
       html: `<stripe-payment-sheet></stripe-payment-sheet>`,
     });
+
     expect(page.root).toEqualHtml(`
-      <stripe-payment-sheet>
-        <mock:shadow-root>
-          <slot></slot>
-        </mock:shadow-root>
-      </stripe-payment-sheet>
+ <stripe-payment-sheet class="undefined">
+      <div class="stripe-payment-sheet-wrap">
+        <form id="stripe-card-element">
+          <div class="stripe-heading">
+            Add your payment information
+          </div>
+          <div>
+            <div class="stripe-section-title">
+              Card information
+            </div>
+          </div>
+          <div class="card payment-info visible">
+            <fieldset class="stripe-input-box">
+              <div>
+                <label>
+                  <div id="card-number"></div>
+                </label>
+              </div>
+              <div class="stripe-input-column" style="display: flex;">
+                <label style="width: 50%;">
+                  <div id="card-expiry"></div>
+                </label>
+                <label style="width: 50%;">
+                  <div id="card-cvc"></div>
+                </label>
+              </div>
+              <div class="element-errors" id="card-errors"></div>
+            </fieldset>
+          </div>
+          <div style="margin-top: 32px;">
+            <button type="submit">
+              Pay
+            </button>
+          </div>
+        </form>
+      </div>
+    </stripe-payment-sheet>
     `);
   });
 });
