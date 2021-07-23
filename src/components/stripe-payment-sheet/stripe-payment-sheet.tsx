@@ -291,7 +291,7 @@ export class StripePaymentSheet {
    * @param event
    * @param param1
    */
-  private async defaultFormSubitAction(event: Event, { stripe, cardNumber, paymentIntentClientSecret }: FormSubmitEvent) {
+  private async defaultFormSubmitAction(event: Event, { stripe, cardNumber, paymentIntentClientSecret }: FormSubmitEvent) {
     event.preventDefault();
     try {
       const result = await stripe.confirmCardPayment(paymentIntentClientSecret, {
@@ -357,7 +357,7 @@ export class StripePaymentSheet {
         if (this.handleSubmit) {
           await this.handleSubmit(e, submitEventProps);
         } else if (this.shouldUseDefaultFormSubmitAction === true && paymentIntentClientSecret) {
-          await this.defaultFormSubitAction(e, submitEventProps);
+          await this.defaultFormSubmitAction(e, submitEventProps);
         } else {
           e.preventDefault();
         }
