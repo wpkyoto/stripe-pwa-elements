@@ -16,6 +16,7 @@
   ],
   "scripts": {
     "build": "stencil build --docs",
+    "build.watch": "stencil build --watch",
     "start": "stencil build --dev --watch --serve",
     "lint": "eslint src/**/*{.ts,.tsx}",
     "fmt": "prettier-eslint --write $PWD/'src/{components, utils}/**/*{.ts,.tsx,.js}'",
@@ -24,14 +25,18 @@
     "generate": "stencil generate",
     "format": "prettier --write src",
     "example:copy": "stencil build --docs && cp -R dist/stripe-elements example/",
-    "example:serve": "npx serve example"
+    "example:serve": "npx serve example",
+    "storybook": "start-storybook -s ./dist",
+    "build-storybook": "build-storybook",
+    "build-stencil:watch": "stencil build --docs-readme --watch --serve"
   },
   "dependencies": {
     "@stencil/core": "^2.0.1",
     "@stripe/stripe-js": "^1.16.0",
     "i18next": "^20.3.3",
     "i18next-browser-languagedetector": "^6.1.2",
-    "ionicons": "^5.5.2"
+    "ionicons": "^5.5.2",
+    "lit-html": "^1.4.1"
   },
   "keywords": [
     "stripe",
@@ -55,12 +60,18 @@
   "author": "Hidetaka Okamoto <info@wp-kyoto.net> (https://wp-kyoto.net)",
   "license": "MIT",
   "devDependencies": {
+    "@babel/core": "^7.14.8",
     "@stencil/eslint-plugin": "^0.3.1",
     "@stencil/sass": "^1.4.1",
+    "@storybook/addon-actions": "^6.3.5",
+    "@storybook/addon-essentials": "^6.3.5",
+    "@storybook/addon-links": "^6.3.5",
+    "@storybook/html": "^6.3.5",
     "@types/jest": "^26.0.24",
     "@types/puppeteer": "^5.4.3",
     "@typescript-eslint/eslint-plugin": "^4.28.3",
     "@typescript-eslint/parser": "^4.28.3",
+    "babel-loader": "^8.2.2",
     "eslint": "^7.31.0",
     "eslint-plugin-react": "^7.24.0",
     "jest": "^26.6.3",
