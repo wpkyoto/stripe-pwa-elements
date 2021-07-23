@@ -12,7 +12,7 @@ i18next.use(I18nextBrowserLanguageDetector).init({
       translation: {
         'Pay': '支払う',
         'Failed to load Stripe': 'ライブラリの読み込みに失敗しました。',
-        'Add your payment information': 'カード情報を登録します。',
+        'Add your payment information': '支払情報を追加',
         'Card information': 'カード情報',
         'Card Number': 'カード番号',
         'MM / YY': '月 / 年',
