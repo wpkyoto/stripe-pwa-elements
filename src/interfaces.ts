@@ -1,4 +1,12 @@
-import { Stripe, StripeCardCvcElement, StripeCardExpiryElement, StripeCardNumberElement } from '@stripe/stripe-js';
+import {
+  Stripe,
+  StripeCardCvcElement,
+  StripeCardExpiryElement,
+  StripeCardNumberElement,
+  PaymentRequestPaymentMethodEvent,
+  PaymentRequestShippingOptionEvent,
+  PaymentRequestShippingAddressEvent,
+} from '@stripe/stripe-js';
 
 /**
  * Event object of `formSubmit` event
@@ -30,3 +38,7 @@ export type StripeDidLoadedHandler = (event: StripeLoadedEvent) => Promise<void>
  * Activity progress status
  */
 export type ProgressStatus = '' | 'loading' | 'success' | 'failure';
+
+export type PaymentRequestPaymentMethodEventHandler = (event: PaymentRequestPaymentMethodEvent, stripe: Stripe) => Promise<void>;
+export type PaymentRequestShippingOptionEventHandler = (event: PaymentRequestShippingOptionEvent, stripe: Stripe) => Promise<void>;
+export type PaymentRequestShippingAddressEventHandler = (event: PaymentRequestShippingAddressEvent, stripe: Stripe) => Promise<void>;

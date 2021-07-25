@@ -51,12 +51,16 @@ export class StripePaymentSheet {
         return;
       })
       .then(() => {
-        if (!this.stripe) {return;}
+        if (!this.stripe) {
+          return;
+        }
 
         return this.initElement();
       })
       .then(() => {
-        if (!this.stripe) {return;}
+        if (!this.stripe) {
+          return;
+        }
 
         this.stripeLoadedEventHandler();
       });
@@ -377,11 +381,17 @@ export class StripePaymentSheet {
   }
 
   disconnectedCallback() {
-    if (this.cardNumber) {this.cardNumber.unmount();}
+    if (this.cardNumber) {
+      this.cardNumber.unmount();
+    }
 
-    if (this.cardExpiry) {this.cardExpiry.unmount();}
+    if (this.cardExpiry) {
+      this.cardExpiry.unmount();
+    }
 
-    if (this.cardCVC) {this.cardCVC.unmount();}
+    if (this.cardCVC) {
+      this.cardCVC.unmount();
+    }
   }
 
   render() {
