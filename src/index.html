@@ -10,11 +10,58 @@
   <body>
     <div id="stripe"></div>
 
-
-
-
-      <script>
+    <script>
       const targetElement = document.getElementById('stripe');
+      const modalSheetElement = document.createElement('stripe-payment-sheet-modal');
+      targetElement.appendChild(modalSheetElement);
+      customElements
+        .whenDefined('stripe-payment-sheet-modal')
+        .then(() => {
+          modalSheetElement.setAttribute('open', true);
+          modalSheetElement.setAttribute('publishable-key', 'pk_test_51EMxG7KVC4SfzSeak35hZaAe91cpzKZE9eOQcVWpa7owYJeS30avCAF0lT1QUMKTbzepTIYgAgjly4AmgZuxxkcS00kQ40cBLe');
+          return modalSheetElement.getStripePaymentSheetElement();
+        })
+        .then(stripeElement => {
+          stripeElement.setAttribute('should-use-default-form-submit-action', false);
+
+          stripeElement.addEventListener('formSubmit', async props => {
+            try {
+              throw new Error('debug');
+            } catch (e) {
+              console.log(e);
+              stripeElement.setErrorMessage(`Error: ${e.message}`);
+              stripeElement.updateProgress('failure');
+            }
+            return;
+            const {
+              detail: { stripe, cardNumber, event },
+            } = props;
+            const result = await stripe.createPaymentMethod({
+              type: 'card',
+              card: cardNumber,
+            });
+            console.log(result);
+            stripeElement.updateProgress('success');
+          });
+
+          stripeElement.setAttribute('payment-intent-client-secret', 'dummy');
+          stripeElement.addEventListener('defaultFormSubmitResult', async ({ detail }) => {
+            if (detail instanceof Error) {
+              console.error(detail);
+              stripeElement.setErrorMessage(`Error: ${detail.message}`);
+            } else {
+              console.log(detail);
+            }
+          });
+        })
+        .catch(e => {
+          console.log(e);
+          const errorElement = document.createElement('p');
+          errorElement.innerText = e.message;
+          targetElement.appendChild(errorElement);
+        });
+
+      /*
       const modalElement = document.createElement('stripe-element-modal');
       modalElement.setAttribute('open', true);
       const stripeElement = document.createElement('stripe-payment-sheet');
@@ -39,43 +86,6 @@
             requestShipping: false,
             requestPayerEmail: true,
           });
-        });
-      customElements
-        .whenDefined('stripe-payment-sheet')
-        .then(() => {
-          stripeElement.initStripe('pk_test_51EMxG7KVC4SfzSeak35hZaAe91cpzKZE9eOQcVWpa7owYJeS30avCAF0lT1QUMKTbzepTIYgAgjly4AmgZuxxkcS00kQ40cBLe').then(() => {
-            stripeElement.setAttribute('should-use-default-form-submit-action', false);
-
-            stripeElement.addEventListener('formSubmit', async props => {
-              try {
-                throw new Error('debug');
-              } catch (e) {
-                console.log(e);
-                stripeElement.setErrorMessage(`Error: ${e.message}`);
-                stripeElement.updateProgress('failure');
-              }
-              return;
-              const {
-                detail: { stripe, cardNumber, event },
-              } = props;
-              const result = await stripe.createPaymentMethod({
-                type: 'card',
-                card: cardNumber,
-              });
-              console.log(result);
-              stripeElement.updateProgress('success');
-            });
-
-            stripeElement.setAttribute('payment-intent-client-secret', 'dummy');
-            stripeElement.addEventListener('defaultFormSubmitResult', async ({ detail }) => {
-              if (detail instanceof Error) {
-                console.error(detail);
-                stripeElement.setErrorMessage(`Error: ${detail.message}`);
-              } else {
-                console.log(detail);
-              }
-            });
-          });
         })
         .catch(e => {
           console.log(e);
@@ -83,6 +93,7 @@
           errorElement.innerText = e.message;
           targetElement.appendChild(errorElement);
         });
+        */
     </script>
     <style>
       body {
