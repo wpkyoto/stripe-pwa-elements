@@ -51,12 +51,16 @@ export class StripePaymentSheet {
         return;
       })
       .then(() => {
-        if (!this.stripe) {return;}
+        if (!this.stripe) {
+          return;
+        }
 
         return this.initElement();
       })
       .then(() => {
-        if (!this.stripe) {return;}
+        if (!this.stripe) {
+          return;
+        }
 
         this.stripeLoadedEventHandler();
       });
@@ -377,11 +381,17 @@ export class StripePaymentSheet {
   }
 
   disconnectedCallback() {
-    if (this.cardNumber) {this.cardNumber.unmount();}
+    if (this.cardNumber) {
+      this.cardNumber.unmount();
+    }
 
-    if (this.cardExpiry) {this.cardExpiry.unmount();}
+    if (this.cardExpiry) {
+      this.cardExpiry.unmount();
+    }
 
-    if (this.cardCVC) {this.cardCVC.unmount();}
+    if (this.cardCVC) {
+      this.cardCVC.unmount();
+    }
   }
 
   render() {
@@ -420,6 +430,19 @@ export class StripePaymentSheet {
               </div>
               <div id="card-errors" class="element-errors">
                 {errorMessage}
+              </div>
+            </fieldset>
+          </div>
+          <div style={{ marginTop: '1.5rem' }}>
+            <div class="stripe-section-title">{i18n.t('Country or region')}</div>
+          </div>
+          <div class="payment-info card visible">
+            <fieldset class="stripe-input-box">
+              <div>
+                <label>
+                  {this.showLabel ? <lenged>{i18n.t('Postal Code')}</lenged> : null}
+                  <input id="zip" name="zip" type="text" inputmode="numeric" class="stripe-input-box StripeElement" style={{ width: '100%' }} placeholder={i18n.t('Postal Code')} />
+                </label>
               </div>
             </fieldset>
           </div>

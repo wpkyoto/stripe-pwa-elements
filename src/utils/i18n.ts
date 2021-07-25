@@ -23,4 +23,3 @@ i18next.use(I18nextBrowserLanguageDetector).init({
 });
 
 export const i18n = i18next;
-export const t = i18next.t;
