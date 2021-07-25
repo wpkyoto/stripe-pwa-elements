@@ -24,7 +24,8 @@
     "generate": "stencil generate",
     "format": "prettier --write src",
     "example:copy": "stencil build --docs && cp -R dist/stripe-elements example/",
-    "example:serve": "npx serve example"
+    "example:serve": "npx serve example",
+    "release": "np"
   },
   "dependencies": {
     "@stencil/core": "^2.0.1",
