@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { FormSubmitEvent, FormSubmitHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
+import { FormSubmitEvent, FormSubmitHandler, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
 import { PaymentIntentResult, PaymentRequestOptions } from "@stripe/stripe-js";
 export namespace Components {
     interface StripeElementModal {
@@ -37,14 +37,32 @@ export namespace Components {
          */
         "initStripe": (publishableKey: string) => Promise<void>;
         /**
+          * Set handler of the `paymentRequest.on('paymentmethod'` event.
+          * @example ```  element.setPaymentMethodEventHandler(async (event, stripe) => { // Confirm the PaymentIntent with the payment method returned from the payment request.   const {error} = await stripe.confirmCardPayment(     paymentIntent.client_secret,     {      payment_method: event.paymentMethod.id,      shipping: {        name: event.shippingAddress.recipient,        phone: event.shippingAddress.phone,        address: {          line1: event.shippingAddress.addressLine[0],          city: event.shippingAddress.city,          postal_code: event.shippingAddress.postalCode,          state: event.shippingAddress.region,          country: event.shippingAddress.country,        },      },    },    {handleActions: false}  ); ```
+         */
+        "paymentMethodEventHandler"?: PaymentRequestPaymentMethodEventHandler;
+        /**
           * Your Stripe publishable API key.
          */
         "publishableKey": string;
+        "setPaymentMethodEventHandler": (handler: PaymentRequestPaymentMethodEventHandler) => Promise<void>;
         /**
           * @param option
           * @private
          */
         "setPaymentRequestOption": (option: PaymentRequestOptions) => Promise<this>;
+        "setPaymentRequestShippingAddressEventHandler": (handler: PaymentRequestShippingAddressEventHandler) => Promise<void>;
+        "setPaymentRequestShippingOptionEventHandler": (handler: PaymentRequestShippingOptionEventHandler) => Promise<void>;
+        /**
+          * Set handler of the `paymentRequest.on('shippingoptionchange')` event
+          * @example ```  element.setPaymentRequestShippingAddressEventHandler(async (event, stripe) => {   const response = await store.updatePaymentIntentWithShippingCost(     paymentIntent.id,     store.getLineItems(),     event.shippingOption   );  }) ```
+         */
+        "shippingAddressEventHandler"?: PaymentRequestShippingAddressEventHandler;
+        /**
+          * Set handler of the `paymentRequest.on('shippingaddresschange')` event
+          * @example ```  element.setPaymentRequestShippingOptionEventHandler(async (event, stripe) => {   event.updateWith({status: 'success'});  }) ```
+         */
+        "shippingOptionEventHandler"?: PaymentRequestShippingOptionEventHandler;
         /**
           * Stripe.js class loaded handler
          */
@@ -187,9 +205,24 @@ declare namespace LocalJSX {
          */
         "onStripeLoaded"?: (event: CustomEvent<StripeLoadedEvent>) => void;
         /**
+          * Set handler of the `paymentRequest.on('paymentmethod'` event.
+          * @example ```  element.setPaymentMethodEventHandler(async (event, stripe) => { // Confirm the PaymentIntent with the payment method returned from the payment request.   const {error} = await stripe.confirmCardPayment(     paymentIntent.client_secret,     {      payment_method: event.paymentMethod.id,      shipping: {        name: event.shippingAddress.recipient,        phone: event.shippingAddress.phone,        address: {          line1: event.shippingAddress.addressLine[0],          city: event.shippingAddress.city,          postal_code: event.shippingAddress.postalCode,          state: event.shippingAddress.region,          country: event.shippingAddress.country,        },      },    },    {handleActions: false}  ); ```
+         */
+        "paymentMethodEventHandler"?: PaymentRequestPaymentMethodEventHandler;
+        /**
           * Your Stripe publishable API key.
          */
         "publishableKey"?: string;
+        /**
+          * Set handler of the `paymentRequest.on('shippingoptionchange')` event
+          * @example ```  element.setPaymentRequestShippingAddressEventHandler(async (event, stripe) => {   const response = await store.updatePaymentIntentWithShippingCost(     paymentIntent.id,     store.getLineItems(),     event.shippingOption   );  }) ```
+         */
+        "shippingAddressEventHandler"?: PaymentRequestShippingAddressEventHandler;
+        /**
+          * Set handler of the `paymentRequest.on('shippingaddresschange')` event
+          * @example ```  element.setPaymentRequestShippingOptionEventHandler(async (event, stripe) => {   event.updateWith({status: 'success'});  }) ```
+         */
+        "shippingOptionEventHandler"?: PaymentRequestShippingOptionEventHandler;
         /**
           * Stripe.js class loaded handler
          */
