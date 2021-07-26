@@ -1,6 +1,12 @@
 import { Component, Prop, h, State, Method, EventEmitter, Event, Host, Element } from '@stencil/core';
 import { loadStripe, Stripe, PaymentRequestOptions } from '@stripe/stripe-js';
-import { StripeDidLoadedHandler, StripeLoadedEvent } from '../../interfaces';
+import {
+  StripeDidLoadedHandler,
+  StripeLoadedEvent,
+  PaymentRequestShippingAddressEventHandler,
+  PaymentRequestPaymentMethodEventHandler,
+  PaymentRequestShippingOptionEventHandler,
+} from '../../interfaces';
 
 @Component({
   tag: 'stripe-payment-request-button',
@@ -14,6 +20,72 @@ export class StripePaymentRequestButton {
   @State() stripe: Stripe;
 
   @State() paymentRequestOption?: PaymentRequestOptions;
+
+  /**
+   * Set handler of the `paymentRequest.on('paymentmethod'` event.
+   * @example
+   * ```
+   *  element.setPaymentMethodEventHandler(async (event, stripe) => {
+   * // Confirm the PaymentIntent with the payment method returned from the payment request.
+   *   const {error} = await stripe.confirmCardPayment(
+   *     paymentIntent.client_secret,
+   *     {
+   *      payment_method: event.paymentMethod.id,
+   *      shipping: {
+   *        name: event.shippingAddress.recipient,
+   *        phone: event.shippingAddress.phone,
+   *        address: {
+   *          line1: event.shippingAddress.addressLine[0],
+   *          city: event.shippingAddress.city,
+   *          postal_code: event.shippingAddress.postalCode,
+   *          state: event.shippingAddress.region,
+   *          country: event.shippingAddress.country,
+   *        },
+   *      },
+   *    },
+   *    {handleActions: false}
+   *  );
+   * ```
+   */
+  @Prop() paymentMethodEventHandler?: PaymentRequestPaymentMethodEventHandler;
+  @Method()
+  public async setPaymentMethodEventHandler(handler: PaymentRequestPaymentMethodEventHandler) {
+    this.paymentMethodEventHandler = handler;
+  }
+
+  /**
+   * Set handler of the `paymentRequest.on('shippingaddresschange')` event
+   * @example
+   * ```
+   *  element.setPaymentRequestShippingOptionEventHandler(async (event, stripe) => {
+   *   event.updateWith({status: 'success'});
+   *  })
+   * ```
+   */
+  @Prop() shippingOptionEventHandler?: PaymentRequestShippingOptionEventHandler;
+  @Method()
+  public async setPaymentRequestShippingOptionEventHandler(handler: PaymentRequestShippingOptionEventHandler) {
+    this.shippingOptionEventHandler = handler;
+  }
+
+  /**
+   * Set handler of the `paymentRequest.on('shippingoptionchange')` event
+   * @example
+   * ```
+   *  element.setPaymentRequestShippingAddressEventHandler(async (event, stripe) => {
+   *   const response = await store.updatePaymentIntentWithShippingCost(
+   *     paymentIntent.id,
+   *     store.getLineItems(),
+   *     event.shippingOption
+   *   );
+   *  })
+   * ```
+   */
+  @Prop() shippingAddressEventHandler?: PaymentRequestShippingAddressEventHandler;
+  @Method()
+  public async setPaymentRequestShippingAddressEventHandler(handler: PaymentRequestShippingAddressEventHandler) {
+    this.shippingAddressEventHandler = handler;
+  }
 
   /**
    * Your Stripe publishable API key.
@@ -135,6 +207,22 @@ export class StripePaymentRequestButton {
       paymentRequestButton.mount(paymentRequestButtonElement);
       // Show the payment request section.
       document.getElementById('payment-request').classList.add('visible');
+
+      if (this.paymentMethodEventHandler) {
+        paymentRequest.on('paymentmethod', event => {
+          this.paymentMethodEventHandler(event, this.stripe);
+        });
+      }
+      if (this.shippingOptionEventHandler) {
+        paymentRequest.on('shippingoptionchange', event => {
+          this.shippingOptionEventHandler(event, this.stripe);
+        });
+      }
+      if (this.shippingAddressEventHandler) {
+        paymentRequest.on('shippingaddresschange', event => {
+          this.shippingAddressEventHandler(event, this.stripe);
+        });
+      }
     }
   }
 
