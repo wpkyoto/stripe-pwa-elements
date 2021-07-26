@@ -117,6 +117,7 @@ export namespace Components {
         "updateProgress": (progress: ProgressStatus) => Promise<this>;
     }
     interface StripePaymentSheetModal {
+        "destroy": () => Promise<void>;
         "getStripePaymentSheetElement": () => Promise<HTMLStripePaymentSheetElement>;
         /**
           * Form submit event handler
@@ -132,6 +133,7 @@ export namespace Components {
           * @example ``` <stripe-card-element payment-intent-client-secret="dummy" /> ```
          */
         "paymentIntentClientSecret"?: string;
+        "present": () => Promise<unknown>;
         /**
           * Your Stripe publishable API key.
          */
@@ -152,6 +154,7 @@ export namespace Components {
           * Stripe.js class loaded handler
          */
         "stripeDidLoaded"?: StripeDidLoadedHandler;
+        "updateProgress": (progress: ProgressStatus) => Promise<HTMLStripePaymentSheetElement>;
     }
 }
 declare global {
@@ -276,6 +279,7 @@ declare namespace LocalJSX {
           * Form submit event handler
          */
         "handleSubmit"?: FormSubmitHandler;
+        "onClosed"?: (event: CustomEvent<any>) => void;
         /**
           * Modal state. If true, the modal will open
          */

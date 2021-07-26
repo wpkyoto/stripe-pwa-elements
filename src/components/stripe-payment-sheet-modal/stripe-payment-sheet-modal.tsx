@@ -1,5 +1,5 @@
-import { Component, Prop, h, Method } from '@stencil/core';
-import { StripeDidLoadedHandler, FormSubmitHandler } from '../../interfaces';
+import { Component, Prop, h, Method, Element, Event, EventEmitter } from '@stencil/core';
+import { StripeDidLoadedHandler, FormSubmitHandler, ProgressStatus } from '../../interfaces';
 
 @Component({
   tag: 'stripe-payment-sheet-modal',
@@ -7,6 +7,8 @@ import { StripeDidLoadedHandler, FormSubmitHandler } from '../../interfaces';
   shadow: false,
 })
 export class StripePaymentSheetModal {
+  @Element() el: HTMLStripePaymentSheetModalElement;
+
   /**
    * Your Stripe publishable API key.
    */
@@ -71,10 +73,51 @@ export class StripePaymentSheetModal {
    */
   @Prop() open = false;
 
+  /**
+   *
+   */
+  @Event() closed: EventEmitter;
+
+  componentDidLoad() {
+    const modal = this.el.querySelector('stripe-element-modal');
+
+    modal.addEventListener('close', () => {
+      this.closed.emit();
+    });
+  }
+
   @Method()
   public async getStripePaymentSheetElement() {
-    const targets = document.getElementsByTagName('stripe-payment-sheet');
-    return targets[0];
+    return this.el.querySelector('stripe-payment-sheet');
+  }
+
+  @Method()
+  public present() {
+    this.open = true;
+
+    return new Promise(async (resolve, reject) => {
+      const paymentSheet = this.el.querySelector('stripe-payment-sheet');
+
+      paymentSheet.addEventListener('formSubmit', async props => {
+        resolve(props);
+      });
+      this.el.addEventListener('closed', () => reject());
+    });
+  }
+
+  @Method()
+  public async updateProgress(progress: ProgressStatus) {
+    const paymentSheet = this.el.querySelector('stripe-payment-sheet');
+
+    return paymentSheet.updateProgress(progress);
+  }
+
+  @Method()
+  public async destroy() {
+    const paymentSheet = this.el.querySelector('stripe-payment-sheet');
+
+    paymentSheet.remove();
+    this.el.remove();
   }
 
   render() {

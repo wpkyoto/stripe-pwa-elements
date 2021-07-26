@@ -7,6 +7,7 @@ describe('stripe-payment-sheet-modal', () => {
       components: [StripePaymentSheetModal],
       html: `<stripe-payment-sheet-modal></stripe-payment-sheet-modal>`,
     });
+
     expect(page.root).toEqualHtml(`
       <stripe-payment-sheet-modal>
         <stripe-element-modal showclosebutton="">
