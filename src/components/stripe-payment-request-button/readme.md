@@ -2,18 +2,24 @@
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
-| Property          | Attribute         | Description                      | Type                                          | Default     |
-| ----------------- | ----------------- | -------------------------------- | --------------------------------------------- | ----------- |
-| `publishableKey`  | `publishable-key` | Your Stripe publishable API key. | `string`                                      | `undefined` |
-| `stripeDidLoaded` | --                | Stripe.js class loaded handler   | `(event: StripeLoadedEvent) => Promise<void>` | `undefined` |
+| Property                      | Attribute         | Description                                                           | Type                                                                           | Default     |
+| ----------------------------- | ----------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------ | ----------- |
+| `paymentMethodEventHandler`   | --                | Set handler of the `paymentRequest.on('paymentmethod'` event.         | `(event: PaymentRequestPaymentMethodEvent, stripe: Stripe) => Promise<void>`   | `undefined` |
+| `publishableKey`              | `publishable-key` | Your Stripe publishable API key.                                      | `string`                                                                       | `undefined` |
+| `shippingAddressEventHandler` | --                | Set handler of the `paymentRequest.on('shippingoptionchange')` event  | `(event: PaymentRequestShippingAddressEvent, stripe: Stripe) => Promise<void>` | `undefined` |
+| `shippingOptionEventHandler`  | --                | Set handler of the `paymentRequest.on('shippingaddresschange')` event | `(event: PaymentRequestShippingOptionEvent, stripe: Stripe) => Promise<void>`  | `undefined` |
+| `stripeDidLoaded`             | --                | Stripe.js class loaded handler                                        | `(event: StripeLoadedEvent) => Promise<void>`                                  | `undefined` |
+
 
 ## Events
 
 | Event          | Description                | Type                               |
 | -------------- | -------------------------- | ---------------------------------- |
 | `stripeLoaded` | Stripe Client loaded event | `CustomEvent<{ stripe: Stripe; }>` |
+
 
 ## Methods
 
@@ -25,12 +31,49 @@ Get Stripe.js, and initialize elements
 
 Type: `Promise<void>`
 
+
+
+### `setPaymentMethodEventHandler(handler: PaymentRequestPaymentMethodEventHandler) => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
 ### `setPaymentRequestOption(option: PaymentRequestOptions) => Promise<this>`
+
+
 
 #### Returns
 
 Type: `Promise<this>`
 
----
 
-_Built with [StencilJS](https://stenciljs.com/)_
+
+### `setPaymentRequestShippingAddressEventHandler(handler: PaymentRequestShippingAddressEventHandler) => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `setPaymentRequestShippingOptionEventHandler(handler: PaymentRequestShippingOptionEventHandler) => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+
+----------------------------------------------
+
+*Built with [StencilJS](https://stenciljs.com/)*

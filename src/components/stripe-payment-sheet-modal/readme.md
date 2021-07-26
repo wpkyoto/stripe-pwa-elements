@@ -1,4 +1,6 @@
-# stripe-payment-sheet
+# stripe-payment-sheet-modal
+
+
 
 <!-- Auto Generated Below -->
 
@@ -8,27 +10,27 @@
 | Property                           | Attribute                               | Description                                                                                                                                                                                 | Type                                                      | Default     |
 | ---------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- | ----------- |
 | `handleSubmit`                     | --                                      | Form submit event handler                                                                                                                                                                   | `(event: Event, props: FormSubmitEvent) => Promise<void>` | `undefined` |
+| `open`                             | `open`                                  | Modal state. If true, the modal will open                                                                                                                                                   | `boolean`                                                 | `false`     |
 | `paymentIntentClientSecret`        | `payment-intent-client-secret`          | The client secret from paymentIntent.create response                                                                                                                                        | `string`                                                  | `undefined` |
 | `publishableKey`                   | `publishable-key`                       | Your Stripe publishable API key.                                                                                                                                                            | `string`                                                  | `undefined` |
 | `shouldUseDefaultFormSubmitAction` | `should-use-default-form-submit-action` | The component will provide a function to call the `stripe.confirmCardPayment`API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element | `boolean`                                                 | `true`      |
+| `showCloseButton`                  | `show-close-button`                     | If true, the modal display close button                                                                                                                                                     | `boolean`                                                 | `true`      |
 | `showLabel`                        | `show-label`                            | Show the form label                                                                                                                                                                         | `boolean`                                                 | `false`     |
 | `stripeDidLoaded`                  | --                                      | Stripe.js class loaded handler                                                                                                                                                              | `(event: StripeLoadedEvent) => Promise<void>`             | `undefined` |
 
 
 ## Events
 
-| Event                     | Description                                   | Type                                                                                                                                                                            |
-| ------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `defaultFormSubmitResult` | Recieve the result of defaultFormSubmit event | `CustomEvent<Error \| { paymentIntent: PaymentIntent; error?: undefined; } \| { paymentIntent?: undefined; error: StripeError; }>`                                              |
-| `formSubmit`              | Form submit event                             | `CustomEvent<{ stripe: Stripe; cardNumber: StripeCardNumberElement; cardExpiry: StripeCardExpiryElement; cardCVC: StripeCardCvcElement; paymentIntentClientSecret?: string; }>` |
-| `stripeLoaded`            | Stripe Client loaded event                    | `CustomEvent<{ stripe: Stripe; }>`                                                                                                                                              |
+| Event    | Description | Type               |
+| -------- | ----------- | ------------------ |
+| `closed` |             | `CustomEvent<any>` |
 
 
 ## Methods
 
-### `initStripe(publishableKey: string) => Promise<void>`
+### `destroy() => Promise<void>`
 
-Get Stripe.js, and initialize elements
+
 
 #### Returns
 
@@ -36,38 +38,51 @@ Type: `Promise<void>`
 
 
 
-### `setErrorMessage(errorMessage: string) => Promise<this>`
+### `getStripePaymentSheetElement() => Promise<HTMLStripePaymentSheetElement>`
 
-Set error message
+
 
 #### Returns
 
-Type: `Promise<this>`
+Type: `Promise<HTMLStripePaymentSheetElement>`
 
 
 
-### `updateProgress(progress: ProgressStatus) => Promise<this>`
+### `present() => Promise<unknown>`
 
-Update the form submit progress
+
 
 #### Returns
 
-Type: `Promise<this>`
+Type: `Promise<unknown>`
+
+
+
+### `updateProgress(progress: ProgressStatus) => Promise<HTMLStripePaymentSheetElement>`
+
+
+
+#### Returns
+
+Type: `Promise<HTMLStripePaymentSheetElement>`
 
 
 
 
 ## Dependencies
 
-### Used by
+### Depends on
 
- - [stripe-payment-sheet-modal](../stripe-payment-sheet-modal)
+- [stripe-element-modal](../stripe-element-modal)
+- [stripe-payment-sheet](../stripe-payment-sheet)
 
 ### Graph
 ```mermaid
 graph TD;
+  stripe-payment-sheet-modal --> stripe-element-modal
   stripe-payment-sheet-modal --> stripe-payment-sheet
-  style stripe-payment-sheet fill:#f9f,stroke:#333,stroke-width:4px
+  stripe-element-modal --> ion-icon
+  style stripe-payment-sheet-modal fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------

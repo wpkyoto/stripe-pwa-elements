@@ -213,11 +213,13 @@ export class StripePaymentRequestButton {
           this.paymentMethodEventHandler(event, this.stripe);
         });
       }
+
       if (this.shippingOptionEventHandler) {
         paymentRequest.on('shippingoptionchange', event => {
           this.shippingOptionEventHandler(event, this.stripe);
         });
       }
+
       if (this.shippingAddressEventHandler) {
         paymentRequest.on('shippingaddresschange', event => {
           this.shippingAddressEventHandler(event, this.stripe);

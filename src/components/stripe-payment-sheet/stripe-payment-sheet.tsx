@@ -290,8 +290,10 @@ export class StripePaymentSheet {
   private cardCVC!: StripeCardCvcElement;
 
   componentWillUpdate() {
-    if (!this.publishableKey) return;
-    if (['success', 'loading'].includes(this.loadStripeStatus)) return;
+    if (!this.publishableKey) {return;}
+
+    if (['success', 'loading'].includes(this.loadStripeStatus)) {return;}
+
     this.initStripe(this.publishableKey);
   }
 
