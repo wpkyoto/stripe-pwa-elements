@@ -289,6 +289,12 @@ export class StripePaymentSheet {
   private cardExpiry!: StripeCardExpiryElement;
   private cardCVC!: StripeCardCvcElement;
 
+  componentWillUpdate() {
+    if (!this.publishableKey) return;
+    if (['success', 'loading'].includes(this.loadStripeStatus)) return;
+    this.initStripe(this.publishableKey);
+  }
+
   /**
    * Default form submit action (just call a confirmCardPayment).
    * If you don't want use it, please set `should-use-default-form-submit-action="false"`

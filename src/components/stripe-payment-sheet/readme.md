@@ -1,9 +1,6 @@
 # stripe-payment-sheet
 
-
-
 <!-- Auto Generated Below -->
-
 
 ## Properties
 
@@ -16,7 +13,6 @@
 | `showLabel`                        | `show-label`                            | Show the form label                                                                                                                                                                         | `boolean`                                                 | `false`     |
 | `stripeDidLoaded`                  | --                                      | Stripe.js class loaded handler                                                                                                                                                              | `(event: StripeLoadedEvent) => Promise<void>`             | `undefined` |
 
-
 ## Events
 
 | Event                     | Description                                   | Type                                                                                                                                                                            |
@@ -24,7 +20,6 @@
 | `defaultFormSubmitResult` | Recieve the result of defaultFormSubmit event | `CustomEvent<Error \| { paymentIntent: PaymentIntent; error?: undefined; } \| { paymentIntent?: undefined; error: StripeError; }>`                                              |
 | `formSubmit`              | Form submit event                             | `CustomEvent<{ stripe: Stripe; cardNumber: StripeCardNumberElement; cardExpiry: StripeCardExpiryElement; cardCVC: StripeCardCvcElement; paymentIntentClientSecret?: string; }>` |
 | `stripeLoaded`            | Stripe Client loaded event                    | `CustomEvent<{ stripe: Stripe; }>`                                                                                                                                              |
-
 
 ## Methods
 
@@ -36,8 +31,6 @@ Get Stripe.js, and initialize elements
 
 Type: `Promise<void>`
 
-
-
 ### `setErrorMessage(errorMessage: string) => Promise<this>`
 
 Set error message
@@ -45,8 +38,6 @@ Set error message
 #### Returns
 
 Type: `Promise<this>`
-
-
 
 ### `updateProgress(progress: ProgressStatus) => Promise<this>`
 
@@ -56,9 +47,6 @@ Update the form submit progress
 
 Type: `Promise<this>`
 
+---
 
-
-
-----------------------------------------------
-
-*Built with [StencilJS](https://stenciljs.com/)*
+_Built with [StencilJS](https://stenciljs.com/)_
