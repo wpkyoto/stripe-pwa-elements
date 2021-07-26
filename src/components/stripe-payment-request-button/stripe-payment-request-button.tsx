@@ -198,7 +198,7 @@ export class StripePaymentRequestButton {
     const paymentRequestButton = elements.create('paymentRequestButton', {
       paymentRequest,
     });
-    const paymentRequestButtonElement = document.getElementById('payment-request-button');
+    const paymentRequestButtonElement: HTMLElement = this.el.querySelector('#payment-request-button');
     // Check if the Payment Request is available (or Apple Pay on the Web).
     const paymentRequestSupport = await paymentRequest.canMakePayment();
 
@@ -206,7 +206,7 @@ export class StripePaymentRequestButton {
       // Display the Pay button by mounting the Element in the DOM.
       paymentRequestButton.mount(paymentRequestButtonElement);
       // Show the payment request section.
-      document.getElementById('payment-request').classList.add('visible');
+      this.el.querySelector('#payment-request').classList.add('visible');
 
       if (this.paymentMethodEventHandler) {
         paymentRequest.on('paymentmethod', event => {
