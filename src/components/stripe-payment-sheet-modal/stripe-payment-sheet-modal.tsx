@@ -1,5 +1,5 @@
 import { Component, Prop, h, Method, Element, Event, EventEmitter } from '@stencil/core';
-import { StripeDidLoadedHandler, FormSubmitHandler, ProgressStatus } from '../../interfaces';
+import { StripeDidLoadedHandler, FormSubmitHandler, ProgressStatus, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingOptionEventHandler } from '../../interfaces';
 
 @Component({
   tag: 'stripe-payment-sheet-modal',

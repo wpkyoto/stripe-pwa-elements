@@ -3,6 +3,7 @@ import { loadStripe, PaymentIntentResult, Stripe, StripeCardCvcElement, StripeCa
 import { checkPlatform } from '../../utils/utils';
 import { StripeDidLoadedHandler, StripeLoadedEvent, FormSubmitEvent, FormSubmitHandler, ProgressStatus } from '../../interfaces';
 import { i18n } from '../../utils/i18n';
+import { PaymentRequestButtonOptions } from '../stripe-payment-request-button/stripe-payment-request-button';
 
 @Component({
   tag: 'stripe-payment-sheet',
@@ -171,6 +172,9 @@ export class StripePaymentSheet {
    * And listen the 'formSubmit' event on the element
    */
   @Prop() shouldUseDefaultFormSubmitAction = true;
+
+  @Prop()
+  paymentRequestButton?: PaymentRequestButtonOptions
 
   /**
    * Form submit event handler
@@ -402,6 +406,26 @@ export class StripePaymentSheet {
     }
   }
 
+  renderPaymentRequestButton() {
+    const { paymentRequestButton } = this
+    if (!paymentRequestButton || !paymentRequestButton.enable) return null;
+
+    const {
+      paymentMethodHandler,
+      shippingOptionChangeHandler,
+      shippingAddressChangeHandler,
+    } = paymentRequestButton;
+
+    return (
+      <stripe-payment-request-button
+        publishableKey={this.publishableKey}
+        paymentMethodEventHandler={paymentMethodHandler}
+        shippingAddressEventHandler={shippingAddressChangeHandler}
+        shippingOptionEventHandler={shippingOptionChangeHandler}
+      ></stripe-payment-request-button>
+    )
+  }
+
   render() {
     const { errorMessage } = this;
 
@@ -415,6 +439,7 @@ export class StripePaymentSheet {
       <div class="stripe-payment-sheet-wrap">
         <form id="stripe-card-element">
           <div class="stripe-heading">{i18n.t('Add your payment information')}</div>
+          {this.renderPaymentRequestButton()}
           <div>
             <div class="stripe-section-title">{i18n.t('Card information')}</div>
           </div>

@@ -8,6 +8,13 @@ import {
   PaymentRequestShippingOptionEventHandler,
 } from '../../interfaces';
 
+export type PaymentRequestButtonOptions = {
+  enable: boolean;
+  paymentMethodHandler?: PaymentRequestPaymentMethodEventHandler;
+  shippingAddressChangeHandler?: PaymentRequestShippingAddressEventHandler;
+  shippingOptionChangeHandler?: PaymentRequestShippingOptionEventHandler;
+}
+
 @Component({
   tag: 'stripe-payment-request-button',
   styleUrl: 'stripe-payment-request-button.css',
@@ -54,7 +61,7 @@ export class StripePaymentRequestButton {
   }
 
   /**
-   * Set handler of the `paymentRequest.on('shippingaddresschange')` event
+   * Set handler of the `paymentRequest.on('shippingoptionchange')` event
    * @example
    * ```
    *  element.setPaymentRequestShippingOptionEventHandler(async (event, stripe) => {
@@ -69,7 +76,7 @@ export class StripePaymentRequestButton {
   }
 
   /**
-   * Set handler of the `paymentRequest.on('shippingoptionchange')` event
+   * Set handler of the `paymentRequest.on('shippingaddresschange')` event
    * @example
    * ```
    *  element.setPaymentRequestShippingAddressEventHandler(async (event, stripe) => {
