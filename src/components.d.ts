@@ -5,7 +5,7 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { FormSubmitEvent, FormSubmitHandler, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
+import { FormSubmitEvent, FormSubmitHandler, PaymentRequestButtonOption, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
 import { PaymentIntentResult, PaymentRequestOptions } from "@stripe/stripe-js";
 export namespace Components {
     interface StripeElementModal {
@@ -54,12 +54,12 @@ export namespace Components {
         "setPaymentRequestShippingAddressEventHandler": (handler: PaymentRequestShippingAddressEventHandler) => Promise<void>;
         "setPaymentRequestShippingOptionEventHandler": (handler: PaymentRequestShippingOptionEventHandler) => Promise<void>;
         /**
-          * Set handler of the `paymentRequest.on('shippingoptionchange')` event
+          * Set handler of the `paymentRequest.on('shippingaddresschange')` event
           * @example ```  element.setPaymentRequestShippingAddressEventHandler(async (event, stripe) => {   const response = await store.updatePaymentIntentWithShippingCost(     paymentIntent.id,     store.getLineItems(),     event.shippingOption   );  }) ```
          */
         "shippingAddressEventHandler"?: PaymentRequestShippingAddressEventHandler;
         /**
-          * Set handler of the `paymentRequest.on('shippingaddresschange')` event
+          * Set handler of the `paymentRequest.on('shippingoptionchange')` event
           * @example ```  element.setPaymentRequestShippingOptionEventHandler(async (event, stripe) => {   event.updateWith({status: 'success'});  }) ```
          */
         "shippingOptionEventHandler"?: PaymentRequestShippingOptionEventHandler;
@@ -97,6 +97,11 @@ export namespace Components {
          */
         "setErrorMessage": (errorMessage: string) => Promise<this>;
         /**
+          * @param option
+          * @private
+         */
+        "setPaymentRequestOption": (option: PaymentRequestButtonOption) => Promise<this>;
+        /**
           * The component will provide a function to call the `stripe.confirmCardPayment`API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element
          */
         "shouldUseDefaultFormSubmitAction": boolean;
@@ -104,6 +109,7 @@ export namespace Components {
           * Show the form label
          */
         "showLabel": boolean;
+        "showPaymentRequestButton": boolean;
         /**
           * Stripe.js class loaded handler
          */
@@ -138,6 +144,7 @@ export namespace Components {
           * Your Stripe publishable API key.
          */
         "publishableKey": string;
+        "setPaymentRequestButton": (options: PaymentRequestButtonOption) => Promise<void>;
         /**
           * The component will provide a function to call the `stripe.confirmCardPayment`API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element
          */
@@ -217,12 +224,12 @@ declare namespace LocalJSX {
          */
         "publishableKey"?: string;
         /**
-          * Set handler of the `paymentRequest.on('shippingoptionchange')` event
+          * Set handler of the `paymentRequest.on('shippingaddresschange')` event
           * @example ```  element.setPaymentRequestShippingAddressEventHandler(async (event, stripe) => {   const response = await store.updatePaymentIntentWithShippingCost(     paymentIntent.id,     store.getLineItems(),     event.shippingOption   );  }) ```
          */
         "shippingAddressEventHandler"?: PaymentRequestShippingAddressEventHandler;
         /**
-          * Set handler of the `paymentRequest.on('shippingaddresschange')` event
+          * Set handler of the `paymentRequest.on('shippingoptionchange')` event
           * @example ```  element.setPaymentRequestShippingOptionEventHandler(async (event, stripe) => {   event.updateWith({status: 'success'});  }) ```
          */
         "shippingOptionEventHandler"?: PaymentRequestShippingOptionEventHandler;
@@ -269,6 +276,7 @@ declare namespace LocalJSX {
           * Show the form label
          */
         "showLabel"?: boolean;
+        "showPaymentRequestButton"?: boolean;
         /**
           * Stripe.js class loaded handler
          */

@@ -82,6 +82,7 @@ graph TD;
   stripe-payment-sheet-modal --> stripe-element-modal
   stripe-payment-sheet-modal --> stripe-payment-sheet
   stripe-element-modal --> ion-icon
+  stripe-payment-sheet --> stripe-payment-request-button
   style stripe-payment-sheet-modal fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

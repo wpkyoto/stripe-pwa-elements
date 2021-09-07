@@ -5,14 +5,18 @@
 
 ## Properties
 
-| Property                           | Attribute                               | Description                                                                                                                                                                                 | Type                                                      | Default     |
-| ---------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- | ----------- |
-| `handleSubmit`                     | --                                      | Form submit event handler                                                                                                                                                                   | `(event: Event, props: FormSubmitEvent) => Promise<void>` | `undefined` |
-| `paymentIntentClientSecret`        | `payment-intent-client-secret`          | The client secret from paymentIntent.create response                                                                                                                                        | `string`                                                  | `undefined` |
-| `publishableKey`                   | `publishable-key`                       | Your Stripe publishable API key.                                                                                                                                                            | `string`                                                  | `undefined` |
-| `shouldUseDefaultFormSubmitAction` | `should-use-default-form-submit-action` | The component will provide a function to call the `stripe.confirmCardPayment`API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element | `boolean`                                                 | `true`      |
-| `showLabel`                        | `show-label`                            | Show the form label                                                                                                                                                                         | `boolean`                                                 | `false`     |
-| `stripeDidLoaded`                  | --                                      | Stripe.js class loaded handler                                                                                                                                                              | `(event: StripeLoadedEvent) => Promise<void>`             | `undefined` |
+| Property                                     | Attribute                               | Description                                                                                                                                                                                 | Type                                                                           | Default     |
+| -------------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | ----------- |
+| `handleSubmit`                               | --                                      | Form submit event handler                                                                                                                                                                   | `(event: Event, props: FormSubmitEvent) => Promise<void>`                      | `undefined` |
+| `paymentIntentClientSecret`                  | `payment-intent-client-secret`          | The client secret from paymentIntent.create response                                                                                                                                        | `string`                                                                       | `undefined` |
+| `paymentRequestButton`                       | `payment-request-button`                |                                                                                                                                                                                             | `boolean`                                                                      | `undefined` |
+| `paymentRequestPaymentMethodHandler`         | --                                      |                                                                                                                                                                                             | `(event: PaymentRequestPaymentMethodEvent, stripe: Stripe) => Promise<void>`   | `undefined` |
+| `paymentRequestShippingAddressChangeHandler` | --                                      |                                                                                                                                                                                             | `(event: PaymentRequestShippingAddressEvent, stripe: Stripe) => Promise<void>` | `undefined` |
+| `paymentRequestShippingOptionChangeHandler`  | --                                      |                                                                                                                                                                                             | `(event: PaymentRequestShippingOptionEvent, stripe: Stripe) => Promise<void>`  | `undefined` |
+| `publishableKey`                             | `publishable-key`                       | Your Stripe publishable API key.                                                                                                                                                            | `string`                                                                       | `undefined` |
+| `shouldUseDefaultFormSubmitAction`           | `should-use-default-form-submit-action` | The component will provide a function to call the `stripe.confirmCardPayment`API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element | `boolean`                                                                      | `true`      |
+| `showLabel`                                  | `show-label`                            | Show the form label                                                                                                                                                                         | `boolean`                                                                      | `false`     |
+| `stripeDidLoaded`                            | --                                      | Stripe.js class loaded handler                                                                                                                                                              | `(event: StripeLoadedEvent) => Promise<void>`                                  | `undefined` |
 
 
 ## Events
@@ -63,9 +67,14 @@ Type: `Promise<this>`
 
  - [stripe-payment-sheet-modal](../stripe-payment-sheet-modal)
 
+### Depends on
+
+- [stripe-payment-request-button](../stripe-payment-request-button)
+
 ### Graph
 ```mermaid
 graph TD;
+  stripe-payment-sheet --> stripe-payment-request-button
   stripe-payment-sheet-modal --> stripe-payment-sheet
   style stripe-payment-sheet fill:#f9f,stroke:#333,stroke-width:4px
 ```

@@ -1,5 +1,8 @@
 import { Component, Prop, h, Method, Element, Event, EventEmitter } from '@stencil/core';
-import { StripeDidLoadedHandler, FormSubmitHandler, ProgressStatus, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingOptionEventHandler } from '../../interfaces';
+import {
+  StripeDidLoadedHandler, FormSubmitHandler, ProgressStatus,
+  PaymentRequestButtonOption,
+ } from '../../interfaces';
 
 @Component({
   tag: 'stripe-payment-sheet-modal',
@@ -118,6 +121,22 @@ export class StripePaymentSheetModal {
 
     paymentSheet.remove();
     this.el.remove();
+  }
+
+  @Method()
+  public async setPaymentRequestButton(options: PaymentRequestButtonOption) {
+      const elements = this.el.getElementsByTagName('stripe-payment-sheet')
+
+      if (elements.length < 1) {
+        return;
+      }
+
+      const paymentSheetElement = elements[0]
+
+      if (!paymentSheetElement) {return;}
+
+      paymentSheetElement.setAttribute('show-payment-request-button', 'true')
+      paymentSheetElement.setPaymentRequestOption(options)
   }
 
   render() {

@@ -9,8 +9,8 @@
 | ----------------------------- | ----------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------ | ----------- |
 | `paymentMethodEventHandler`   | --                | Set handler of the `paymentRequest.on('paymentmethod'` event.         | `(event: PaymentRequestPaymentMethodEvent, stripe: Stripe) => Promise<void>`   | `undefined` |
 | `publishableKey`              | `publishable-key` | Your Stripe publishable API key.                                      | `string`                                                                       | `undefined` |
-| `shippingAddressEventHandler` | --                | Set handler of the `paymentRequest.on('shippingoptionchange')` event  | `(event: PaymentRequestShippingAddressEvent, stripe: Stripe) => Promise<void>` | `undefined` |
-| `shippingOptionEventHandler`  | --                | Set handler of the `paymentRequest.on('shippingaddresschange')` event | `(event: PaymentRequestShippingOptionEvent, stripe: Stripe) => Promise<void>`  | `undefined` |
+| `shippingAddressEventHandler` | --                | Set handler of the `paymentRequest.on('shippingaddresschange')` event | `(event: PaymentRequestShippingAddressEvent, stripe: Stripe) => Promise<void>` | `undefined` |
+| `shippingOptionEventHandler`  | --                | Set handler of the `paymentRequest.on('shippingoptionchange')` event  | `(event: PaymentRequestShippingOptionEvent, stripe: Stripe) => Promise<void>`  | `undefined` |
 | `stripeDidLoaded`             | --                | Stripe.js class loaded handler                                        | `(event: StripeLoadedEvent) => Promise<void>`                                  | `undefined` |
 
 
@@ -73,6 +73,19 @@ Type: `Promise<void>`
 
 
 
+
+## Dependencies
+
+### Used by
+
+ - [stripe-payment-sheet](../stripe-payment-sheet)
+
+### Graph
+```mermaid
+graph TD;
+  stripe-payment-sheet --> stripe-payment-request-button
+  style stripe-payment-request-button fill:#f9f,stroke:#333,stroke-width:4px
+```
 
 ----------------------------------------------
 
