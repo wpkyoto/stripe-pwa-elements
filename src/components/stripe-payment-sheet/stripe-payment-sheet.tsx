@@ -186,6 +186,9 @@ export class StripePayment {
    */
   @Prop() shouldUseDefaultFormSubmitAction = true;
 
+  /**
+   * If show PaymentRequest Button, should put true
+   */
   @Prop()
   showPaymentRequestButton: boolean;
 
@@ -247,7 +250,7 @@ export class StripePayment {
    * ```
    */
   @Event() stripeLoaded: EventEmitter<StripeLoadedEvent>;
-  stripeLoadedEventHandler() {
+  private stripeLoadedEventHandler() {
     const event: StripeLoadedEvent = {
       stripe: this.stripe,
     };
@@ -281,7 +284,7 @@ export class StripePayment {
    *   })
    */
   @Event() formSubmit: EventEmitter<FormSubmitEvent>;
-  async formSubmitEventHandler() {
+  private async formSubmitEventHandler() {
     const { cardCVC, cardExpiry, cardNumber, stripe } = this;
 
     this.formSubmit.emit({
@@ -310,7 +313,7 @@ export class StripePayment {
    *   })
    */
   @Event() defaultFormSubmitResult: EventEmitter<DefaultFormSubmitResult>;
-  async defaultFormSubmitResultHandler(result: DefaultFormSubmitResult) {
+  private async defaultFormSubmitResultHandler(result: DefaultFormSubmitResult) {
     this.defaultFormSubmitResult.emit(result);
   }
 
@@ -447,10 +450,10 @@ export class StripePayment {
    * Create payment request button
    * It's just proxy of stripe-payment-request-button
    */
-  createPaymentRequestButton() {
-    const { showPaymentRequestButton } = this
+  private createPaymentRequestButton() {
+    const { showPaymentRequestButton, paymentRequestOption } = this
 
-    if (!showPaymentRequestButton) {return null;}
+    if (!showPaymentRequestButton || !paymentRequestOption) {return null;}
 
     if (!document) {return null;}
 
@@ -460,9 +463,6 @@ export class StripePayment {
     targetElement.appendChild(stripePaymentRequestElement);
 
     const {
-      paymentRequestOption,
-    } = this;
-    const {
       paymentRequestPaymentMethodHandler,
       paymentRequestShippingOptionChangeHandler,
       paymentRequestShippingAddressChangeHandler,
@@ -471,9 +471,7 @@ export class StripePayment {
     customElements
       .whenDefined('stripe-payment-request-button')
       .then(() => {
-        if (paymentRequestOption) {
-          stripePaymentRequestElement.setPaymentRequestOption(paymentRequestOption)
-        }
+        stripePaymentRequestElement.setPaymentRequestOption(paymentRequestOption)
 
         if (paymentRequestPaymentMethodHandler) {
           stripePaymentRequestElement
@@ -484,7 +482,7 @@ export class StripePayment {
           stripePaymentRequestElement
             .setPaymentRequestShippingOptionEventHandler(paymentRequestShippingOptionChangeHandler)
         }
-
+   
         if (paymentRequestShippingAddressChangeHandler) {
           stripePaymentRequestElement.
             setPaymentRequestShippingAddressEventHandler(paymentRequestShippingAddressChangeHandler)

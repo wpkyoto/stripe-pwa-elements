@@ -53,6 +53,9 @@ export namespace Components {
           * Show the form label
          */
         "showLabel": boolean;
+        /**
+          * If show PaymentRequest Button, should put true
+         */
         "showPaymentRequestButton": boolean;
         /**
           * Stripe.js class loaded handler
@@ -81,13 +84,22 @@ export namespace Components {
           * Your Stripe publishable API key.
          */
         "publishableKey": string;
+        /**
+          * Register event handler for `paymentRequest.on('paymentmethod'` event.
+         */
         "setPaymentMethodEventHandler": (handler: PaymentRequestPaymentMethodEventHandler) => Promise<void>;
         /**
           * @param option
           * @private
          */
         "setPaymentRequestOption": (option: PaymentRequestOptions) => Promise<this>;
+        /**
+          * Register event handler for `paymentRequest.on('shippingaddresschange'` event.
+         */
         "setPaymentRequestShippingAddressEventHandler": (handler: PaymentRequestShippingAddressEventHandler) => Promise<void>;
+        /**
+          * Register event handler for `paymentRequest.on('shippingoptionchange'` event.
+         */
         "setPaymentRequestShippingOptionEventHandler": (handler: PaymentRequestShippingOptionEventHandler) => Promise<void>;
         /**
           * Set handler of the `paymentRequest.on('shippingaddresschange')` event
@@ -105,7 +117,13 @@ export namespace Components {
         "stripeDidLoaded"?: StripeDidLoadedHandler;
     }
     interface StripePaymentSheet {
+        /**
+          * Remove the modal
+         */
         "destroy": () => Promise<void>;
+        /**
+          * Get the inner component
+         */
         "getStripePaymentSheetElement": () => Promise<HTMLStripePaymentElement>;
         /**
           * Form submit event handler
@@ -126,11 +144,17 @@ export namespace Components {
           * Modal state. If true, the modal will open
          */
         "open": boolean;
+        /**
+          * open modal
+         */
         "present": () => Promise<unknown>;
         /**
           * Your Stripe publishable API key.
          */
         "publishableKey": string;
+        /**
+          * Add payment request button
+         */
         "setPaymentRequestButton": (options: PaymentRequestButtonOption) => Promise<void>;
         /**
           * The component will provide a function to call the `stripe.confirmCardPayment`API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element
@@ -148,6 +172,9 @@ export namespace Components {
           * Stripe.js class loaded handler
          */
         "stripeDidLoaded"?: StripeDidLoadedHandler;
+        /**
+          * Update Stripe client loading process
+         */
         "updateProgress": (progress: ProgressStatus) => Promise<HTMLStripePaymentElement>;
     }
     interface StripeSheet {
@@ -248,6 +275,9 @@ declare namespace LocalJSX {
           * Show the form label
          */
         "showLabel"?: boolean;
+        /**
+          * If show PaymentRequest Button, should put true
+         */
         "showPaymentRequestButton"?: boolean;
         /**
           * Stripe.js class loaded handler

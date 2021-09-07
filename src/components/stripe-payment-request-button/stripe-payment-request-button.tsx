@@ -48,6 +48,10 @@ export class StripePaymentRequestButton {
    * ```
    */
   @Prop() paymentMethodEventHandler?: PaymentRequestPaymentMethodEventHandler;
+
+  /**
+   * Register event handler for `paymentRequest.on('paymentmethod'` event.
+   */
   @Method()
   public async setPaymentMethodEventHandler(handler: PaymentRequestPaymentMethodEventHandler) {
     this.paymentMethodEventHandler = handler;
@@ -63,6 +67,10 @@ export class StripePaymentRequestButton {
    * ```
    */
   @Prop() shippingOptionEventHandler?: PaymentRequestShippingOptionEventHandler;
+  
+  /**
+   * Register event handler for `paymentRequest.on('shippingoptionchange'` event.
+   */
   @Method()
   public async setPaymentRequestShippingOptionEventHandler(handler: PaymentRequestShippingOptionEventHandler) {
     this.shippingOptionEventHandler = handler;
@@ -82,6 +90,10 @@ export class StripePaymentRequestButton {
    * ```
    */
   @Prop() shippingAddressEventHandler?: PaymentRequestShippingAddressEventHandler;
+  
+  /**
+   * Register event handler for `paymentRequest.on('shippingaddresschange'` event.
+   */
   @Method()
   public async setPaymentRequestShippingAddressEventHandler(handler: PaymentRequestShippingAddressEventHandler) {
     this.shippingAddressEventHandler = handler;
