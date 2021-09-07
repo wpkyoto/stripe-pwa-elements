@@ -15,6 +15,7 @@ describe('stripe-payment-sheet', () => {
           <div class="stripe-heading">
             Add your payment information
           </div>
+          <div id="stripe-payment-request-button"></div>
           <div>
             <div class="stripe-section-title">
               Card information

@@ -12,6 +12,54 @@
 
     <script>
       const targetElement = document.getElementById('stripe');
+      const paymentSheetModal = document.createElement('stripe-payment-sheet-modal')
+      targetElement.appendChild(paymentSheetModal);
+      customElements.whenDefined('stripe-payment-sheet-modal')
+        .then(() => {
+          paymentSheetModal.setAttribute('publishable-key', 'pk_test_51EMxG7KVC4SfzSeak35hZaAe91cpzKZE9eOQcVWpa7owYJeS30avCAF0lT1QUMKTbzepTIYgAgjly4AmgZuxxkcS00kQ40cBLe');
+          paymentSheetModal.setAttribute('open', true);
+          paymentSheetModal.setPaymentRequestButton({
+            country: 'JP',
+            currency: 'jpy',
+            total: {
+              label: 'Total',
+              amount: 100,
+            },
+            requestShipping: false,
+            requestPayerEmail: true,
+          })
+        }).catch(e => {
+          console.log(e)
+        })
+
+      /*
+      const paymentSheet = document.createElement('stripe-payment-sheet')
+      targetElement.appendChild(paymentSheet)
+      customElements.whenDefined('stripe-payment-sheet')
+      .then(() => {
+        paymentSheet.setAttribute(
+          'publishable-key',
+          'pk_test_51EMxG7KVC4SfzSeak35hZaAe91cpzKZE9eOQcVWpa7owYJeS30avCAF0lT1QUMKTbzepTIYgAgjly4AmgZuxxkcS00kQ40cBLe'
+        );
+        paymentSheet.setAttribute(
+          'show-payment-request-button',
+          'true'
+        )
+        paymentSheet.setPaymentRequestOption({
+            country: 'JP',
+            currency: 'jpy',
+            total: {
+              label: 'Total',
+              amount: 100,
+            },
+            requestShipping: false,
+            requestPayerEmail: true,
+          });
+      }).catch(e => {
+        console.log(e)
+      })
+      */
+      /*
       const modalSheetElement = document.createElement('stripe-payment-sheet-modal');
       targetElement.appendChild(modalSheetElement);
       customElements

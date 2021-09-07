@@ -12,6 +12,7 @@
 | `publishableKey`                   | `publishable-key`                       | Your Stripe publishable API key.                                                                                                                                                            | `string`                                                  | `undefined` |
 | `shouldUseDefaultFormSubmitAction` | `should-use-default-form-submit-action` | The component will provide a function to call the `stripe.confirmCardPayment`API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element | `boolean`                                                 | `true`      |
 | `showLabel`                        | `show-label`                            | Show the form label                                                                                                                                                                         | `boolean`                                                 | `false`     |
+| `showPaymentRequestButton`         | `show-payment-request-button`           |                                                                                                                                                                                             | `boolean`                                                 | `undefined` |
 | `stripeDidLoaded`                  | --                                      | Stripe.js class loaded handler                                                                                                                                                              | `(event: StripeLoadedEvent) => Promise<void>`             | `undefined` |
 
 
@@ -46,6 +47,16 @@ Type: `Promise<this>`
 
 
 
+### `setPaymentRequestOption(option: PaymentRequestButtonOption) => Promise<this>`
+
+
+
+#### Returns
+
+Type: `Promise<this>`
+
+
+
 ### `updateProgress(progress: ProgressStatus) => Promise<this>`
 
 Update the form submit progress
@@ -63,9 +74,14 @@ Type: `Promise<this>`
 
  - [stripe-payment-sheet-modal](../stripe-payment-sheet-modal)
 
+### Depends on
+
+- [stripe-payment-request-button](../stripe-payment-request-button)
+
 ### Graph
 ```mermaid
 graph TD;
+  stripe-payment-sheet --> stripe-payment-request-button
   stripe-payment-sheet-modal --> stripe-payment-sheet
   style stripe-payment-sheet fill:#f9f,stroke:#333,stroke-width:4px
 ```

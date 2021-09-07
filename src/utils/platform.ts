@@ -12,6 +12,7 @@ export const isPlatform: IsPlatformSignature = (winOrPlatform: Window | Platform
     platform = winOrPlatform;
     winOrPlatform = undefined;
   }
+
   return getPlatforms(winOrPlatform).includes(platform!);
 };
 
@@ -23,10 +24,12 @@ export const setupPlatforms = (win: any = window) => {
   win.Ionic = win.Ionic || {};
 
   let platforms: Platforms[] | undefined | null = win.Ionic.platforms;
+
   if (platforms == null) {
     platforms = win.Ionic.platforms = detectPlatforms(win);
     platforms.forEach(p => win.document.documentElement.classList.add(`plt-${p}`));
   }
+
   return platforms;
 };
 
@@ -86,6 +89,7 @@ const isCordova = (win: any): boolean => !!(win['cordova'] || win['phonegap'] ||
 
 const isCapacitorNative = (win: any): boolean => {
   const capacitor = win['Capacitor'];
+
   return !!(capacitor && capacitor.isNative);
 };
 

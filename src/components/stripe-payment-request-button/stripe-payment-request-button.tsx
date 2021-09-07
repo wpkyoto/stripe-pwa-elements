@@ -54,7 +54,7 @@ export class StripePaymentRequestButton {
   }
 
   /**
-   * Set handler of the `paymentRequest.on('shippingaddresschange')` event
+   * Set handler of the `paymentRequest.on('shippingoptionchange')` event
    * @example
    * ```
    *  element.setPaymentRequestShippingOptionEventHandler(async (event, stripe) => {
@@ -69,7 +69,7 @@ export class StripePaymentRequestButton {
   }
 
   /**
-   * Set handler of the `paymentRequest.on('shippingoptionchange')` event
+   * Set handler of the `paymentRequest.on('shippingaddresschange')` event
    * @example
    * ```
    *  element.setPaymentRequestShippingAddressEventHandler(async (event, stripe) => {
