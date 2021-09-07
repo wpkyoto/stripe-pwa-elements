@@ -64,16 +64,14 @@ export class StripePaymentSheet {
    */
   @Prop({
     mutable: true,
-  })
-  handleSubmit: FormSubmitHandler;
+  }) handleSubmit: FormSubmitHandler;
 
   /**
    * Stripe.js class loaded handler
    */
   @Prop({
     mutable: true,
-  })
-  stripeDidLoaded?: StripeDidLoadedHandler;
+  }) stripeDidLoaded?: StripeDidLoadedHandler;
 
   /**
    * If true, the modal display close button
@@ -93,21 +91,28 @@ export class StripePaymentSheet {
 
   componentDidLoad() {
     const modal = this.el.querySelector('stripe-sheet');
+
     modal.addEventListener('close', () => {
       this.closed.emit();
     });
   }
 
+  /**
+   * Get the inner component 
+   */
   @Method()
   public async getStripePaymentSheetElement() {
     return this.el.querySelector('stripe-payment');
   }
 
+  /**
+   * open modal
+   */
   @Method()
-  public present() {
+  public async present() {
     this.open = true;
 
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
       const paymentSheet = this.el.querySelector('stripe-payment');
 
       paymentSheet.addEventListener('formSubmit', async props => {
@@ -117,6 +122,9 @@ export class StripePaymentSheet {
     });
   }
 
+  /**
+   * Update Stripe client loading process 
+   */
   @Method()
   public async updateProgress(progress: ProgressStatus) {
     const paymentSheet = this.el.querySelector('stripe-payment');
@@ -124,6 +132,9 @@ export class StripePaymentSheet {
     return paymentSheet.updateProgress(progress);
   }
 
+  /**
+   * Remove the modal
+   */
   @Method()
   public async destroy() {
     const paymentSheet = this.el.querySelector('stripe-payment');
@@ -132,6 +143,10 @@ export class StripePaymentSheet {
     this.el.remove();
   }
 
+  /**
+   * 
+   * Add payment request button
+   */
   @Method()
   public async setPaymentRequestButton(options: PaymentRequestButtonOption) {
       const elements = this.el.getElementsByTagName('stripe-payment')
