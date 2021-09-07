@@ -58,6 +58,16 @@ Type: `Promise<unknown>`
 
 
 
+### `setPaymentRequestButton(options: PaymentRequestButtonOption) => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
 ### `updateProgress(progress: ProgressStatus) => Promise<HTMLStripePaymentSheetElement>`
 
 
