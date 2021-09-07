@@ -82,9 +82,9 @@ Type: `Promise<this>`
 ### Graph
 ```mermaid
 graph TD;
-  stripe-payment-sheet --> stripe-payment-request-button
-  stripe-payment-sheet-modal --> stripe-payment-sheet
-  style stripe-payment-sheet fill:#f9f,stroke:#333,stroke-width:4px
+  stripe-payment --> stripe-payment-request-button
+  stripe-payment-sheet-modal --> stripe-payment
+  style stripe-payment fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------

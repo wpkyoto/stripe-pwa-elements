@@ -101,7 +101,7 @@ export class StripePaymentSheetModal {
 
   @Method()
   public async getStripePaymentSheetElement() {
-    return this.el.querySelector('stripe-payment-sheet');
+    return this.el.querySelector('stripe-payment');
   }
 
   @Method()
@@ -109,7 +109,7 @@ export class StripePaymentSheetModal {
     this.open = true;
 
     return new Promise(async (resolve, reject) => {
-      const paymentSheet = this.el.querySelector('stripe-payment-sheet');
+      const paymentSheet = this.el.querySelector('stripe-payment');
 
       paymentSheet.addEventListener('formSubmit', async props => {
         resolve(props);
@@ -120,14 +120,14 @@ export class StripePaymentSheetModal {
 
   @Method()
   public async updateProgress(progress: ProgressStatus) {
-    const paymentSheet = this.el.querySelector('stripe-payment-sheet');
+    const paymentSheet = this.el.querySelector('stripe-payment');
 
     return paymentSheet.updateProgress(progress);
   }
 
   @Method()
   public async destroy() {
-    const paymentSheet = this.el.querySelector('stripe-payment-sheet');
+    const paymentSheet = this.el.querySelector('stripe-payment');
 
     paymentSheet.remove();
     this.el.remove();
@@ -135,7 +135,7 @@ export class StripePaymentSheetModal {
 
   @Method()
   public async setPaymentRequestButton(options: PaymentRequestButtonOption) {
-      const elements = this.el.getElementsByTagName('stripe-payment-sheet')
+      const elements = this.el.getElementsByTagName('stripe-payment')
 
       if (elements.length < 1) {
         return;
@@ -152,7 +152,7 @@ export class StripePaymentSheetModal {
   render() {
     return (
       <stripe-sheet open={this.open} showCloseButton={this.showCloseButton}>
-        <stripe-payment-sheet
+        <stripe-payment
           showLabel={this.showLabel}
           publishableKey={this.publishableKey}
           intentClientSecret={this.intentClientSecret}
@@ -160,7 +160,7 @@ export class StripePaymentSheetModal {
           handleSubmit={this.handleSubmit}
           stripeDidLoaded={this.stripeDidLoaded}
           intentType={this.intentType}
-        ></stripe-payment-sheet>
+        ></stripe-payment>
       </stripe-sheet>
     );
   }

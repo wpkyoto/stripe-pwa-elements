@@ -8,45 +8,7 @@ import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { DefaultFormSubmitResult, FormSubmitEvent, FormSubmitHandler, IntentType, PaymentRequestButtonOption, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
 import { PaymentRequestOptions } from "@stripe/stripe-js";
 export namespace Components {
-    interface StripePaymentRequestButton {
-        /**
-          * Get Stripe.js, and initialize elements
-          * @param publishableKey
-         */
-        "initStripe": (publishableKey: string) => Promise<void>;
-        /**
-          * Set handler of the `paymentRequest.on('paymentmethod'` event.
-          * @example ```  element.setPaymentMethodEventHandler(async (event, stripe) => { // Confirm the PaymentIntent with the payment method returned from the payment request.   const {error} = await stripe.confirmCardPayment(     paymentIntent.client_secret,     {      payment_method: event.paymentMethod.id,      shipping: {        name: event.shippingAddress.recipient,        phone: event.shippingAddress.phone,        address: {          line1: event.shippingAddress.addressLine[0],          city: event.shippingAddress.city,          postal_code: event.shippingAddress.postalCode,          state: event.shippingAddress.region,          country: event.shippingAddress.country,        },      },    },    {handleActions: false}  ); ```
-         */
-        "paymentMethodEventHandler"?: PaymentRequestPaymentMethodEventHandler;
-        /**
-          * Your Stripe publishable API key.
-         */
-        "publishableKey": string;
-        "setPaymentMethodEventHandler": (handler: PaymentRequestPaymentMethodEventHandler) => Promise<void>;
-        /**
-          * @param option
-          * @private
-         */
-        "setPaymentRequestOption": (option: PaymentRequestOptions) => Promise<this>;
-        "setPaymentRequestShippingAddressEventHandler": (handler: PaymentRequestShippingAddressEventHandler) => Promise<void>;
-        "setPaymentRequestShippingOptionEventHandler": (handler: PaymentRequestShippingOptionEventHandler) => Promise<void>;
-        /**
-          * Set handler of the `paymentRequest.on('shippingaddresschange')` event
-          * @example ```  element.setPaymentRequestShippingAddressEventHandler(async (event, stripe) => {   const response = await store.updatePaymentIntentWithShippingCost(     paymentIntent.id,     store.getLineItems(),     event.shippingOption   );  }) ```
-         */
-        "shippingAddressEventHandler"?: PaymentRequestShippingAddressEventHandler;
-        /**
-          * Set handler of the `paymentRequest.on('shippingoptionchange')` event
-          * @example ```  element.setPaymentRequestShippingOptionEventHandler(async (event, stripe) => {   event.updateWith({status: 'success'});  }) ```
-         */
-        "shippingOptionEventHandler"?: PaymentRequestShippingOptionEventHandler;
-        /**
-          * Stripe.js class loaded handler
-         */
-        "stripeDidLoaded"?: StripeDidLoadedHandler;
-    }
-    interface StripePaymentSheet {
+    interface StripePayment {
         /**
           * Form submit event handler
          */
@@ -104,9 +66,47 @@ export namespace Components {
          */
         "updateProgress": (progress: ProgressStatus) => Promise<this>;
     }
+    interface StripePaymentRequestButton {
+        /**
+          * Get Stripe.js, and initialize elements
+          * @param publishableKey
+         */
+        "initStripe": (publishableKey: string) => Promise<void>;
+        /**
+          * Set handler of the `paymentRequest.on('paymentmethod'` event.
+          * @example ```  element.setPaymentMethodEventHandler(async (event, stripe) => { // Confirm the PaymentIntent with the payment method returned from the payment request.   const {error} = await stripe.confirmCardPayment(     paymentIntent.client_secret,     {      payment_method: event.paymentMethod.id,      shipping: {        name: event.shippingAddress.recipient,        phone: event.shippingAddress.phone,        address: {          line1: event.shippingAddress.addressLine[0],          city: event.shippingAddress.city,          postal_code: event.shippingAddress.postalCode,          state: event.shippingAddress.region,          country: event.shippingAddress.country,        },      },    },    {handleActions: false}  ); ```
+         */
+        "paymentMethodEventHandler"?: PaymentRequestPaymentMethodEventHandler;
+        /**
+          * Your Stripe publishable API key.
+         */
+        "publishableKey": string;
+        "setPaymentMethodEventHandler": (handler: PaymentRequestPaymentMethodEventHandler) => Promise<void>;
+        /**
+          * @param option
+          * @private
+         */
+        "setPaymentRequestOption": (option: PaymentRequestOptions) => Promise<this>;
+        "setPaymentRequestShippingAddressEventHandler": (handler: PaymentRequestShippingAddressEventHandler) => Promise<void>;
+        "setPaymentRequestShippingOptionEventHandler": (handler: PaymentRequestShippingOptionEventHandler) => Promise<void>;
+        /**
+          * Set handler of the `paymentRequest.on('shippingaddresschange')` event
+          * @example ```  element.setPaymentRequestShippingAddressEventHandler(async (event, stripe) => {   const response = await store.updatePaymentIntentWithShippingCost(     paymentIntent.id,     store.getLineItems(),     event.shippingOption   );  }) ```
+         */
+        "shippingAddressEventHandler"?: PaymentRequestShippingAddressEventHandler;
+        /**
+          * Set handler of the `paymentRequest.on('shippingoptionchange')` event
+          * @example ```  element.setPaymentRequestShippingOptionEventHandler(async (event, stripe) => {   event.updateWith({status: 'success'});  }) ```
+         */
+        "shippingOptionEventHandler"?: PaymentRequestShippingOptionEventHandler;
+        /**
+          * Stripe.js class loaded handler
+         */
+        "stripeDidLoaded"?: StripeDidLoadedHandler;
+    }
     interface StripePaymentSheetModal {
         "destroy": () => Promise<void>;
-        "getStripePaymentSheetElement": () => Promise<HTMLStripePaymentSheetElement>;
+        "getStripePaymentSheetElement": () => Promise<HTMLStripePaymentElement>;
         /**
           * Form submit event handler
          */
@@ -148,7 +148,7 @@ export namespace Components {
           * Stripe.js class loaded handler
          */
         "stripeDidLoaded"?: StripeDidLoadedHandler;
-        "updateProgress": (progress: ProgressStatus) => Promise<HTMLStripePaymentSheetElement>;
+        "updateProgress": (progress: ProgressStatus) => Promise<HTMLStripePaymentElement>;
     }
     interface StripeSheet {
         /**
@@ -174,17 +174,17 @@ export namespace Components {
     }
 }
 declare global {
+    interface HTMLStripePaymentElement extends Components.StripePayment, HTMLStencilElement {
+    }
+    var HTMLStripePaymentElement: {
+        prototype: HTMLStripePaymentElement;
+        new (): HTMLStripePaymentElement;
+    };
     interface HTMLStripePaymentRequestButtonElement extends Components.StripePaymentRequestButton, HTMLStencilElement {
     }
     var HTMLStripePaymentRequestButtonElement: {
         prototype: HTMLStripePaymentRequestButtonElement;
         new (): HTMLStripePaymentRequestButtonElement;
-    };
-    interface HTMLStripePaymentSheetElement extends Components.StripePaymentSheet, HTMLStencilElement {
-    }
-    var HTMLStripePaymentSheetElement: {
-        prototype: HTMLStripePaymentSheetElement;
-        new (): HTMLStripePaymentSheetElement;
     };
     interface HTMLStripePaymentSheetModalElement extends Components.StripePaymentSheetModal, HTMLStencilElement {
     }
@@ -199,44 +199,14 @@ declare global {
         new (): HTMLStripeSheetElement;
     };
     interface HTMLElementTagNameMap {
+        "stripe-payment": HTMLStripePaymentElement;
         "stripe-payment-request-button": HTMLStripePaymentRequestButtonElement;
-        "stripe-payment-sheet": HTMLStripePaymentSheetElement;
         "stripe-payment-sheet-modal": HTMLStripePaymentSheetModalElement;
         "stripe-sheet": HTMLStripeSheetElement;
     }
 }
 declare namespace LocalJSX {
-    interface StripePaymentRequestButton {
-        /**
-          * Stripe Client loaded event
-          * @example ``` stripeElement  .addEventListener('stripeLoaded', async ({ detail: {stripe} }) => {   stripe     .createSource({       type: 'ideal',       amount: 1099,       currency: 'eur',       owner: {         name: 'Jenny Rosen',       },       redirect: {         return_url: 'https://shop.example.com/crtA6B28E1',       },     })     .then(function(result) {       // Handle result.error or result.source     });   }); ```
-         */
-        "onStripeLoaded"?: (event: CustomEvent<StripeLoadedEvent>) => void;
-        /**
-          * Set handler of the `paymentRequest.on('paymentmethod'` event.
-          * @example ```  element.setPaymentMethodEventHandler(async (event, stripe) => { // Confirm the PaymentIntent with the payment method returned from the payment request.   const {error} = await stripe.confirmCardPayment(     paymentIntent.client_secret,     {      payment_method: event.paymentMethod.id,      shipping: {        name: event.shippingAddress.recipient,        phone: event.shippingAddress.phone,        address: {          line1: event.shippingAddress.addressLine[0],          city: event.shippingAddress.city,          postal_code: event.shippingAddress.postalCode,          state: event.shippingAddress.region,          country: event.shippingAddress.country,        },      },    },    {handleActions: false}  ); ```
-         */
-        "paymentMethodEventHandler"?: PaymentRequestPaymentMethodEventHandler;
-        /**
-          * Your Stripe publishable API key.
-         */
-        "publishableKey"?: string;
-        /**
-          * Set handler of the `paymentRequest.on('shippingaddresschange')` event
-          * @example ```  element.setPaymentRequestShippingAddressEventHandler(async (event, stripe) => {   const response = await store.updatePaymentIntentWithShippingCost(     paymentIntent.id,     store.getLineItems(),     event.shippingOption   );  }) ```
-         */
-        "shippingAddressEventHandler"?: PaymentRequestShippingAddressEventHandler;
-        /**
-          * Set handler of the `paymentRequest.on('shippingoptionchange')` event
-          * @example ```  element.setPaymentRequestShippingOptionEventHandler(async (event, stripe) => {   event.updateWith({status: 'success'});  }) ```
-         */
-        "shippingOptionEventHandler"?: PaymentRequestShippingOptionEventHandler;
-        /**
-          * Stripe.js class loaded handler
-         */
-        "stripeDidLoaded"?: StripeDidLoadedHandler;
-    }
-    interface StripePaymentSheet {
+    interface StripePayment {
         /**
           * Form submit event handler
          */
@@ -279,6 +249,36 @@ declare namespace LocalJSX {
          */
         "showLabel"?: boolean;
         "showPaymentRequestButton"?: boolean;
+        /**
+          * Stripe.js class loaded handler
+         */
+        "stripeDidLoaded"?: StripeDidLoadedHandler;
+    }
+    interface StripePaymentRequestButton {
+        /**
+          * Stripe Client loaded event
+          * @example ``` stripeElement  .addEventListener('stripeLoaded', async ({ detail: {stripe} }) => {   stripe     .createSource({       type: 'ideal',       amount: 1099,       currency: 'eur',       owner: {         name: 'Jenny Rosen',       },       redirect: {         return_url: 'https://shop.example.com/crtA6B28E1',       },     })     .then(function(result) {       // Handle result.error or result.source     });   }); ```
+         */
+        "onStripeLoaded"?: (event: CustomEvent<StripeLoadedEvent>) => void;
+        /**
+          * Set handler of the `paymentRequest.on('paymentmethod'` event.
+          * @example ```  element.setPaymentMethodEventHandler(async (event, stripe) => { // Confirm the PaymentIntent with the payment method returned from the payment request.   const {error} = await stripe.confirmCardPayment(     paymentIntent.client_secret,     {      payment_method: event.paymentMethod.id,      shipping: {        name: event.shippingAddress.recipient,        phone: event.shippingAddress.phone,        address: {          line1: event.shippingAddress.addressLine[0],          city: event.shippingAddress.city,          postal_code: event.shippingAddress.postalCode,          state: event.shippingAddress.region,          country: event.shippingAddress.country,        },      },    },    {handleActions: false}  ); ```
+         */
+        "paymentMethodEventHandler"?: PaymentRequestPaymentMethodEventHandler;
+        /**
+          * Your Stripe publishable API key.
+         */
+        "publishableKey"?: string;
+        /**
+          * Set handler of the `paymentRequest.on('shippingaddresschange')` event
+          * @example ```  element.setPaymentRequestShippingAddressEventHandler(async (event, stripe) => {   const response = await store.updatePaymentIntentWithShippingCost(     paymentIntent.id,     store.getLineItems(),     event.shippingOption   );  }) ```
+         */
+        "shippingAddressEventHandler"?: PaymentRequestShippingAddressEventHandler;
+        /**
+          * Set handler of the `paymentRequest.on('shippingoptionchange')` event
+          * @example ```  element.setPaymentRequestShippingOptionEventHandler(async (event, stripe) => {   event.updateWith({status: 'success'});  }) ```
+         */
+        "shippingOptionEventHandler"?: PaymentRequestShippingOptionEventHandler;
         /**
           * Stripe.js class loaded handler
          */
@@ -338,8 +338,8 @@ declare namespace LocalJSX {
         "showCloseButton"?: boolean;
     }
     interface IntrinsicElements {
+        "stripe-payment": StripePayment;
         "stripe-payment-request-button": StripePaymentRequestButton;
-        "stripe-payment-sheet": StripePaymentSheet;
         "stripe-payment-sheet-modal": StripePaymentSheetModal;
         "stripe-sheet": StripeSheet;
     }
@@ -348,8 +348,8 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "stripe-payment": LocalJSX.StripePayment & JSXBase.HTMLAttributes<HTMLStripePaymentElement>;
             "stripe-payment-request-button": LocalJSX.StripePaymentRequestButton & JSXBase.HTMLAttributes<HTMLStripePaymentRequestButtonElement>;
-            "stripe-payment-sheet": LocalJSX.StripePaymentSheet & JSXBase.HTMLAttributes<HTMLStripePaymentSheetElement>;
             "stripe-payment-sheet-modal": LocalJSX.StripePaymentSheetModal & JSXBase.HTMLAttributes<HTMLStripePaymentSheetModalElement>;
             "stripe-sheet": LocalJSX.StripeSheet & JSXBase.HTMLAttributes<HTMLStripeSheetElement>;
         }

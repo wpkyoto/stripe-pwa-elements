@@ -13,12 +13,12 @@ import {
 import { i18n } from '../../utils/i18n';
 
 @Component({
-  tag: 'stripe-payment-sheet',
+  tag: 'stripe-payment',
   styleUrl: 'stripe-payment-sheet.scss',
   shadow: false,
 })
-export class StripePaymentSheet {
-  @Element() el: HTMLStripePaymentSheetElement;
+export class StripePayment {
+  @Element() el: HTMLStripePaymentElement;
 
   /**
    * Status of the Stripe client initilizing process

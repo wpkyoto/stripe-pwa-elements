@@ -39,13 +39,13 @@ Type: `Promise<void>`
 
 
 
-### `getStripePaymentSheetElement() => Promise<HTMLStripePaymentSheetElement>`
+### `getStripePaymentSheetElement() => Promise<HTMLStripePaymentElement>`
 
 
 
 #### Returns
 
-Type: `Promise<HTMLStripePaymentSheetElement>`
+Type: `Promise<HTMLStripePaymentElement>`
 
 
 
@@ -69,13 +69,13 @@ Type: `Promise<void>`
 
 
 
-### `updateProgress(progress: ProgressStatus) => Promise<HTMLStripePaymentSheetElement>`
+### `updateProgress(progress: ProgressStatus) => Promise<HTMLStripePaymentElement>`
 
 
 
 #### Returns
 
-Type: `Promise<HTMLStripePaymentSheetElement>`
+Type: `Promise<HTMLStripePaymentElement>`
 
 
 
@@ -85,15 +85,15 @@ Type: `Promise<HTMLStripePaymentSheetElement>`
 ### Depends on
 
 - [stripe-sheet](../stripe-element-modal)
-- [stripe-payment-sheet](../stripe-payment-sheet)
+- [stripe-payment](../stripe-payment-sheet)
 
 ### Graph
 ```mermaid
 graph TD;
   stripe-payment-sheet-modal --> stripe-sheet
-  stripe-payment-sheet-modal --> stripe-payment-sheet
+  stripe-payment-sheet-modal --> stripe-payment
   stripe-sheet --> ion-icon
-  stripe-payment-sheet --> stripe-payment-request-button
+  stripe-payment --> stripe-payment-request-button
   style stripe-payment-sheet-modal fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

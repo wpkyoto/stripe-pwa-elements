@@ -1,15 +1,15 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { StripePaymentSheet } from '../stripe-payment-sheet';
+import { StripePayment } from '../stripe-payment-sheet';
 
-describe('stripe-payment-sheet', () => {
+describe('stripe-payment', () => {
   it('renders', async () => {
     const page = await newSpecPage({
-      components: [StripePaymentSheet],
-      html: `<stripe-payment-sheet></stripe-payment-sheet>`,
+      components: [StripePayment],
+      html: `<stripe-payment></stripe-payment>`,
     });
 
     expect(page.root).toEqualHtml(`
- <stripe-payment-sheet class="undefined">
+ <stripe-payment class="undefined">
       <div class="stripe-payment-sheet-wrap">
         <form id="stripe-card-element">
           <div class="stripe-heading">
@@ -46,7 +46,7 @@ describe('stripe-payment-sheet', () => {
           </div>
         </form>
       </div>
-    </stripe-payment-sheet>
+    </stripe-payment>
     `);
   });
 });
