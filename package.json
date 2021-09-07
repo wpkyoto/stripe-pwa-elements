@@ -22,6 +22,7 @@
     "test": "stencil test --spec",
     "test:e2e": "stencil test --spec --e2e",
     "test.watch": "stencil test --spec --e2e --watchAll",
+    "g": "stencil generate",
     "generate": "stencil generate",
     "format": "prettier --write src",
     "example:copy": "stencil build --docs && cp -R dist/stripe-elements example/",

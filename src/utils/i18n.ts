@@ -17,10 +17,11 @@ i18next.use(I18nextBrowserLanguageDetector).init({
         'Card Number': 'カード番号',
         'MM / YY': '月 / 年',
         'CVC': 'セキュリティコード(CVC)',
+        'Country or region': '地域',
+        'Postal Code': '郵便番号',
       },
     },
   },
 });
 
 export const i18n = i18next;
-export const t = i18next.t;

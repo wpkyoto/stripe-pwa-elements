@@ -39,6 +39,20 @@ describe('stripe-payment', () => {
               <div class="element-errors" id="card-errors"></div>
             </fieldset>
           </div>
+          <div style="margin-top: 1.5rem;">
+            <div class="stripe-section-title">
+              Country or region
+            </div>
+          </div>
+          <div class="card payment-info visible">
+            <fieldset class="stripe-input-box">
+              <div>
+                <label>
+                  <input class="StripeElement stripe-input-box" id="zip" inputmode="numeric" name="zip" placeholder="Postal Code" type="text" style="width: 100%;">
+                </label>
+              </div>
+            </fieldset>
+          </div>
           <div style="margin-top: 32px;">
             <button type="submit">
               Pay
