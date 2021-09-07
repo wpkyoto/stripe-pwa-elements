@@ -104,7 +104,7 @@ export namespace Components {
          */
         "stripeDidLoaded"?: StripeDidLoadedHandler;
     }
-    interface StripePaymentSheetModal {
+    interface StripePaymentSheet {
         "destroy": () => Promise<void>;
         "getStripePaymentSheetElement": () => Promise<HTMLStripePaymentElement>;
         /**
@@ -119,7 +119,7 @@ export namespace Components {
         "intentClientSecret"?: string;
         /**
           * Default submit handle type. If you want to use `setupIntent`, should update this attribute.
-          * @example ``` <stripe-payment-sheet-modal intent-type="setup" /> ```
+          * @example ``` <stripe-payment-sheet intent-type="setup" /> ```
          */
         "intentType": IntentType;
         /**
@@ -186,11 +186,11 @@ declare global {
         prototype: HTMLStripePaymentRequestButtonElement;
         new (): HTMLStripePaymentRequestButtonElement;
     };
-    interface HTMLStripePaymentSheetModalElement extends Components.StripePaymentSheetModal, HTMLStencilElement {
+    interface HTMLStripePaymentSheetElement extends Components.StripePaymentSheet, HTMLStencilElement {
     }
-    var HTMLStripePaymentSheetModalElement: {
-        prototype: HTMLStripePaymentSheetModalElement;
-        new (): HTMLStripePaymentSheetModalElement;
+    var HTMLStripePaymentSheetElement: {
+        prototype: HTMLStripePaymentSheetElement;
+        new (): HTMLStripePaymentSheetElement;
     };
     interface HTMLStripeSheetElement extends Components.StripeSheet, HTMLStencilElement {
     }
@@ -201,7 +201,7 @@ declare global {
     interface HTMLElementTagNameMap {
         "stripe-payment": HTMLStripePaymentElement;
         "stripe-payment-request-button": HTMLStripePaymentRequestButtonElement;
-        "stripe-payment-sheet-modal": HTMLStripePaymentSheetModalElement;
+        "stripe-payment-sheet": HTMLStripePaymentSheetElement;
         "stripe-sheet": HTMLStripeSheetElement;
     }
 }
@@ -284,7 +284,7 @@ declare namespace LocalJSX {
          */
         "stripeDidLoaded"?: StripeDidLoadedHandler;
     }
-    interface StripePaymentSheetModal {
+    interface StripePaymentSheet {
         /**
           * Form submit event handler
          */
@@ -297,7 +297,7 @@ declare namespace LocalJSX {
         "intentClientSecret"?: string;
         /**
           * Default submit handle type. If you want to use `setupIntent`, should update this attribute.
-          * @example ``` <stripe-payment-sheet-modal intent-type="setup" /> ```
+          * @example ``` <stripe-payment-sheet intent-type="setup" /> ```
          */
         "intentType"?: IntentType;
         "onClosed"?: (event: CustomEvent<any>) => void;
@@ -340,7 +340,7 @@ declare namespace LocalJSX {
     interface IntrinsicElements {
         "stripe-payment": StripePayment;
         "stripe-payment-request-button": StripePaymentRequestButton;
-        "stripe-payment-sheet-modal": StripePaymentSheetModal;
+        "stripe-payment-sheet": StripePaymentSheet;
         "stripe-sheet": StripeSheet;
     }
 }
@@ -350,7 +350,7 @@ declare module "@stencil/core" {
         interface IntrinsicElements {
             "stripe-payment": LocalJSX.StripePayment & JSXBase.HTMLAttributes<HTMLStripePaymentElement>;
             "stripe-payment-request-button": LocalJSX.StripePaymentRequestButton & JSXBase.HTMLAttributes<HTMLStripePaymentRequestButtonElement>;
-            "stripe-payment-sheet-modal": LocalJSX.StripePaymentSheetModal & JSXBase.HTMLAttributes<HTMLStripePaymentSheetModalElement>;
+            "stripe-payment-sheet": LocalJSX.StripePaymentSheet & JSXBase.HTMLAttributes<HTMLStripePaymentSheetElement>;
             "stripe-sheet": LocalJSX.StripeSheet & JSXBase.HTMLAttributes<HTMLStripeSheetElement>;
         }
     }

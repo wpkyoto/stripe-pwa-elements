@@ -90,11 +90,11 @@ Type: `Promise<HTMLStripePaymentElement>`
 ### Graph
 ```mermaid
 graph TD;
-  stripe-payment-sheet-modal --> stripe-sheet
-  stripe-payment-sheet-modal --> stripe-payment
+  stripe-payment-sheet --> stripe-sheet
+  stripe-payment-sheet --> stripe-payment
   stripe-sheet --> ion-icon
   stripe-payment --> stripe-payment-request-button
-  style stripe-payment-sheet-modal fill:#f9f,stroke:#333,stroke-width:4px
+  style stripe-payment-sheet fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------

@@ -5,12 +5,12 @@ import {
  } from '../../interfaces';
 
 @Component({
-  tag: 'stripe-payment-sheet-modal',
+  tag: 'stripe-payment-sheet',
   styleUrl: 'stripe-payment-sheet-modal.css',
   shadow: false,
 })
-export class StripePaymentSheetModal {
-  @Element() el: HTMLStripePaymentSheetModalElement;
+export class StripePaymentSheet {
+  @Element() el: HTMLStripePaymentSheetElement;
 
   /**
    * Your Stripe publishable API key.
@@ -54,7 +54,7 @@ export class StripePaymentSheetModal {
    * If you want to use `setupIntent`, should update this attribute.
    * @example
    * ```
-   * <stripe-payment-sheet-modal intent-type="setup" />
+   * <stripe-payment-sheet intent-type="setup" />
    * ```
    */
   @Prop() intentType: IntentType = 'payment'
@@ -92,8 +92,7 @@ export class StripePaymentSheetModal {
   @Event() closed: EventEmitter;
 
   componentDidLoad() {
-    const modal = this.el.querySelector('stripe-element-modal');
-
+    const modal = this.el.querySelector('stripe-sheet');
     modal.addEventListener('close', () => {
       this.closed.emit();
     });

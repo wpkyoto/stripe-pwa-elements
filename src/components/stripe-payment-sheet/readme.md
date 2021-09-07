@@ -73,7 +73,7 @@ Type: `Promise<this>`
 
 ### Used by
 
- - [stripe-payment-sheet-modal](../stripe-payment-sheet-modal)
+ - [stripe-payment-sheet](../stripe-payment-sheet-modal)
 
 ### Depends on
 
@@ -83,7 +83,7 @@ Type: `Promise<this>`
 ```mermaid
 graph TD;
   stripe-payment --> stripe-payment-request-button
-  stripe-payment-sheet-modal --> stripe-payment
+  stripe-payment-sheet --> stripe-payment
   style stripe-payment fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
