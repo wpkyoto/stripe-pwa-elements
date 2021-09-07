@@ -46,12 +46,12 @@
         const resultElement = document.getElementById('result')
         const errorMessage = document.getElementById('error-message')
         const targetElement = document.getElementById('stripe');
-        const modalElement = document.createElement('stripe-element-modal');
+        const modalElement = document.createElement('stripe-sheet');
 
         /**
          * Remove Mounted Stripe Elements when the modal has been closed
          **/
-        customElements.whenDefined('stripe-element-modal')
+        customElements.whenDefined('stripe-sheet')
             .then(() => {
                 modalElement.addEventListener('close', () => {
                     modalElement.innerHTML = ''
@@ -83,7 +83,7 @@
             /**
              * Wait for defining these components
              **/
-            await customElements.whenDefined('stripe-element-modal')
+            await customElements.whenDefined('stripe-sheet')
             await customElements.whenDefined('stripe-payment-request-button')
             await customElements.whenDefined('stripe-payment-sheet')
             /**

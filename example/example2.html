@@ -18,14 +18,14 @@
       </nav>
       <div id="result"></div>
 
-      <stripe-element-modal open="true">
+      <stripe-sheet open="true">
           <stripe-payment-sheet
             publishable-key="pk_test_xxxxx"
             show-label="false"
             intent-client-secret="pi-xxxxxx"
             should-use-default-form-submit-action="false"
           ></stripe-payment-sheet>
-      </stripe-element-modal>
+      </stripe-sheet>
     
     <script>
         customElements.whenDefined('stripe-payment-sheet')

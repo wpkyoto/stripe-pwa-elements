@@ -151,7 +151,7 @@ export class StripePaymentSheetModal {
 
   render() {
     return (
-      <stripe-element-modal open={this.open} showCloseButton={this.showCloseButton}>
+      <stripe-sheet open={this.open} showCloseButton={this.showCloseButton}>
         <stripe-payment-sheet
           showLabel={this.showLabel}
           publishableKey={this.publishableKey}
@@ -161,7 +161,7 @@ export class StripePaymentSheetModal {
           stripeDidLoaded={this.stripeDidLoaded}
           intentType={this.intentType}
         ></stripe-payment-sheet>
-      </stripe-element-modal>
+      </stripe-sheet>
     );
   }
 }

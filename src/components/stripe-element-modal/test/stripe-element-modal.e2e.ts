@@ -1,12 +1,12 @@
 import { newE2EPage } from '@stencil/core/testing';
 
-describe('stripe-element-modal', () => {
+describe('stripe-sheet', () => {
   it('renders', async () => {
     const page = await newE2EPage();
 
-    await page.setContent('<stripe-element-modal></stripe-element-modal>');
+    await page.setContent('<stripe-sheet></stripe-sheet>');
 
-    const element = await page.find('stripe-element-modal');
+    const element = await page.find('stripe-sheet');
 
     expect(element).toHaveClass('hydrated');
   });

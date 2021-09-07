@@ -64,9 +64,9 @@ Type: `Promise<void>`
 ### Graph
 ```mermaid
 graph TD;
-  stripe-element-modal --> ion-icon
-  stripe-payment-sheet-modal --> stripe-element-modal
-  style stripe-element-modal fill:#f9f,stroke:#333,stroke-width:4px
+  stripe-sheet --> ion-icon
+  stripe-payment-sheet-modal --> stripe-sheet
+  style stripe-sheet fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------

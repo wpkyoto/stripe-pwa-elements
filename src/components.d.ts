@@ -8,28 +8,6 @@ import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { DefaultFormSubmitResult, FormSubmitEvent, FormSubmitHandler, IntentType, PaymentRequestButtonOption, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
 import { PaymentRequestOptions } from "@stripe/stripe-js";
 export namespace Components {
-    interface StripeElementModal {
-        /**
-          * Close the modal
-         */
-        "closeModal": () => Promise<void>;
-        /**
-          * Modal state. If true, the modal will open
-         */
-        "open": boolean;
-        /**
-          * Open the modal
-         */
-        "openModal": () => Promise<void>;
-        /**
-          * If true, the modal display close button
-         */
-        "showCloseButton": boolean;
-        /**
-          * Toggle modal state
-         */
-        "toggleModal": () => Promise<void>;
-    }
     interface StripePaymentRequestButton {
         /**
           * Get Stripe.js, and initialize elements
@@ -172,14 +150,30 @@ export namespace Components {
         "stripeDidLoaded"?: StripeDidLoadedHandler;
         "updateProgress": (progress: ProgressStatus) => Promise<HTMLStripePaymentSheetElement>;
     }
+    interface StripeSheet {
+        /**
+          * Close the modal
+         */
+        "closeModal": () => Promise<void>;
+        /**
+          * Modal state. If true, the modal will open
+         */
+        "open": boolean;
+        /**
+          * Open the modal
+         */
+        "openModal": () => Promise<void>;
+        /**
+          * If true, the modal display close button
+         */
+        "showCloseButton": boolean;
+        /**
+          * Toggle modal state
+         */
+        "toggleModal": () => Promise<void>;
+    }
 }
 declare global {
-    interface HTMLStripeElementModalElement extends Components.StripeElementModal, HTMLStencilElement {
-    }
-    var HTMLStripeElementModalElement: {
-        prototype: HTMLStripeElementModalElement;
-        new (): HTMLStripeElementModalElement;
-    };
     interface HTMLStripePaymentRequestButtonElement extends Components.StripePaymentRequestButton, HTMLStencilElement {
     }
     var HTMLStripePaymentRequestButtonElement: {
@@ -198,25 +192,20 @@ declare global {
         prototype: HTMLStripePaymentSheetModalElement;
         new (): HTMLStripePaymentSheetModalElement;
     };
+    interface HTMLStripeSheetElement extends Components.StripeSheet, HTMLStencilElement {
+    }
+    var HTMLStripeSheetElement: {
+        prototype: HTMLStripeSheetElement;
+        new (): HTMLStripeSheetElement;
+    };
     interface HTMLElementTagNameMap {
-        "stripe-element-modal": HTMLStripeElementModalElement;
         "stripe-payment-request-button": HTMLStripePaymentRequestButtonElement;
         "stripe-payment-sheet": HTMLStripePaymentSheetElement;
         "stripe-payment-sheet-modal": HTMLStripePaymentSheetModalElement;
+        "stripe-sheet": HTMLStripeSheetElement;
     }
 }
 declare namespace LocalJSX {
-    interface StripeElementModal {
-        "onClose"?: (event: CustomEvent<any>) => void;
-        /**
-          * Modal state. If true, the modal will open
-         */
-        "open"?: boolean;
-        /**
-          * If true, the modal display close button
-         */
-        "showCloseButton"?: boolean;
-    }
     interface StripePaymentRequestButton {
         /**
           * Stripe Client loaded event
@@ -337,21 +326,32 @@ declare namespace LocalJSX {
          */
         "stripeDidLoaded"?: StripeDidLoadedHandler;
     }
+    interface StripeSheet {
+        "onClose"?: (event: CustomEvent<any>) => void;
+        /**
+          * Modal state. If true, the modal will open
+         */
+        "open"?: boolean;
+        /**
+          * If true, the modal display close button
+         */
+        "showCloseButton"?: boolean;
+    }
     interface IntrinsicElements {
-        "stripe-element-modal": StripeElementModal;
         "stripe-payment-request-button": StripePaymentRequestButton;
         "stripe-payment-sheet": StripePaymentSheet;
         "stripe-payment-sheet-modal": StripePaymentSheetModal;
+        "stripe-sheet": StripeSheet;
     }
 }
 export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
-            "stripe-element-modal": LocalJSX.StripeElementModal & JSXBase.HTMLAttributes<HTMLStripeElementModalElement>;
             "stripe-payment-request-button": LocalJSX.StripePaymentRequestButton & JSXBase.HTMLAttributes<HTMLStripePaymentRequestButtonElement>;
             "stripe-payment-sheet": LocalJSX.StripePaymentSheet & JSXBase.HTMLAttributes<HTMLStripePaymentSheetElement>;
             "stripe-payment-sheet-modal": LocalJSX.StripePaymentSheetModal & JSXBase.HTMLAttributes<HTMLStripePaymentSheetModalElement>;
+            "stripe-sheet": LocalJSX.StripeSheet & JSXBase.HTMLAttributes<HTMLStripeSheetElement>;
         }
     }
 }
