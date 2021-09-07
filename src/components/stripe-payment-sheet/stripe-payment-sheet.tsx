@@ -155,16 +155,16 @@ export class StripePaymentSheet {
    * customElements
    *  .whenDefined('stripe-card-element')
    *  .then(() => {
-   *     stripeElement.setAttribute('payment-intent-client-secret', 'dummy')
+   *     stripeElement.setAttribute('intent-client-secret', 'dummy')
    *   })
    * ```
    *
    * @example
    * ```
-   * <stripe-card-element payment-intent-client-secret="dummy" />
+   * <stripe-card-element intent-client-secret="dummy" />
    * ```
    */
-  @Prop() paymentIntentClientSecret?: string;
+  @Prop() intentClientSecret?: string;
 
   /**
    * The component will provide a function to call the `stripe.confirmCardPayment`API.
@@ -320,10 +320,10 @@ export class StripePaymentSheet {
    * @param event
    * @param param1
    */
-  private async defaultFormSubmitAction(event: Event, { stripe, cardNumber, paymentIntentClientSecret }: FormSubmitEvent) {
+  private async defaultFormSubmitAction(event: Event, { stripe, cardNumber, intentClientSecret }: FormSubmitEvent) {
     event.preventDefault();
     try {
-      const result = await stripe.confirmCardPayment(paymentIntentClientSecret, {
+      const result = await stripe.confirmCardPayment(intentClientSecret, {
         payment_method: {
           card: cardNumber,
         },
@@ -378,14 +378,14 @@ export class StripePaymentSheet {
     this.cardCVC.on('change', handleCardError);
 
     document.getElementById('stripe-card-element').addEventListener('submit', async e => {
-      const { cardCVC, cardExpiry, cardNumber, stripe, paymentIntentClientSecret } = this;
-      const submitEventProps: FormSubmitEvent = { cardCVC, cardExpiry, cardNumber, stripe, paymentIntentClientSecret };
+      const { cardCVC, cardExpiry, cardNumber, stripe, intentClientSecret } = this;
+      const submitEventProps: FormSubmitEvent = { cardCVC, cardExpiry, cardNumber, stripe, intentClientSecret };
 
       this.progress = 'loading';
       try {
         if (this.handleSubmit) {
           await this.handleSubmit(e, submitEventProps);
-        } else if (this.shouldUseDefaultFormSubmitAction === true && paymentIntentClientSecret) {
+        } else if (this.shouldUseDefaultFormSubmitAction === true && intentClientSecret) {
           await this.defaultFormSubmitAction(e, submitEventProps);
         } else {
           e.preventDefault();

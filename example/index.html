@@ -32,7 +32,7 @@
                         <br/>
                         <code>stripe payment_intents create --amount=100 --currency=jpy | jq .client_secret -r</code>
                     </p>
-                    <input name="payment-intent-client-secret" type="text" />
+                    <input name="intent-client-secret" type="text" />
                 </label>
             </fieldset>
             <button type="submit">Launch</button>
@@ -65,7 +65,7 @@
                 errorMessage.innerText = 'Stripe Publishable API Key is required'
                 return
             }
-            const paymentIntentClientSecret = document['open-modal-form']['payment-intent-client-secret'].value
+            const paymentIntentClientSecret = document['open-modal-form']['intent-client-secret'].value
             if (!paymentIntentClientSecret) {
                 errorMessage.innerText = 'Payment Intent Client Secret is required'
                 return
@@ -110,7 +110,7 @@
             /**
              * Set the payment intent client secret
              **/
-            stripeElement.setAttribute('payment-intent-client-secret', paymentIntentClientSecret)
+            stripeElement.setAttribute('intent-client-secret', paymentIntentClientSecret)
             stripeElement.setAttribute('payment-request-button', true)
 
             /**

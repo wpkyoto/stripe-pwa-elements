@@ -81,10 +81,10 @@ export namespace Components {
         "initStripe": (publishableKey: string) => Promise<void>;
         /**
           * The client secret from paymentIntent.create response
-          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.setAttribute('payment-intent-client-secret', 'dummy')   }) ```
-          * @example ``` <stripe-card-element payment-intent-client-secret="dummy" /> ```
+          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.setAttribute('intent-client-secret', 'dummy')   }) ```
+          * @example ``` <stripe-card-element intent-client-secret="dummy" /> ```
          */
-        "paymentIntentClientSecret"?: string;
+        "intentClientSecret"?: string;
         /**
           * Your Stripe publishable API key.
          */
@@ -130,15 +130,15 @@ export namespace Components {
          */
         "handleSubmit": FormSubmitHandler;
         /**
-          * Modal state. If true, the modal will open
-         */
-        "open": boolean;
-        /**
           * The client secret from paymentIntent.create response
           * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.setAttribute('payment-intent-client-secret', 'dummy')   }) ```
           * @example ``` <stripe-card-element payment-intent-client-secret="dummy" /> ```
          */
-        "paymentIntentClientSecret"?: string;
+        "intentClientSecret"?: string;
+        /**
+          * Modal state. If true, the modal will open
+         */
+        "open": boolean;
         "present": () => Promise<unknown>;
         /**
           * Your Stripe publishable API key.
@@ -244,6 +244,12 @@ declare namespace LocalJSX {
          */
         "handleSubmit"?: FormSubmitHandler;
         /**
+          * The client secret from paymentIntent.create response
+          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.setAttribute('intent-client-secret', 'dummy')   }) ```
+          * @example ``` <stripe-card-element intent-client-secret="dummy" /> ```
+         */
+        "intentClientSecret"?: string;
+        /**
           * Recieve the result of defaultFormSubmit event
           * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.addEventListener('defaultFormSubmitResult', async ({detail}) => {       if (detail instanceof Error) {         console.error(detail)       } else {         console.log(detail)       }     })   })
          */
@@ -258,12 +264,6 @@ declare namespace LocalJSX {
           * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement      .addEventListener('stripeLoaded', async ({ detail: {stripe} }) => {       stripe         .createSource({           type: 'ideal',           amount: 1099,           currency: 'eur',           owner: {             name: 'Jenny Rosen',           },           redirect: {             return_url: 'https://shop.example.com/crtA6B28E1',           },         })         .then(function(result) {           // Handle result.error or result.source         });       });   }) ```
          */
         "onStripeLoaded"?: (event: CustomEvent<StripeLoadedEvent>) => void;
-        /**
-          * The client secret from paymentIntent.create response
-          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.setAttribute('payment-intent-client-secret', 'dummy')   }) ```
-          * @example ``` <stripe-card-element payment-intent-client-secret="dummy" /> ```
-         */
-        "paymentIntentClientSecret"?: string;
         /**
           * Your Stripe publishable API key.
          */
@@ -287,17 +287,17 @@ declare namespace LocalJSX {
           * Form submit event handler
          */
         "handleSubmit"?: FormSubmitHandler;
-        "onClosed"?: (event: CustomEvent<any>) => void;
-        /**
-          * Modal state. If true, the modal will open
-         */
-        "open"?: boolean;
         /**
           * The client secret from paymentIntent.create response
           * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.setAttribute('payment-intent-client-secret', 'dummy')   }) ```
           * @example ``` <stripe-card-element payment-intent-client-secret="dummy" /> ```
          */
-        "paymentIntentClientSecret"?: string;
+        "intentClientSecret"?: string;
+        "onClosed"?: (event: CustomEvent<any>) => void;
+        /**
+          * Modal state. If true, the modal will open
+         */
+        "open"?: boolean;
         /**
           * Your Stripe publishable API key.
          */

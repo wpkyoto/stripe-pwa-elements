@@ -40,7 +40,7 @@ export class StripePaymentSheetModal {
    * <stripe-card-element payment-intent-client-secret="dummy" />
    * ```
    */
-  @Prop() paymentIntentClientSecret?: string;
+  @Prop() intentClientSecret?: string;
 
   /**
    * The component will provide a function to call the `stripe.confirmCardPayment`API.
@@ -145,7 +145,7 @@ export class StripePaymentSheetModal {
         <stripe-payment-sheet
           showLabel={this.showLabel}
           publishableKey={this.publishableKey}
-          paymentIntentClientSecret={this.paymentIntentClientSecret}
+          intentClientSecret={this.intentClientSecret}
           shouldUseDefaultFormSubmitAction={this.shouldUseDefaultFormSubmitAction}
           handleSubmit={this.handleSubmit}
           stripeDidLoaded={this.stripeDidLoaded}

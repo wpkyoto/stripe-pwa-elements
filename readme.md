@@ -45,7 +45,7 @@ https://github.com/stripe-elements/stripe-elements/blob/main/src/components/stri
           <stripe-payment-sheet
             publishable-key="pk_test_xxxxx"
             show-label="false"
-            payment-intent-client-secret="pi-xxxxxx"
+            intent-client-secret="pi-xxxxxx"
             should-use-default-form-submit-action="false"
           ></stripe-payment-sheet>
       </stripe-element-modal>
@@ -128,7 +128,7 @@ https://github.com/stripe-elements/stripe-elements/blob/main/src/components/stri
             /**
              * Set the payment intent client secret
              **/
-            stripeElement.setAttribute('payment-intent-client-secret', paymentIntentClientSecret)
+            stripeElement.setAttribute('intent-client-secret', paymentIntentClientSecret)
 
             /**
              * Disable default form submit event
