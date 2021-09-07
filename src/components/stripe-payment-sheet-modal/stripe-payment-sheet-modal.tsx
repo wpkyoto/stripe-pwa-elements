@@ -1,7 +1,7 @@
 import { Component, Prop, h, Method, Element, Event, EventEmitter } from '@stencil/core';
 import {
   StripeDidLoadedHandler, FormSubmitHandler, ProgressStatus,
-  PaymentRequestButtonOption,
+  PaymentRequestButtonOption, IntentType,
  } from '../../interfaces';
 
 @Component({
@@ -31,13 +31,13 @@ export class StripePaymentSheetModal {
    * customElements
    *  .whenDefined('stripe-card-element')
    *  .then(() => {
-   *     stripeElement.setAttribute('payment-intent-client-secret', 'dummy')
+   *     stripeElement.setAttribute('intent-client-secret', 'dummy')
    *   })
    * ```
    *
    * @example
    * ```
-   * <stripe-card-element payment-intent-client-secret="dummy" />
+   * <stripe-card-element intent-client-secret="dummy" />
    * ```
    */
   @Prop() intentClientSecret?: string;
@@ -48,6 +48,16 @@ export class StripePaymentSheetModal {
    * And listen the 'formSubmit' event on the element
    */
   @Prop() shouldUseDefaultFormSubmitAction = true;
+
+  /**
+   * Default submit handle type.
+   * If you want to use `setupIntent`, should update this attribute.
+   * @example
+   * ```
+   * <stripe-payment-sheet-modal intent-type="setup" />
+   * ```
+   */
+  @Prop() intentType: IntentType = 'payment'
 
   /**
    * Form submit event handler
@@ -149,6 +159,7 @@ export class StripePaymentSheetModal {
           shouldUseDefaultFormSubmitAction={this.shouldUseDefaultFormSubmitAction}
           handleSubmit={this.handleSubmit}
           stripeDidLoaded={this.stripeDidLoaded}
+          intentType={this.intentType}
         ></stripe-payment-sheet>
       </stripe-element-modal>
     );

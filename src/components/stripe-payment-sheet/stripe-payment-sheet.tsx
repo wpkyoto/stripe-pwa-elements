@@ -1,8 +1,15 @@
 import { Component, Prop, h, State, Method, EventEmitter, Event, Element } from '@stencil/core';
-import { loadStripe, PaymentIntentResult, Stripe, StripeCardCvcElement, StripeCardExpiryElement, StripeCardNumberElement } from '@stripe/stripe-js';
+import { loadStripe, Stripe, StripeCardCvcElement, StripeCardExpiryElement, StripeCardNumberElement } from '@stripe/stripe-js';
 import { checkPlatform } from '../../utils/utils';
-import { StripeDidLoadedHandler, StripeLoadedEvent, FormSubmitEvent, FormSubmitHandler, ProgressStatus,
-  PaymentRequestButtonOption, } from '../../interfaces';
+import {
+  StripeDidLoadedHandler,
+  StripeLoadedEvent,
+  FormSubmitEvent,
+  FormSubmitHandler,
+  ProgressStatus,
+  PaymentRequestButtonOption,
+  IntentType,
+  DefaultFormSubmitResult, } from '../../interfaces';
 import { i18n } from '../../utils/i18n';
 
 @Component({
@@ -22,6 +29,12 @@ export class StripePaymentSheet {
    * Stripe client class
    */
   @State() stripe: Stripe;
+
+  /**
+   * Default submit handle type.
+   * If you want to use `setupIntent`, should update this attribute.
+   */
+  @Prop() intentType: IntentType = 'payment'
 
   /**
    * Get Stripe.js, and initialize elements
@@ -296,8 +309,8 @@ export class StripePaymentSheet {
    *     })
    *   })
    */
-  @Event() defaultFormSubmitResult: EventEmitter<PaymentIntentResult | Error>;
-  async defaultFormSubmitResultHandler(result: PaymentIntentResult | Error) {
+  @Event() defaultFormSubmitResult: EventEmitter<DefaultFormSubmitResult>;
+  async defaultFormSubmitResultHandler(result: DefaultFormSubmitResult) {
     this.defaultFormSubmitResult.emit(result);
   }
 
@@ -323,11 +336,22 @@ export class StripePaymentSheet {
   private async defaultFormSubmitAction(event: Event, { stripe, cardNumber, intentClientSecret }: FormSubmitEvent) {
     event.preventDefault();
     try {
-      const result = await stripe.confirmCardPayment(intentClientSecret, {
-        payment_method: {
-          card: cardNumber,
-        },
-      });
+      const { intentType} = this
+      const result = await (() => {
+        if (intentType === 'payment') {
+          return stripe.confirmCardPayment(intentClientSecret, {
+            payment_method: {
+              card: cardNumber,
+            },
+          });
+        }
+
+        return stripe.confirmCardSetup(intentClientSecret, {
+          payment_method: {
+            card: cardNumber,
+          },
+        });
+      })()
 
       this.defaultFormSubmitResultHandler(result);
     } catch (e) {

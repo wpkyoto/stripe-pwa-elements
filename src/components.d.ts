@@ -5,8 +5,8 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { FormSubmitEvent, FormSubmitHandler, PaymentRequestButtonOption, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
-import { PaymentIntentResult, PaymentRequestOptions } from "@stripe/stripe-js";
+import { DefaultFormSubmitResult, FormSubmitEvent, FormSubmitHandler, IntentType, PaymentRequestButtonOption, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
+import { PaymentRequestOptions } from "@stripe/stripe-js";
 export namespace Components {
     interface StripeElementModal {
         /**
@@ -86,6 +86,10 @@ export namespace Components {
          */
         "intentClientSecret"?: string;
         /**
+          * Default submit handle type. If you want to use `setupIntent`, should update this attribute.
+         */
+        "intentType": IntentType;
+        /**
           * Your Stripe publishable API key.
          */
         "publishableKey": string;
@@ -131,10 +135,15 @@ export namespace Components {
         "handleSubmit": FormSubmitHandler;
         /**
           * The client secret from paymentIntent.create response
-          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.setAttribute('payment-intent-client-secret', 'dummy')   }) ```
-          * @example ``` <stripe-card-element payment-intent-client-secret="dummy" /> ```
+          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.setAttribute('intent-client-secret', 'dummy')   }) ```
+          * @example ``` <stripe-card-element intent-client-secret="dummy" /> ```
          */
         "intentClientSecret"?: string;
+        /**
+          * Default submit handle type. If you want to use `setupIntent`, should update this attribute.
+          * @example ``` <stripe-payment-sheet-modal intent-type="setup" /> ```
+         */
+        "intentType": IntentType;
         /**
           * Modal state. If true, the modal will open
          */
@@ -250,10 +259,14 @@ declare namespace LocalJSX {
          */
         "intentClientSecret"?: string;
         /**
+          * Default submit handle type. If you want to use `setupIntent`, should update this attribute.
+         */
+        "intentType"?: IntentType;
+        /**
           * Recieve the result of defaultFormSubmit event
           * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.addEventListener('defaultFormSubmitResult', async ({detail}) => {       if (detail instanceof Error) {         console.error(detail)       } else {         console.log(detail)       }     })   })
          */
-        "onDefaultFormSubmitResult"?: (event: CustomEvent<PaymentIntentResult | Error>) => void;
+        "onDefaultFormSubmitResult"?: (event: CustomEvent<DefaultFormSubmitResult>) => void;
         /**
           * Form submit event
           * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement       .addEventListener('formSubmit', async props => {         const {           detail: { stripe, cardNumber, event },         } = props;         const result = await stripe.createPaymentMethod({           type: 'card',           card: cardNumber,         });         console.log(result);       })   })
@@ -289,10 +302,15 @@ declare namespace LocalJSX {
         "handleSubmit"?: FormSubmitHandler;
         /**
           * The client secret from paymentIntent.create response
-          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.setAttribute('payment-intent-client-secret', 'dummy')   }) ```
-          * @example ``` <stripe-card-element payment-intent-client-secret="dummy" /> ```
+          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.setAttribute('intent-client-secret', 'dummy')   }) ```
+          * @example ``` <stripe-card-element intent-client-secret="dummy" /> ```
          */
         "intentClientSecret"?: string;
+        /**
+          * Default submit handle type. If you want to use `setupIntent`, should update this attribute.
+          * @example ``` <stripe-payment-sheet-modal intent-type="setup" /> ```
+         */
+        "intentType"?: IntentType;
         "onClosed"?: (event: CustomEvent<any>) => void;
         /**
           * Modal state. If true, the modal will open
