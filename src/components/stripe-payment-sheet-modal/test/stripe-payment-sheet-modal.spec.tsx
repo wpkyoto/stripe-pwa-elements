@@ -8,12 +8,6 @@ describe('stripe-payment-sheet-modal', () => {
       html: `<stripe-payment-sheet-modal></stripe-payment-sheet-modal>`,
     });
 
-    expect(page.root).toEqualHtml(`
-      <stripe-payment-sheet-modal>
-        <stripe-element-modal showclosebutton="">
-            <stripe-payment-sheet shouldusedefaultformsubmitaction=""></stripe-payment-sheet>
-        </stripe-element-modal>
-      </stripe-payment-sheet-modal>
-    `);
+    expect(page.root).toMatchSnapshot()
   });
 });
