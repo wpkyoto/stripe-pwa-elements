@@ -5,30 +5,66 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { FormSubmitEvent, FormSubmitHandler, PaymentRequestButtonOption, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
-import { PaymentIntentResult, PaymentRequestOptions } from "@stripe/stripe-js";
+import { DefaultFormSubmitResult, FormSubmitEvent, FormSubmitHandler, IntentType, PaymentRequestButtonOption, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
+import { PaymentRequestOptions } from "@stripe/stripe-js";
 export namespace Components {
-    interface StripeElementModal {
+    interface StripePayment {
         /**
-          * Close the modal
+          * Form submit event handler
          */
-        "closeModal": () => Promise<void>;
+        "handleSubmit": FormSubmitHandler;
         /**
-          * Modal state. If true, the modal will open
+          * Get Stripe.js, and initialize elements
+          * @param publishableKey
+          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {    tripeElement.initStripe('pk_test_XXXXXXXXX')  }) ```
          */
-        "open": boolean;
+        "initStripe": (publishableKey: string) => Promise<void>;
         /**
-          * Open the modal
+          * The client secret from paymentIntent.create response
+          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.setAttribute('intent-client-secret', 'dummy')   }) ```
+          * @example ``` <stripe-card-element intent-client-secret="dummy" /> ```
          */
-        "openModal": () => Promise<void>;
+        "intentClientSecret"?: string;
         /**
-          * If true, the modal display close button
+          * Default submit handle type. If you want to use `setupIntent`, should update this attribute.
          */
-        "showCloseButton": boolean;
+        "intentType": IntentType;
         /**
-          * Toggle modal state
+          * Your Stripe publishable API key.
          */
-        "toggleModal": () => Promise<void>;
+        "publishableKey": string;
+        /**
+          * Set error message
+          * @param errorMessage string
+          * @returns 
+          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {    // You must set the attributes to stop running default form submit action when you want to listen the 'formSubmit' event.    stripeElement.setAttribute('should-use-default-form-submit-action', false)    stripeElement.addEventListener('formSubmit', async props => {      try {        throw new Error('debug')      } catch (e) {        stripeElement.setErrorMessage(`Error: ${e.message}`)        stripeElement.updateProgress('failure')      }   }); })
+         */
+        "setErrorMessage": (errorMessage: string) => Promise<this>;
+        /**
+          * @param option
+          * @private
+         */
+        "setPaymentRequestOption": (option: PaymentRequestButtonOption) => Promise<this>;
+        /**
+          * The component will provide a function to call the `stripe.confirmCardPayment`API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element
+         */
+        "shouldUseDefaultFormSubmitAction": boolean;
+        /**
+          * Show the form label
+         */
+        "showLabel": boolean;
+        "showPaymentRequestButton": boolean;
+        /**
+          * Stripe.js class loaded handler
+         */
+        "stripeDidLoaded"?: StripeDidLoadedHandler;
+        /**
+          * Update the form submit progress
+          * @param progress
+          * @returns 
+          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {    // You must set the attributes to stop running default form submit action when you want to listen the 'formSubmit' event.    stripeElement.setAttribute('should-use-default-form-submit-action', false)    stripeElement.addEventListener('formSubmit', async props => {      const {        detail: { stripe, cardNumber, event },      } = props;      const result = await stripe.createPaymentMethod({        type: 'card',        card: cardNumber,      });      console.log(result);      stripeElement.updateProgress('success')    }); })
+         */
+        "updateProgress": (progress: ProgressStatus) => Promise<this>;
     }
     interface StripePaymentRequestButton {
         /**
@@ -69,76 +105,27 @@ export namespace Components {
         "stripeDidLoaded"?: StripeDidLoadedHandler;
     }
     interface StripePaymentSheet {
+        "destroy": () => Promise<void>;
+        "getStripePaymentSheetElement": () => Promise<HTMLStripePaymentElement>;
         /**
           * Form submit event handler
          */
         "handleSubmit": FormSubmitHandler;
-        /**
-          * Get Stripe.js, and initialize elements
-          * @param publishableKey
-          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {    tripeElement.initStripe('pk_test_XXXXXXXXX')  }) ```
-         */
-        "initStripe": (publishableKey: string) => Promise<void>;
         /**
           * The client secret from paymentIntent.create response
-          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.setAttribute('payment-intent-client-secret', 'dummy')   }) ```
-          * @example ``` <stripe-card-element payment-intent-client-secret="dummy" /> ```
+          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.setAttribute('intent-client-secret', 'dummy')   }) ```
+          * @example ``` <stripe-card-element intent-client-secret="dummy" /> ```
          */
-        "paymentIntentClientSecret"?: string;
+        "intentClientSecret"?: string;
         /**
-          * Your Stripe publishable API key.
+          * Default submit handle type. If you want to use `setupIntent`, should update this attribute.
+          * @example ``` <stripe-payment-sheet intent-type="setup" /> ```
          */
-        "publishableKey": string;
-        /**
-          * Set error message
-          * @param errorMessage string
-          * @returns 
-          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {    // You must set the attributes to stop running default form submit action when you want to listen the 'formSubmit' event.    stripeElement.setAttribute('should-use-default-form-submit-action', false)    stripeElement.addEventListener('formSubmit', async props => {      try {        throw new Error('debug')      } catch (e) {        stripeElement.setErrorMessage(`Error: ${e.message}`)        stripeElement.updateProgress('failure')      }   }); })
-         */
-        "setErrorMessage": (errorMessage: string) => Promise<this>;
-        /**
-          * @param option
-          * @private
-         */
-        "setPaymentRequestOption": (option: PaymentRequestButtonOption) => Promise<this>;
-        /**
-          * The component will provide a function to call the `stripe.confirmCardPayment`API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element
-         */
-        "shouldUseDefaultFormSubmitAction": boolean;
-        /**
-          * Show the form label
-         */
-        "showLabel": boolean;
-        "showPaymentRequestButton": boolean;
-        /**
-          * Stripe.js class loaded handler
-         */
-        "stripeDidLoaded"?: StripeDidLoadedHandler;
-        /**
-          * Update the form submit progress
-          * @param progress
-          * @returns 
-          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {    // You must set the attributes to stop running default form submit action when you want to listen the 'formSubmit' event.    stripeElement.setAttribute('should-use-default-form-submit-action', false)    stripeElement.addEventListener('formSubmit', async props => {      const {        detail: { stripe, cardNumber, event },      } = props;      const result = await stripe.createPaymentMethod({        type: 'card',        card: cardNumber,      });      console.log(result);      stripeElement.updateProgress('success')    }); })
-         */
-        "updateProgress": (progress: ProgressStatus) => Promise<this>;
-    }
-    interface StripePaymentSheetModal {
-        "destroy": () => Promise<void>;
-        "getStripePaymentSheetElement": () => Promise<HTMLStripePaymentSheetElement>;
-        /**
-          * Form submit event handler
-         */
-        "handleSubmit": FormSubmitHandler;
+        "intentType": IntentType;
         /**
           * Modal state. If true, the modal will open
          */
         "open": boolean;
-        /**
-          * The client secret from paymentIntent.create response
-          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.setAttribute('payment-intent-client-secret', 'dummy')   }) ```
-          * @example ``` <stripe-card-element payment-intent-client-secret="dummy" /> ```
-         */
-        "paymentIntentClientSecret"?: string;
         "present": () => Promise<unknown>;
         /**
           * Your Stripe publishable API key.
@@ -161,15 +148,37 @@ export namespace Components {
           * Stripe.js class loaded handler
          */
         "stripeDidLoaded"?: StripeDidLoadedHandler;
-        "updateProgress": (progress: ProgressStatus) => Promise<HTMLStripePaymentSheetElement>;
+        "updateProgress": (progress: ProgressStatus) => Promise<HTMLStripePaymentElement>;
+    }
+    interface StripeSheet {
+        /**
+          * Close the modal
+         */
+        "closeModal": () => Promise<void>;
+        /**
+          * Modal state. If true, the modal will open
+         */
+        "open": boolean;
+        /**
+          * Open the modal
+         */
+        "openModal": () => Promise<void>;
+        /**
+          * If true, the modal display close button
+         */
+        "showCloseButton": boolean;
+        /**
+          * Toggle modal state
+         */
+        "toggleModal": () => Promise<void>;
     }
 }
 declare global {
-    interface HTMLStripeElementModalElement extends Components.StripeElementModal, HTMLStencilElement {
+    interface HTMLStripePaymentElement extends Components.StripePayment, HTMLStencilElement {
     }
-    var HTMLStripeElementModalElement: {
-        prototype: HTMLStripeElementModalElement;
-        new (): HTMLStripeElementModalElement;
+    var HTMLStripePaymentElement: {
+        prototype: HTMLStripePaymentElement;
+        new (): HTMLStripePaymentElement;
     };
     interface HTMLStripePaymentRequestButtonElement extends Components.StripePaymentRequestButton, HTMLStencilElement {
     }
@@ -183,30 +192,67 @@ declare global {
         prototype: HTMLStripePaymentSheetElement;
         new (): HTMLStripePaymentSheetElement;
     };
-    interface HTMLStripePaymentSheetModalElement extends Components.StripePaymentSheetModal, HTMLStencilElement {
+    interface HTMLStripeSheetElement extends Components.StripeSheet, HTMLStencilElement {
     }
-    var HTMLStripePaymentSheetModalElement: {
-        prototype: HTMLStripePaymentSheetModalElement;
-        new (): HTMLStripePaymentSheetModalElement;
+    var HTMLStripeSheetElement: {
+        prototype: HTMLStripeSheetElement;
+        new (): HTMLStripeSheetElement;
     };
     interface HTMLElementTagNameMap {
-        "stripe-element-modal": HTMLStripeElementModalElement;
+        "stripe-payment": HTMLStripePaymentElement;
         "stripe-payment-request-button": HTMLStripePaymentRequestButtonElement;
         "stripe-payment-sheet": HTMLStripePaymentSheetElement;
-        "stripe-payment-sheet-modal": HTMLStripePaymentSheetModalElement;
+        "stripe-sheet": HTMLStripeSheetElement;
     }
 }
 declare namespace LocalJSX {
-    interface StripeElementModal {
-        "onClose"?: (event: CustomEvent<any>) => void;
+    interface StripePayment {
         /**
-          * Modal state. If true, the modal will open
+          * Form submit event handler
          */
-        "open"?: boolean;
+        "handleSubmit"?: FormSubmitHandler;
         /**
-          * If true, the modal display close button
+          * The client secret from paymentIntent.create response
+          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.setAttribute('intent-client-secret', 'dummy')   }) ```
+          * @example ``` <stripe-card-element intent-client-secret="dummy" /> ```
          */
-        "showCloseButton"?: boolean;
+        "intentClientSecret"?: string;
+        /**
+          * Default submit handle type. If you want to use `setupIntent`, should update this attribute.
+         */
+        "intentType"?: IntentType;
+        /**
+          * Recieve the result of defaultFormSubmit event
+          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.addEventListener('defaultFormSubmitResult', async ({detail}) => {       if (detail instanceof Error) {         console.error(detail)       } else {         console.log(detail)       }     })   })
+         */
+        "onDefaultFormSubmitResult"?: (event: CustomEvent<DefaultFormSubmitResult>) => void;
+        /**
+          * Form submit event
+          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement       .addEventListener('formSubmit', async props => {         const {           detail: { stripe, cardNumber, event },         } = props;         const result = await stripe.createPaymentMethod({           type: 'card',           card: cardNumber,         });         console.log(result);       })   })
+         */
+        "onFormSubmit"?: (event: CustomEvent<FormSubmitEvent>) => void;
+        /**
+          * Stripe Client loaded event
+          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement      .addEventListener('stripeLoaded', async ({ detail: {stripe} }) => {       stripe         .createSource({           type: 'ideal',           amount: 1099,           currency: 'eur',           owner: {             name: 'Jenny Rosen',           },           redirect: {             return_url: 'https://shop.example.com/crtA6B28E1',           },         })         .then(function(result) {           // Handle result.error or result.source         });       });   }) ```
+         */
+        "onStripeLoaded"?: (event: CustomEvent<StripeLoadedEvent>) => void;
+        /**
+          * Your Stripe publishable API key.
+         */
+        "publishableKey"?: string;
+        /**
+          * The component will provide a function to call the `stripe.confirmCardPayment`API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element
+         */
+        "shouldUseDefaultFormSubmitAction"?: boolean;
+        /**
+          * Show the form label
+         */
+        "showLabel"?: boolean;
+        "showPaymentRequestButton"?: boolean;
+        /**
+          * Stripe.js class loaded handler
+         */
+        "stripeDidLoaded"?: StripeDidLoadedHandler;
     }
     interface StripePaymentRequestButton {
         /**
@@ -244,60 +290,21 @@ declare namespace LocalJSX {
          */
         "handleSubmit"?: FormSubmitHandler;
         /**
-          * Recieve the result of defaultFormSubmit event
-          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.addEventListener('defaultFormSubmitResult', async ({detail}) => {       if (detail instanceof Error) {         console.error(detail)       } else {         console.log(detail)       }     })   })
-         */
-        "onDefaultFormSubmitResult"?: (event: CustomEvent<PaymentIntentResult | Error>) => void;
-        /**
-          * Form submit event
-          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement       .addEventListener('formSubmit', async props => {         const {           detail: { stripe, cardNumber, event },         } = props;         const result = await stripe.createPaymentMethod({           type: 'card',           card: cardNumber,         });         console.log(result);       })   })
-         */
-        "onFormSubmit"?: (event: CustomEvent<FormSubmitEvent>) => void;
-        /**
-          * Stripe Client loaded event
-          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement      .addEventListener('stripeLoaded', async ({ detail: {stripe} }) => {       stripe         .createSource({           type: 'ideal',           amount: 1099,           currency: 'eur',           owner: {             name: 'Jenny Rosen',           },           redirect: {             return_url: 'https://shop.example.com/crtA6B28E1',           },         })         .then(function(result) {           // Handle result.error or result.source         });       });   }) ```
-         */
-        "onStripeLoaded"?: (event: CustomEvent<StripeLoadedEvent>) => void;
-        /**
           * The client secret from paymentIntent.create response
-          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.setAttribute('payment-intent-client-secret', 'dummy')   }) ```
-          * @example ``` <stripe-card-element payment-intent-client-secret="dummy" /> ```
+          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.setAttribute('intent-client-secret', 'dummy')   }) ```
+          * @example ``` <stripe-card-element intent-client-secret="dummy" /> ```
          */
-        "paymentIntentClientSecret"?: string;
+        "intentClientSecret"?: string;
         /**
-          * Your Stripe publishable API key.
+          * Default submit handle type. If you want to use `setupIntent`, should update this attribute.
+          * @example ``` <stripe-payment-sheet intent-type="setup" /> ```
          */
-        "publishableKey"?: string;
-        /**
-          * The component will provide a function to call the `stripe.confirmCardPayment`API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element
-         */
-        "shouldUseDefaultFormSubmitAction"?: boolean;
-        /**
-          * Show the form label
-         */
-        "showLabel"?: boolean;
-        "showPaymentRequestButton"?: boolean;
-        /**
-          * Stripe.js class loaded handler
-         */
-        "stripeDidLoaded"?: StripeDidLoadedHandler;
-    }
-    interface StripePaymentSheetModal {
-        /**
-          * Form submit event handler
-         */
-        "handleSubmit"?: FormSubmitHandler;
+        "intentType"?: IntentType;
         "onClosed"?: (event: CustomEvent<any>) => void;
         /**
           * Modal state. If true, the modal will open
          */
         "open"?: boolean;
-        /**
-          * The client secret from paymentIntent.create response
-          * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.setAttribute('payment-intent-client-secret', 'dummy')   }) ```
-          * @example ``` <stripe-card-element payment-intent-client-secret="dummy" /> ```
-         */
-        "paymentIntentClientSecret"?: string;
         /**
           * Your Stripe publishable API key.
          */
@@ -319,21 +326,32 @@ declare namespace LocalJSX {
          */
         "stripeDidLoaded"?: StripeDidLoadedHandler;
     }
+    interface StripeSheet {
+        "onClose"?: (event: CustomEvent<any>) => void;
+        /**
+          * Modal state. If true, the modal will open
+         */
+        "open"?: boolean;
+        /**
+          * If true, the modal display close button
+         */
+        "showCloseButton"?: boolean;
+    }
     interface IntrinsicElements {
-        "stripe-element-modal": StripeElementModal;
+        "stripe-payment": StripePayment;
         "stripe-payment-request-button": StripePaymentRequestButton;
         "stripe-payment-sheet": StripePaymentSheet;
-        "stripe-payment-sheet-modal": StripePaymentSheetModal;
+        "stripe-sheet": StripeSheet;
     }
 }
 export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
-            "stripe-element-modal": LocalJSX.StripeElementModal & JSXBase.HTMLAttributes<HTMLStripeElementModalElement>;
+            "stripe-payment": LocalJSX.StripePayment & JSXBase.HTMLAttributes<HTMLStripePaymentElement>;
             "stripe-payment-request-button": LocalJSX.StripePaymentRequestButton & JSXBase.HTMLAttributes<HTMLStripePaymentRequestButtonElement>;
             "stripe-payment-sheet": LocalJSX.StripePaymentSheet & JSXBase.HTMLAttributes<HTMLStripePaymentSheetElement>;
-            "stripe-payment-sheet-modal": LocalJSX.StripePaymentSheetModal & JSXBase.HTMLAttributes<HTMLStripePaymentSheetModalElement>;
+            "stripe-sheet": LocalJSX.StripeSheet & JSXBase.HTMLAttributes<HTMLStripeSheetElement>;
         }
     }
 }

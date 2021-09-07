@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`stripe-payment-sheet renders 1`] = `
+<stripe-payment-sheet>
+  <stripe-sheet showclosebutton="">
+    <stripe-payment intenttype="payment" shouldusedefaultformsubmitaction=""></stripe-payment>
+  </stripe-sheet>
+</stripe-payment-sheet>
+`;

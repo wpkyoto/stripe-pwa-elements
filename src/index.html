@@ -12,9 +12,9 @@
 
     <script>
       const targetElement = document.getElementById('stripe');
-      const paymentSheetModal = document.createElement('stripe-payment-sheet-modal')
+      const paymentSheetModal = document.createElement('stripe-payment-sheet')
       targetElement.appendChild(paymentSheetModal);
-      customElements.whenDefined('stripe-payment-sheet-modal')
+      customElements.whenDefined('stripe-payment-sheet')
         .then(() => {
           paymentSheetModal.setAttribute('publishable-key', 'pk_test_51EMxG7KVC4SfzSeak35hZaAe91cpzKZE9eOQcVWpa7owYJeS30avCAF0lT1QUMKTbzepTIYgAgjly4AmgZuxxkcS00kQ40cBLe');
           paymentSheetModal.setAttribute('open', true);
@@ -110,7 +110,7 @@
         });
 
       /*
-      const modalElement = document.createElement('stripe-element-modal');
+      const modalElement = document.createElement('stripe-sheet');
       modalElement.setAttribute('open', true);
       const stripeElement = document.createElement('stripe-payment-sheet');
       const stripePaymentRequestElement = document.createElement('stripe-payment-request-button');

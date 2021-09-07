@@ -1,16 +1,16 @@
 import { Component, Prop, h, Method, Element, Event, EventEmitter } from '@stencil/core';
 import {
   StripeDidLoadedHandler, FormSubmitHandler, ProgressStatus,
-  PaymentRequestButtonOption,
+  PaymentRequestButtonOption, IntentType,
  } from '../../interfaces';
 
 @Component({
-  tag: 'stripe-payment-sheet-modal',
+  tag: 'stripe-payment-sheet',
   styleUrl: 'stripe-payment-sheet-modal.css',
   shadow: false,
 })
-export class StripePaymentSheetModal {
-  @Element() el: HTMLStripePaymentSheetModalElement;
+export class StripePaymentSheet {
+  @Element() el: HTMLStripePaymentSheetElement;
 
   /**
    * Your Stripe publishable API key.
@@ -31,16 +31,16 @@ export class StripePaymentSheetModal {
    * customElements
    *  .whenDefined('stripe-card-element')
    *  .then(() => {
-   *     stripeElement.setAttribute('payment-intent-client-secret', 'dummy')
+   *     stripeElement.setAttribute('intent-client-secret', 'dummy')
    *   })
    * ```
    *
    * @example
    * ```
-   * <stripe-card-element payment-intent-client-secret="dummy" />
+   * <stripe-card-element intent-client-secret="dummy" />
    * ```
    */
-  @Prop() paymentIntentClientSecret?: string;
+  @Prop() intentClientSecret?: string;
 
   /**
    * The component will provide a function to call the `stripe.confirmCardPayment`API.
@@ -48,6 +48,16 @@ export class StripePaymentSheetModal {
    * And listen the 'formSubmit' event on the element
    */
   @Prop() shouldUseDefaultFormSubmitAction = true;
+
+  /**
+   * Default submit handle type.
+   * If you want to use `setupIntent`, should update this attribute.
+   * @example
+   * ```
+   * <stripe-payment-sheet intent-type="setup" />
+   * ```
+   */
+  @Prop() intentType: IntentType = 'payment'
 
   /**
    * Form submit event handler
@@ -82,8 +92,7 @@ export class StripePaymentSheetModal {
   @Event() closed: EventEmitter;
 
   componentDidLoad() {
-    const modal = this.el.querySelector('stripe-element-modal');
-
+    const modal = this.el.querySelector('stripe-sheet');
     modal.addEventListener('close', () => {
       this.closed.emit();
     });
@@ -91,7 +100,7 @@ export class StripePaymentSheetModal {
 
   @Method()
   public async getStripePaymentSheetElement() {
-    return this.el.querySelector('stripe-payment-sheet');
+    return this.el.querySelector('stripe-payment');
   }
 
   @Method()
@@ -99,7 +108,7 @@ export class StripePaymentSheetModal {
     this.open = true;
 
     return new Promise(async (resolve, reject) => {
-      const paymentSheet = this.el.querySelector('stripe-payment-sheet');
+      const paymentSheet = this.el.querySelector('stripe-payment');
 
       paymentSheet.addEventListener('formSubmit', async props => {
         resolve(props);
@@ -110,14 +119,14 @@ export class StripePaymentSheetModal {
 
   @Method()
   public async updateProgress(progress: ProgressStatus) {
-    const paymentSheet = this.el.querySelector('stripe-payment-sheet');
+    const paymentSheet = this.el.querySelector('stripe-payment');
 
     return paymentSheet.updateProgress(progress);
   }
 
   @Method()
   public async destroy() {
-    const paymentSheet = this.el.querySelector('stripe-payment-sheet');
+    const paymentSheet = this.el.querySelector('stripe-payment');
 
     paymentSheet.remove();
     this.el.remove();
@@ -125,7 +134,7 @@ export class StripePaymentSheetModal {
 
   @Method()
   public async setPaymentRequestButton(options: PaymentRequestButtonOption) {
-      const elements = this.el.getElementsByTagName('stripe-payment-sheet')
+      const elements = this.el.getElementsByTagName('stripe-payment')
 
       if (elements.length < 1) {
         return;
@@ -141,16 +150,17 @@ export class StripePaymentSheetModal {
 
   render() {
     return (
-      <stripe-element-modal open={this.open} showCloseButton={this.showCloseButton}>
-        <stripe-payment-sheet
+      <stripe-sheet open={this.open} showCloseButton={this.showCloseButton}>
+        <stripe-payment
           showLabel={this.showLabel}
           publishableKey={this.publishableKey}
-          paymentIntentClientSecret={this.paymentIntentClientSecret}
+          intentClientSecret={this.intentClientSecret}
           shouldUseDefaultFormSubmitAction={this.shouldUseDefaultFormSubmitAction}
           handleSubmit={this.handleSubmit}
           stripeDidLoaded={this.stripeDidLoaded}
-        ></stripe-payment-sheet>
-      </stripe-element-modal>
+          intentType={this.intentType}
+        ></stripe-payment>
+      </stripe-sheet>
     );
   }
 }

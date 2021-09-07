@@ -7,6 +7,8 @@ import {
   PaymentRequestShippingOptionEvent,
   PaymentRequestShippingAddressEvent,
   PaymentRequestOptions,
+  PaymentIntentResult,
+  SetupIntentResult,
 } from '@stripe/stripe-js';
 
 /**
@@ -17,7 +19,7 @@ export type FormSubmitEvent = {
   cardNumber: StripeCardNumberElement;
   cardExpiry: StripeCardExpiryElement;
   cardCVC: StripeCardCvcElement;
-  paymentIntentClientSecret?: string;
+  intentClientSecret?: string;
 };
 /**
  * Handler function of the `formSubmit` event
@@ -55,3 +57,9 @@ export type PaymentRequestButtonOption = PaymentRequestOptions & {
   paymentRequestShippingAddressChangeHandler?: PaymentRequestShippingAddressEventHandler;
   paymentRequestShippingOptionChangeHandler?: PaymentRequestShippingOptionEventHandler; 
 }
+
+/**
+ * Stripe XXXIntent types
+ */
+export type IntentType = 'setup' | 'payment'
+export type DefaultFormSubmitResult = Error | PaymentIntentResult | SetupIntentResult

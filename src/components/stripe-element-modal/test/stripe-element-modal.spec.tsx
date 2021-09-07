@@ -1,15 +1,15 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { StripeElementModal } from '../stripe-element-modal';
+import { StripeSheet } from '../stripe-element-modal';
 
-describe('stripe-element-modal', () => {
+describe('stripe-sheet', () => {
   it('renders', async () => {
     const page = await newSpecPage({
-      components: [StripeElementModal],
-      html: `<stripe-element-modal></stripe-element-modal>`,
+      components: [StripeSheet],
+      html: `<stripe-sheet></stripe-sheet>`,
     });
 
     expect(page.root).toEqualHtml(`
-    <stripe-element-modal class="undefined">
+    <stripe-sheet class="undefined">
       <mock:shadow-root>
         <div class="modal-row">
           <div class="modal-child">
@@ -20,7 +20,7 @@ describe('stripe-element-modal', () => {
           </div>
         </div>
       </mock:shadow-root>
-    </stripe-element-modal>
+    </stripe-sheet>
     `);
   });
 });
