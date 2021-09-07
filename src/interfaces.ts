@@ -6,6 +6,7 @@ import {
   PaymentRequestPaymentMethodEvent,
   PaymentRequestShippingOptionEvent,
   PaymentRequestShippingAddressEvent,
+  PaymentRequestOptions,
 } from '@stripe/stripe-js';
 
 /**
@@ -39,6 +40,18 @@ export type StripeDidLoadedHandler = (event: StripeLoadedEvent) => Promise<void>
  */
 export type ProgressStatus = '' | 'loading' | 'success' | 'failure';
 
+/**
+ * PaymentRequest Button API handlers
+ */
 export type PaymentRequestPaymentMethodEventHandler = (event: PaymentRequestPaymentMethodEvent, stripe: Stripe) => Promise<void>;
 export type PaymentRequestShippingOptionEventHandler = (event: PaymentRequestShippingOptionEvent, stripe: Stripe) => Promise<void>;
 export type PaymentRequestShippingAddressEventHandler = (event: PaymentRequestShippingAddressEvent, stripe: Stripe) => Promise<void>;
+
+/**
+ * PaymentRequest Button options
+ */
+export type PaymentRequestButtonOption = PaymentRequestOptions & {
+  paymentRequestPaymentMethodHandler?: PaymentRequestPaymentMethodEventHandler;
+  paymentRequestShippingAddressChangeHandler?: PaymentRequestShippingAddressEventHandler;
+  paymentRequestShippingOptionChangeHandler?: PaymentRequestShippingOptionEventHandler; 
+}
