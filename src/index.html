@@ -12,9 +12,10 @@
 
     <script>
       const targetElement = document.getElementById('stripe');
-      const paymentSheetModal = document.createElement('stripe-payment-sheet')
+      const paymentSheetModal = document.createElement('stripe-payment-sheet');
       targetElement.appendChild(paymentSheetModal);
-      customElements.whenDefined('stripe-payment-sheet')
+      customElements
+        .whenDefined('stripe-payment-sheet')
         .then(() => {
           paymentSheetModal.setAttribute('publishable-key', 'pk_test_51EMxG7KVC4SfzSeak35hZaAe91cpzKZE9eOQcVWpa7owYJeS30avCAF0lT1QUMKTbzepTIYgAgjly4AmgZuxxkcS00kQ40cBLe');
           paymentSheetModal.setAttribute('open', true);
@@ -27,10 +28,11 @@
             },
             requestShipping: false,
             requestPayerEmail: true,
-          })
-        }).catch(e => {
-          console.log(e)
+          });
         })
+        .catch(e => {
+          console.log(e);
+        });
 
       /*
       const paymentSheet = document.createElement('stripe-payment-sheet')

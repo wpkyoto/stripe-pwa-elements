@@ -8,6 +8,6 @@ describe('stripe-payment-sheet', () => {
       html: `<stripe-payment-sheet></stripe-payment-sheet>`,
     });
 
-    expect(page.root).toMatchSnapshot()
+    expect(page.root).toMatchSnapshot();
   });
 });

@@ -1,8 +1,5 @@
 import { Component, Prop, h, Method, Element, Event, EventEmitter } from '@stencil/core';
-import {
-  StripeDidLoadedHandler, FormSubmitHandler, ProgressStatus,
-  PaymentRequestButtonOption, IntentType,
- } from '../../interfaces';
+import { StripeDidLoadedHandler, FormSubmitHandler, ProgressStatus, PaymentRequestButtonOption, IntentType } from '../../interfaces';
 
 @Component({
   tag: 'stripe-payment-sheet',
@@ -57,21 +54,23 @@ export class StripePaymentSheet {
    * <stripe-payment-sheet intent-type="setup" />
    * ```
    */
-  @Prop() intentType: IntentType = 'payment'
+  @Prop() intentType: IntentType = 'payment';
 
   /**
    * Form submit event handler
    */
   @Prop({
     mutable: true,
-  }) handleSubmit: FormSubmitHandler;
+  })
+  handleSubmit: FormSubmitHandler;
 
   /**
    * Stripe.js class loaded handler
    */
   @Prop({
     mutable: true,
-  }) stripeDidLoaded?: StripeDidLoadedHandler;
+  })
+  stripeDidLoaded?: StripeDidLoadedHandler;
 
   /**
    * If true, the modal display close button
@@ -98,7 +97,7 @@ export class StripePaymentSheet {
   }
 
   /**
-   * Get the inner component 
+   * Get the inner component
    */
   @Method()
   public async getStripePaymentSheetElement() {
@@ -123,7 +122,7 @@ export class StripePaymentSheet {
   }
 
   /**
-   * Update Stripe client loading process 
+   * Update Stripe client loading process
    */
   @Method()
   public async updateProgress(progress: ProgressStatus) {
@@ -144,23 +143,25 @@ export class StripePaymentSheet {
   }
 
   /**
-   * 
+   *
    * Add payment request button
    */
   @Method()
   public async setPaymentRequestButton(options: PaymentRequestButtonOption) {
-      const elements = this.el.getElementsByTagName('stripe-payment')
+    const elements = this.el.getElementsByTagName('stripe-payment');
 
-      if (elements.length < 1) {
-        return;
-      }
+    if (elements.length < 1) {
+      return;
+    }
 
-      const paymentSheetElement = elements[0]
+    const paymentSheetElement = elements[0];
 
-      if (!paymentSheetElement) {return;}
+    if (!paymentSheetElement) {
+      return;
+    }
 
-      paymentSheetElement.setAttribute('show-payment-request-button', 'true')
-      paymentSheetElement.setPaymentRequestOption(options)
+    paymentSheetElement.setAttribute('show-payment-request-button', 'true');
+    paymentSheetElement.setPaymentRequestOption(options);
   }
 
   render() {

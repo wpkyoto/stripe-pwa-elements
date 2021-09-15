@@ -9,7 +9,8 @@ import {
   ProgressStatus,
   PaymentRequestButtonOption,
   IntentType,
-  DefaultFormSubmitResult, } from '../../interfaces';
+  DefaultFormSubmitResult,
+} from '../../interfaces';
 import { i18n } from '../../utils/i18n';
 
 @Component({
@@ -34,7 +35,7 @@ export class StripePayment {
    * Default submit handle type.
    * If you want to use `setupIntent`, should update this attribute.
    */
-  @Prop() intentType: IntentType = 'payment'
+  @Prop() intentType: IntentType = 'payment';
 
   /**
    * Get Stripe.js, and initialize elements
@@ -200,7 +201,7 @@ export class StripePayment {
   @Method()
   public async setPaymentRequestOption(option: PaymentRequestButtonOption) {
     this.paymentRequestOption = option;
-    this.createPaymentRequestButton()
+    this.createPaymentRequestButton();
     return this;
   }
 
@@ -288,9 +289,9 @@ export class StripePayment {
     const { cardCVC, cardExpiry, cardNumber, stripe } = this;
 
     this.formSubmit.emit({
-      cardCVC,
-      cardExpiry,
-      cardNumber,
+      cardCVCElement: cardCVC,
+      cardExpiryElement: cardExpiry,
+      cardNumberElement: cardNumber,
       stripe,
     });
   }
@@ -322,12 +323,16 @@ export class StripePayment {
   private cardCVC!: StripeCardCvcElement;
 
   componentWillUpdate() {
-    if (!this.publishableKey) {return;}
+    if (!this.publishableKey) {
+      return;
+    }
 
-    if (['success', 'loading'].includes(this.loadStripeStatus)) {return;}
+    if (['success', 'loading'].includes(this.loadStripeStatus)) {
+      return;
+    }
 
     this.initStripe(this.publishableKey);
-    this.createPaymentRequestButton()
+    this.createPaymentRequestButton();
   }
 
   /**
@@ -336,25 +341,25 @@ export class StripePayment {
    * @param event
    * @param param1
    */
-  private async defaultFormSubmitAction(event: Event, { stripe, cardNumber, intentClientSecret }: FormSubmitEvent) {
+  private async defaultFormSubmitAction(event: Event, { stripe, cardNumberElement, intentClientSecret }: FormSubmitEvent) {
     event.preventDefault();
     try {
-      const { intentType} = this
+      const { intentType } = this;
       const result = await (() => {
         if (intentType === 'payment') {
           return stripe.confirmCardPayment(intentClientSecret, {
             payment_method: {
-              card: cardNumber,
+              card: cardNumberElement,
             },
           });
         }
 
         return stripe.confirmCardSetup(intentClientSecret, {
           payment_method: {
-            card: cardNumber,
+            card: cardNumberElement,
           },
         });
-      })()
+      })();
 
       this.defaultFormSubmitResultHandler(result);
     } catch (e) {
@@ -406,7 +411,13 @@ export class StripePayment {
 
     document.getElementById('stripe-card-element').addEventListener('submit', async e => {
       const { cardCVC, cardExpiry, cardNumber, stripe, intentClientSecret } = this;
-      const submitEventProps: FormSubmitEvent = { cardCVC, cardExpiry, cardNumber, stripe, intentClientSecret };
+      const submitEventProps: FormSubmitEvent = {
+        cardCVCElement: cardCVC,
+        cardExpiryElement: cardExpiry,
+        cardNumberElement: cardNumber,
+        stripe,
+        intentClientSecret,
+      };
 
       this.progress = 'loading';
       try {
@@ -451,45 +462,40 @@ export class StripePayment {
    * It's just proxy of stripe-payment-request-button
    */
   private createPaymentRequestButton() {
-    const { showPaymentRequestButton, paymentRequestOption } = this
+    const { showPaymentRequestButton, paymentRequestOption } = this;
 
-    if (!showPaymentRequestButton || !paymentRequestOption) {return null;}
+    if (!showPaymentRequestButton || !paymentRequestOption) {
+      return null;
+    }
 
-    if (!document) {return null;}
+    if (!document) {
+      return null;
+    }
 
     const targetElement = document.getElementById('stripe-payment-request-button');
     const stripePaymentRequestElement = document.createElement('stripe-payment-request-button');
 
     targetElement.appendChild(stripePaymentRequestElement);
 
-    const {
-      paymentRequestPaymentMethodHandler,
-      paymentRequestShippingOptionChangeHandler,
-      paymentRequestShippingAddressChangeHandler,
-    } = paymentRequestOption
+    const { paymentRequestPaymentMethodHandler, paymentRequestShippingOptionChangeHandler, paymentRequestShippingAddressChangeHandler } = paymentRequestOption;
 
-    customElements
-      .whenDefined('stripe-payment-request-button')
-      .then(() => {
-        stripePaymentRequestElement.setPaymentRequestOption(paymentRequestOption)
+    customElements.whenDefined('stripe-payment-request-button').then(() => {
+      stripePaymentRequestElement.setPaymentRequestOption(paymentRequestOption);
 
-        if (paymentRequestPaymentMethodHandler) {
-          stripePaymentRequestElement
-            .setPaymentMethodEventHandler(paymentRequestPaymentMethodHandler)
-        }
+      if (paymentRequestPaymentMethodHandler) {
+        stripePaymentRequestElement.setPaymentMethodEventHandler(paymentRequestPaymentMethodHandler);
+      }
 
-        if (paymentRequestShippingOptionChangeHandler) {
-          stripePaymentRequestElement
-            .setPaymentRequestShippingOptionEventHandler(paymentRequestShippingOptionChangeHandler)
-        }
-   
-        if (paymentRequestShippingAddressChangeHandler) {
-          stripePaymentRequestElement.
-            setPaymentRequestShippingAddressEventHandler(paymentRequestShippingAddressChangeHandler)
-        }
+      if (paymentRequestShippingOptionChangeHandler) {
+        stripePaymentRequestElement.setPaymentRequestShippingOptionEventHandler(paymentRequestShippingOptionChangeHandler);
+      }
 
-        return stripePaymentRequestElement.initStripe(this.publishableKey);
-      })
+      if (paymentRequestShippingAddressChangeHandler) {
+        stripePaymentRequestElement.setPaymentRequestShippingAddressEventHandler(paymentRequestShippingAddressChangeHandler);
+      }
+
+      return stripePaymentRequestElement.initStripe(this.publishableKey);
+    });
   }
 
   render() {
@@ -500,13 +506,12 @@ export class StripePayment {
     }
 
     const disabled = this.progress === 'loading';
-    
 
     return (
       <div class="stripe-payment-sheet-wrap">
         <form id="stripe-card-element">
           <div class="stripe-heading">{i18n.t('Add your payment information')}</div>
-          <div id="stripe-payment-request-button"/>
+          <div id="stripe-payment-request-button" />
           <div>
             <div class="stripe-section-title">{i18n.t('Card information')}</div>
           </div>

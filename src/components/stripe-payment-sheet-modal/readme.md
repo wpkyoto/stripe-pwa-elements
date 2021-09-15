@@ -1,9 +1,6 @@
 # stripe-payment-sheet-modal
 
-
-
 <!-- Auto Generated Below -->
-
 
 ## Properties
 
@@ -19,66 +16,43 @@
 | `showLabel`                        | `show-label`                            | Show the form label                                                                                                                                                                         | `boolean`                                                 | `false`     |
 | `stripeDidLoaded`                  | --                                      | Stripe.js class loaded handler                                                                                                                                                              | `(event: StripeLoadedEvent) => Promise<void>`             | `undefined` |
 
-
 ## Events
 
 | Event    | Description | Type               |
 | -------- | ----------- | ------------------ |
 | `closed` |             | `CustomEvent<any>` |
 
-
 ## Methods
 
 ### `destroy() => Promise<void>`
-
-
 
 #### Returns
 
 Type: `Promise<void>`
 
-
-
 ### `getStripePaymentSheetElement() => Promise<HTMLStripePaymentElement>`
-
-
 
 #### Returns
 
 Type: `Promise<HTMLStripePaymentElement>`
 
-
-
 ### `present() => Promise<unknown>`
-
-
 
 #### Returns
 
 Type: `Promise<unknown>`
 
-
-
 ### `setPaymentRequestButton(options: PaymentRequestButtonOption) => Promise<void>`
-
-
 
 #### Returns
 
 Type: `Promise<void>`
 
-
-
 ### `updateProgress(progress: ProgressStatus) => Promise<HTMLStripePaymentElement>`
-
-
 
 #### Returns
 
 Type: `Promise<HTMLStripePaymentElement>`
-
-
-
 
 ## Dependencies
 
@@ -88,6 +62,7 @@ Type: `Promise<HTMLStripePaymentElement>`
 - [stripe-payment](../stripe-payment-sheet)
 
 ### Graph
+
 ```mermaid
 graph TD;
   stripe-payment-sheet --> stripe-sheet
@@ -97,6 +72,6 @@ graph TD;
   style stripe-payment-sheet fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
-----------------------------------------------
+---
 
-*Built with [StencilJS](https://stenciljs.com/)*
+_Built with [StencilJS](https://stenciljs.com/)_

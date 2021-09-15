@@ -16,9 +16,9 @@ import {
  */
 export type FormSubmitEvent = {
   stripe: Stripe;
-  cardNumber: StripeCardNumberElement;
-  cardExpiry: StripeCardExpiryElement;
-  cardCVC: StripeCardCvcElement;
+  cardNumberElement: StripeCardNumberElement;
+  cardExpiryElement: StripeCardExpiryElement;
+  cardCVCElement: StripeCardCvcElement;
   intentClientSecret?: string;
 };
 /**
@@ -55,11 +55,11 @@ export type PaymentRequestShippingAddressEventHandler = (event: PaymentRequestSh
 export type PaymentRequestButtonOption = PaymentRequestOptions & {
   paymentRequestPaymentMethodHandler?: PaymentRequestPaymentMethodEventHandler;
   paymentRequestShippingAddressChangeHandler?: PaymentRequestShippingAddressEventHandler;
-  paymentRequestShippingOptionChangeHandler?: PaymentRequestShippingOptionEventHandler; 
-}
+  paymentRequestShippingOptionChangeHandler?: PaymentRequestShippingOptionEventHandler;
+};
 
 /**
  * Stripe XXXIntent types
  */
-export type IntentType = 'setup' | 'payment'
-export type DefaultFormSubmitResult = Error | PaymentIntentResult | SetupIntentResult
+export type IntentType = 'setup' | 'payment';
+export type DefaultFormSubmitResult = Error | PaymentIntentResult | SetupIntentResult;

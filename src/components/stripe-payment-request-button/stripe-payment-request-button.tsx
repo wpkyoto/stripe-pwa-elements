@@ -67,7 +67,7 @@ export class StripePaymentRequestButton {
    * ```
    */
   @Prop() shippingOptionEventHandler?: PaymentRequestShippingOptionEventHandler;
-  
+
   /**
    * Register event handler for `paymentRequest.on('shippingoptionchange'` event.
    */
@@ -90,7 +90,7 @@ export class StripePaymentRequestButton {
    * ```
    */
   @Prop() shippingAddressEventHandler?: PaymentRequestShippingAddressEventHandler;
-  
+
   /**
    * Register event handler for `paymentRequest.on('shippingaddresschange'` event.
    */
