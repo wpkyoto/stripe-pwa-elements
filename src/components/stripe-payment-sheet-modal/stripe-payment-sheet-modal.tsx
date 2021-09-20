@@ -20,6 +20,27 @@ export class StripePaymentSheet {
   @Prop() showLabel = false;
 
   /**
+   * Payment sheet title
+   * By default we recommended to use these string
+   * - 'Add your payment information' -> PaymentSheet / PaymentFlow(Android)
+   * - 'Add a card' -> PaymentFlow(iOS)
+   * These strings will translated automatically by this library.
+   */
+  @Prop() sheetTitle: string
+
+  /**
+   * Submit button label
+   * By default we recommended to use these string
+   * - 'Pay' -> PaymentSheet
+   * - 'Add' -> PaymentFlow(Android)
+   * - 'Add card' -> PaymentFlow(iOS)
+   * - 'Add a card' -> PaymentFlow(iOS)
+   * These strings will translated automatically by this library.
+   * 
+   */
+  @Prop() buttonLabel: string
+
+  /**
    * The client secret from paymentIntent.create response
    *
    * @example
@@ -175,6 +196,8 @@ export class StripePaymentSheet {
           handleSubmit={this.handleSubmit}
           stripeDidLoaded={this.stripeDidLoaded}
           intentType={this.intentType}
+          buttonLabel={this.buttonLabel}
+          sheetTitle={this.sheetTitle}
         ></stripe-payment>
       </stripe-sheet>
     );

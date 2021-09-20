@@ -38,6 +38,28 @@ export class StripePayment {
   @Prop() intentType: IntentType = 'payment';
 
   /**
+   * Payment sheet title
+   * By default we recommended to use these string
+   * - 'Add your payment information' -> PaymentSheet / PaymentFlow(Android)
+   * - 'Add a card' -> PaymentFlow(iOS)
+   * These strings will translated automatically by this library.
+   */
+  @Prop() sheetTitle = 'Add your payment information'
+
+  /**
+   * Submit button label
+   * By default we recommended to use these string
+   * - 'Pay' -> PaymentSheet
+   * - 'Add' -> PaymentFlow(Android)
+   * - 'Add card' -> PaymentFlow(iOS)
+   * - 'Add a card' -> PaymentFlow(iOS)
+   * These strings will translated automatically by this library.
+   * 
+   */
+  @Prop() buttonLabel = 'Pay'
+
+
+  /**
    * Get Stripe.js, and initialize elements
    * @param publishableKey
    * @example
@@ -510,7 +532,7 @@ export class StripePayment {
     return (
       <div class="stripe-payment-sheet-wrap">
         <form id="stripe-card-element">
-          <div class="stripe-heading">{i18n.t('Add your payment information')}</div>
+          <div class="stripe-heading">{i18n.t(this.sheetTitle)}</div>
           <div id="stripe-payment-request-button" />
           <div>
             <div class="stripe-section-title">{i18n.t('Card information')}</div>
@@ -553,7 +575,7 @@ export class StripePayment {
           </div>
           <div style={{ marginTop: '32px' }}>
             <button type="submit" disabled={disabled}>
-              {this.progress === 'loading' ? i18n.t('Loading') : i18n.t('Pay')}
+              {this.progress === 'loading' ? i18n.t('Loading') : i18n.t(this.buttonLabel)}
             </button>
           </div>
         </form>
