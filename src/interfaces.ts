@@ -12,6 +12,11 @@ import {
 } from '@stripe/stripe-js';
 
 /**
+ * Internal util types
+ */
+export type StringifyBoolean = 'true' | 'false'
+
+/**
  * Event object of `formSubmit` event
  */
 export type FormSubmitEvent = {
@@ -20,6 +25,7 @@ export type FormSubmitEvent = {
   cardExpiryElement: StripeCardExpiryElement;
   cardCVCElement: StripeCardCvcElement;
   intentClientSecret?: string;
+  zipCode?: string;
 };
 /**
  * Handler function of the `formSubmit` event

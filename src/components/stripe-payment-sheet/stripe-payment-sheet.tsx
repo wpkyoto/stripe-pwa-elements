@@ -38,6 +38,10 @@ export class StripePayment {
   @Prop() intentType: IntentType = 'payment';
 
   /**
+   * If true, show zip code field
+   */
+  @Prop() zip = true
+  /**
    * Payment sheet title
    * By default we recommended to use these string
    * - 'Add your payment information' -> PaymentSheet / PaymentFlow(Android)
@@ -143,6 +147,11 @@ export class StripePayment {
    * Error message
    */
   @State() errorMessage = '';
+
+  /**
+   * zip code
+   */
+  @State() zipCode = '';
 
   /**
    * Set error message
@@ -439,6 +448,7 @@ export class StripePayment {
         cardNumberElement: cardNumber,
         stripe,
         intentClientSecret,
+        zipCode: this.zipCode,
       };
 
       this.progress = 'loading';
@@ -560,19 +570,35 @@ export class StripePayment {
               </div>
             </fieldset>
           </div>
+          {this.zip ? (
           <div style={{ marginTop: '1.5rem' }}>
             <div class="stripe-section-title">{i18n.t('Country or region')}</div>
           </div>
+          ):null}
+          {this.zip ? (
           <div class="payment-info card visible">
             <fieldset class="stripe-input-box">
               <div>
                 <label>
                   {this.showLabel ? <lenged>{i18n.t('Postal Code')}</lenged> : null}
-                  <input id="zip" name="zip" type="text" inputmode="numeric" class="stripe-input-box StripeElement" style={{ width: '100%' }} placeholder={i18n.t('Postal Code')} />
+                  <input
+                    id="zip"
+                    name="zip"
+                    type="text"
+                    inputmode="numeric"
+                    class="stripe-input-box StripeElement"
+                    style={{ width: '100%' }}
+                    placeholder={i18n.t('Postal Code')}
+                    value={this.zipCode}
+                    onInput={e => {
+                      this.zipCode = (e.target as any).value
+                    }}
+                  />
                 </label>
               </div>
             </fieldset>
           </div>
+          ):null}
           <div style={{ marginTop: '32px' }}>
             <button type="submit" disabled={disabled}>
               {this.progress === 'loading' ? i18n.t('Loading') : i18n.t(this.buttonLabel)}

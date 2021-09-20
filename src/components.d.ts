@@ -76,6 +76,10 @@ export namespace Components {
           * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {    // You must set the attributes to stop running default form submit action when you want to listen the 'formSubmit' event.    stripeElement.setAttribute('should-use-default-form-submit-action', false)    stripeElement.addEventListener('formSubmit', async props => {      const {        detail: { stripe, cardNumber, event },      } = props;      const result = await stripe.createPaymentMethod({        type: 'card',        card: cardNumber,      });      console.log(result);      stripeElement.updateProgress('success')    }); })
          */
         "updateProgress": (progress: ProgressStatus) => Promise<this>;
+        /**
+          * If true, show zip code field
+         */
+        "zip": boolean;
     }
     interface StripePaymentRequestButton {
         /**
@@ -192,6 +196,10 @@ export namespace Components {
           * Update Stripe client loading process
          */
         "updateProgress": (progress: ProgressStatus) => Promise<HTMLStripePaymentElement>;
+        /**
+          * If true, show zip code field
+         */
+        "zip": boolean;
     }
     interface StripeSheet {
         /**
@@ -307,6 +315,10 @@ declare namespace LocalJSX {
           * Stripe.js class loaded handler
          */
         "stripeDidLoaded"?: StripeDidLoadedHandler;
+        /**
+          * If true, show zip code field
+         */
+        "zip"?: boolean;
     }
     interface StripePaymentRequestButton {
         /**
@@ -387,6 +399,10 @@ declare namespace LocalJSX {
           * Stripe.js class loaded handler
          */
         "stripeDidLoaded"?: StripeDidLoadedHandler;
+        /**
+          * If true, show zip code field
+         */
+        "zip"?: boolean;
     }
     interface StripeSheet {
         "onClose"?: (event: CustomEvent<any>) => void;
