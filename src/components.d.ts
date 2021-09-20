@@ -10,6 +10,10 @@ import { PaymentRequestOptions } from "@stripe/stripe-js";
 export namespace Components {
     interface StripePayment {
         /**
+          * Submit button label By default we recommended to use these string - 'Pay' -> PaymentSheet - 'Add' -> PaymentFlow(Android) - 'Add card' -> PaymentFlow(iOS) - 'Add a card' -> PaymentFlow(iOS) These strings will translated automatically by this library.
+         */
+        "buttonLabel": string;
+        /**
           * Form submit event handler
          */
         "handleSubmit": FormSubmitHandler;
@@ -45,6 +49,10 @@ export namespace Components {
           * @private
          */
         "setPaymentRequestOption": (option: PaymentRequestButtonOption) => Promise<this>;
+        /**
+          * Payment sheet title By default we recommended to use these string - 'Add your payment information' -> PaymentSheet / PaymentFlow(Android) - 'Add a card' -> PaymentFlow(iOS) These strings will translated automatically by this library.
+         */
+        "sheetTitle": string;
         /**
           * The component will provide a function to call the `stripe.confirmCardPayment`API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element
          */
@@ -122,6 +130,10 @@ export namespace Components {
     }
     interface StripePaymentSheet {
         /**
+          * Submit button label By default we recommended to use these string - 'Pay' -> PaymentSheet - 'Add' -> PaymentFlow(Android) - 'Add card' -> PaymentFlow(iOS) - 'Add a card' -> PaymentFlow(iOS) These strings will translated automatically by this library.
+         */
+        "buttonLabel": string;
+        /**
           * Remove the modal
          */
         "destroy": () => Promise<void>;
@@ -160,6 +172,10 @@ export namespace Components {
           * Add payment request button
          */
         "setPaymentRequestButton": (options: PaymentRequestButtonOption) => Promise<void>;
+        /**
+          * Payment sheet title By default we recommended to use these string - 'Add your payment information' -> PaymentSheet / PaymentFlow(Android) - 'Add a card' -> PaymentFlow(iOS) These strings will translated automatically by this library.
+         */
+        "sheetTitle": string;
         /**
           * The component will provide a function to call the `stripe.confirmCardPayment`API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element
          */
@@ -243,6 +259,10 @@ declare global {
 declare namespace LocalJSX {
     interface StripePayment {
         /**
+          * Submit button label By default we recommended to use these string - 'Pay' -> PaymentSheet - 'Add' -> PaymentFlow(Android) - 'Add card' -> PaymentFlow(iOS) - 'Add a card' -> PaymentFlow(iOS) These strings will translated automatically by this library.
+         */
+        "buttonLabel"?: string;
+        /**
           * Form submit event handler
          */
         "handleSubmit"?: FormSubmitHandler;
@@ -275,6 +295,10 @@ declare namespace LocalJSX {
           * Your Stripe publishable API key.
          */
         "publishableKey"?: string;
+        /**
+          * Payment sheet title By default we recommended to use these string - 'Add your payment information' -> PaymentSheet / PaymentFlow(Android) - 'Add a card' -> PaymentFlow(iOS) These strings will translated automatically by this library.
+         */
+        "sheetTitle"?: string;
         /**
           * The component will provide a function to call the `stripe.confirmCardPayment`API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element
          */
@@ -328,6 +352,10 @@ declare namespace LocalJSX {
     }
     interface StripePaymentSheet {
         /**
+          * Submit button label By default we recommended to use these string - 'Pay' -> PaymentSheet - 'Add' -> PaymentFlow(Android) - 'Add card' -> PaymentFlow(iOS) - 'Add a card' -> PaymentFlow(iOS) These strings will translated automatically by this library.
+         */
+        "buttonLabel"?: string;
+        /**
           * Form submit event handler
          */
         "handleSubmit"?: FormSubmitHandler;
@@ -351,6 +379,10 @@ declare namespace LocalJSX {
           * Your Stripe publishable API key.
          */
         "publishableKey"?: string;
+        /**
+          * Payment sheet title By default we recommended to use these string - 'Add your payment information' -> PaymentSheet / PaymentFlow(Android) - 'Add a card' -> PaymentFlow(iOS) These strings will translated automatically by this library.
+         */
+        "sheetTitle"?: string;
         /**
           * The component will provide a function to call the `stripe.confirmCardPayment`API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element
          */
