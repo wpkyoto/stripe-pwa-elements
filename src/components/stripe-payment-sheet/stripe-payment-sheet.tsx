@@ -128,6 +128,11 @@ export class StripePayment {
   @State() errorMessage = '';
 
   /**
+   * zip code
+   */
+  @State() zipCode = '';
+
+  /**
    * Set error message
    * @param errorMessage string
    * @returns
@@ -422,6 +427,7 @@ export class StripePayment {
         cardNumberElement: cardNumber,
         stripe,
         intentClientSecret,
+        zipCode: this.zipCode,
       };
 
       this.progress = 'loading';
@@ -554,7 +560,19 @@ export class StripePayment {
               <div>
                 <label>
                   {this.showLabel ? <lenged>{i18n.t('Postal Code')}</lenged> : null}
-                  <input id="zip" name="zip" type="text" inputmode="numeric" class="stripe-input-box StripeElement" style={{ width: '100%' }} placeholder={i18n.t('Postal Code')} />
+                  <input
+                    id="zip"
+                    name="zip"
+                    type="text"
+                    inputmode="numeric"
+                    class="stripe-input-box StripeElement"
+                    style={{ width: '100%' }}
+                    placeholder={i18n.t('Postal Code')}
+                    value={this.zipCode}
+                    onInput={e => {
+                      this.zipCode = (e.target as any).value
+                    }}
+                  />
                 </label>
               </div>
             </fieldset>

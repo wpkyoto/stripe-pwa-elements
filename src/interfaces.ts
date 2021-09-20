@@ -25,6 +25,7 @@ export type FormSubmitEvent = {
   cardExpiryElement: StripeCardExpiryElement;
   cardCVCElement: StripeCardCvcElement;
   intentClientSecret?: string;
+  zipCode?: string;
 };
 /**
  * Handler function of the `formSubmit` event
