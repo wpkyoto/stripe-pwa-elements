@@ -78,6 +78,11 @@ export class StripePaymentSheet {
   @Prop() showCloseButton = true;
 
   /**
+   * If true, show zip code field
+   */
+  @Prop() zip = true
+
+  /**
    * Modal state.
    * If true, the modal will open
    */
@@ -175,6 +180,7 @@ export class StripePaymentSheet {
           handleSubmit={this.handleSubmit}
           stripeDidLoaded={this.stripeDidLoaded}
           intentType={this.intentType}
+          zip={this.zip}
         ></stripe-payment>
       </stripe-sheet>
     );

@@ -12,6 +12,11 @@ import {
 } from '@stripe/stripe-js';
 
 /**
+ * Internal util types
+ */
+export type StringifyBoolean = 'true' | 'false'
+
+/**
  * Event object of `formSubmit` event
  */
 export type FormSubmitEvent = {

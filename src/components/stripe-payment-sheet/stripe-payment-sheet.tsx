@@ -38,6 +38,11 @@ export class StripePayment {
   @Prop() intentType: IntentType = 'payment';
 
   /**
+   * If true, show zip code field
+   */
+  @Prop() zip = true
+
+  /**
    * Get Stripe.js, and initialize elements
    * @param publishableKey
    * @example
@@ -538,9 +543,12 @@ export class StripePayment {
               </div>
             </fieldset>
           </div>
+          {this.zip ? (
           <div style={{ marginTop: '1.5rem' }}>
             <div class="stripe-section-title">{i18n.t('Country or region')}</div>
           </div>
+          ):null}
+          {this.zip ? (
           <div class="payment-info card visible">
             <fieldset class="stripe-input-box">
               <div>
@@ -551,6 +559,7 @@ export class StripePayment {
               </div>
             </fieldset>
           </div>
+          ):null}
           <div style={{ marginTop: '32px' }}>
             <button type="submit" disabled={disabled}>
               {this.progress === 'loading' ? i18n.t('Loading') : i18n.t('Pay')}
