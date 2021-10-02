@@ -14,7 +14,7 @@ import {
 /**
  * Internal util types
  */
-export type StringifyBoolean = 'true' | 'false'
+export type StringifyBoolean = 'true' | 'false';
 
 /**
  * Event object of `formSubmit` event

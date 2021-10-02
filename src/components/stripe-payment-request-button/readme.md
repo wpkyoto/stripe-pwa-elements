@@ -30,6 +30,8 @@ Type: `Promise<void>`
 
 ### `setPaymentMethodEventHandler(handler: PaymentRequestPaymentMethodEventHandler) => Promise<void>`
 
+Register event handler for `paymentRequest.on('paymentmethod'` event.
+
 #### Returns
 
 Type: `Promise<void>`
@@ -42,11 +44,15 @@ Type: `Promise<this>`
 
 ### `setPaymentRequestShippingAddressEventHandler(handler: PaymentRequestShippingAddressEventHandler) => Promise<void>`
 
+Register event handler for `paymentRequest.on('shippingaddresschange'` event.
+
 #### Returns
 
 Type: `Promise<void>`
 
 ### `setPaymentRequestShippingOptionEventHandler(handler: PaymentRequestShippingOptionEventHandler) => Promise<void>`
+
+Register event handler for `paymentRequest.on('shippingoptionchange'` event.
 
 #### Returns
 

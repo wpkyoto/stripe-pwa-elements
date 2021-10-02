@@ -105,6 +105,12 @@ export class StripePaymentRequestButton {
   @Prop() publishableKey: string;
 
   /**
+   * Overwrite the application name that registered
+   * For wrapper library (like Capacitor)
+   */
+  @Prop() applicationName = '@stripe-elements/stripe-elements';
+
+  /**
    * Stripe.js class loaded handler
    */
   @Prop({
@@ -177,6 +183,9 @@ export class StripePaymentRequestButton {
     loadStripe(publishableKey)
       .then(stripe => {
         this.loadStripeStatus = 'success';
+        stripe.registerAppInfo({
+          name: this.applicationName,
+        });
         this.stripe = stripe;
         return;
       })
