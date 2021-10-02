@@ -40,7 +40,7 @@ export class StripePayment {
   /**
    * If true, show zip code field
    */
-  @Prop() zip = true
+  @Prop() zip = true;
   /**
    * Payment sheet title
    * By default we recommended to use these string
@@ -48,7 +48,7 @@ export class StripePayment {
    * - 'Add a card' -> PaymentFlow(iOS)
    * These strings will translated automatically by this library.
    */
-  @Prop() sheetTitle = 'Add your payment information'
+  @Prop() sheetTitle = 'Add your payment information';
 
   /**
    * Submit button label
@@ -58,10 +58,9 @@ export class StripePayment {
    * - 'Add card' -> PaymentFlow(iOS)
    * - 'Add a card' -> PaymentFlow(iOS)
    * These strings will translated automatically by this library.
-   * 
+   *
    */
-  @Prop() buttonLabel = 'Pay'
-
+  @Prop() buttonLabel = 'Pay';
 
   /**
    * Get Stripe.js, and initialize elements
@@ -82,6 +81,9 @@ export class StripePayment {
     loadStripe(publishableKey)
       .then(stripe => {
         this.loadStripeStatus = 'success';
+        stripe.registerAppInfo({
+          name: this.applicationName,
+        });
         this.stripe = stripe;
         return;
       })
@@ -185,6 +187,12 @@ export class StripePayment {
    * Your Stripe publishable API key.
    */
   @Prop() publishableKey: string;
+
+  /**
+   * Overwrite the application name that registered
+   * For wrapper library (like Capacitor)
+   */
+  @Prop() applicationName = '@stripe-elements/stripe-elements';
 
   /**
    * Show the form label
@@ -571,34 +579,34 @@ export class StripePayment {
             </fieldset>
           </div>
           {this.zip ? (
-          <div style={{ marginTop: '1.5rem' }}>
-            <div class="stripe-section-title">{i18n.t('Country or region')}</div>
-          </div>
-          ):null}
+            <div style={{ marginTop: '1.5rem' }}>
+              <div class="stripe-section-title">{i18n.t('Country or region')}</div>
+            </div>
+          ) : null}
           {this.zip ? (
-          <div class="payment-info card visible">
-            <fieldset class="stripe-input-box">
-              <div>
-                <label>
-                  {this.showLabel ? <lenged>{i18n.t('Postal Code')}</lenged> : null}
-                  <input
-                    id="zip"
-                    name="zip"
-                    type="text"
-                    inputmode="numeric"
-                    class="stripe-input-box StripeElement"
-                    style={{ width: '100%' }}
-                    placeholder={i18n.t('Postal Code')}
-                    value={this.zipCode}
-                    onInput={e => {
-                      this.zipCode = (e.target as any).value
-                    }}
-                  />
-                </label>
-              </div>
-            </fieldset>
-          </div>
-          ):null}
+            <div class="payment-info card visible">
+              <fieldset class="stripe-input-box">
+                <div>
+                  <label>
+                    {this.showLabel ? <lenged>{i18n.t('Postal Code')}</lenged> : null}
+                    <input
+                      id="zip"
+                      name="zip"
+                      type="text"
+                      inputmode="numeric"
+                      class="stripe-input-box StripeElement"
+                      style={{ width: '100%' }}
+                      placeholder={i18n.t('Postal Code')}
+                      value={this.zipCode}
+                      onInput={e => {
+                        this.zipCode = (e.target as any).value;
+                      }}
+                    />
+                  </label>
+                </div>
+              </fieldset>
+            </div>
+          ) : null}
           <div style={{ marginTop: '32px' }}>
             <button type="submit" disabled={disabled}>
               {this.progress === 'loading' ? i18n.t('Loading') : i18n.t(this.buttonLabel)}

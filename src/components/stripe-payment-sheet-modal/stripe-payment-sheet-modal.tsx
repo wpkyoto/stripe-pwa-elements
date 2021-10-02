@@ -15,6 +15,12 @@ export class StripePaymentSheet {
   @Prop() publishableKey: string;
 
   /**
+   * Overwrite the application name that registered
+   * For wrapper library (like Capacitor)
+   */
+  @Prop() applicationName: string;
+
+  /**
    * Show the form label
    */
   @Prop() showLabel = false;
@@ -26,7 +32,7 @@ export class StripePaymentSheet {
    * - 'Add a card' -> PaymentFlow(iOS)
    * These strings will translated automatically by this library.
    */
-  @Prop() sheetTitle: string
+  @Prop() sheetTitle: string;
 
   /**
    * Submit button label
@@ -36,9 +42,9 @@ export class StripePaymentSheet {
    * - 'Add card' -> PaymentFlow(iOS)
    * - 'Add a card' -> PaymentFlow(iOS)
    * These strings will translated automatically by this library.
-   * 
+   *
    */
-  @Prop() buttonLabel: string
+  @Prop() buttonLabel: string;
 
   /**
    * The client secret from paymentIntent.create response
@@ -101,7 +107,7 @@ export class StripePaymentSheet {
   /**
    * If true, show zip code field
    */
-  @Prop() zip = true
+  @Prop() zip = true;
 
   /**
    * Modal state.
@@ -187,6 +193,10 @@ export class StripePaymentSheet {
     }
 
     paymentSheetElement.setAttribute('show-payment-request-button', 'true');
+    if (this.applicationName) {
+      paymentSheetElement.setAttribute('application-name', this.applicationName);
+    }
+
     paymentSheetElement.setPaymentRequestOption(options);
   }
 
@@ -204,6 +214,7 @@ export class StripePaymentSheet {
           zip={this.zip}
           buttonLabel={this.buttonLabel}
           sheetTitle={this.sheetTitle}
+          applicationName={this.applicationName}
         ></stripe-payment>
       </stripe-sheet>
     );
