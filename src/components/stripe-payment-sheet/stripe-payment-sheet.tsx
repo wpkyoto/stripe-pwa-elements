@@ -55,6 +55,9 @@ export class StripePayment {
     loadStripe(publishableKey)
       .then(stripe => {
         this.loadStripeStatus = 'success';
+        stripe.setAppInfo({
+          name: "@stripe-elements/stripe-elements"
+        });
         this.stripe = stripe;
         return;
       })
@@ -482,7 +485,7 @@ export class StripePayment {
           stripePaymentRequestElement
             .setPaymentRequestShippingOptionEventHandler(paymentRequestShippingOptionChangeHandler)
         }
-   
+
         if (paymentRequestShippingAddressChangeHandler) {
           stripePaymentRequestElement.
             setPaymentRequestShippingAddressEventHandler(paymentRequestShippingAddressChangeHandler)
@@ -500,7 +503,7 @@ export class StripePayment {
     }
 
     const disabled = this.progress === 'loading';
-    
+
 
     return (
       <div class="stripe-payment-sheet-wrap">
