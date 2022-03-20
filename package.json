@@ -27,6 +27,7 @@
     "format": "prettier --write src",
     "example:copy": "stencil build --docs && cp -R dist/stripe-elements example/",
     "example:serve": "npx serve example",
+    "prepublishOnly": "npm run build",
     "release": "np"
   },
   "dependencies": {
