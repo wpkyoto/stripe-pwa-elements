@@ -8,6 +8,10 @@ describe('stripe-payment-sheet', () => {
       html: `<stripe-payment-sheet></stripe-payment-sheet>`,
     });
 
-    expect(page.root).toMatchSnapshot();
+    expect(page.root).toEqualHtml(`<stripe-payment-sheet>
+      <stripe-sheet showclosebutton="">
+        <stripe-payment intenttype="payment" shouldusedefaultformsubmitaction="" zip=""></stripe-payment>
+      </stripe-sheet>
+    </stripe-payment-sheet>`);
   });
 });
