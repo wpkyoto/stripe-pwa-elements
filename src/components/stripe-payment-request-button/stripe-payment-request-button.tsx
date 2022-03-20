@@ -215,6 +215,7 @@ export class StripePaymentRequestButton {
    * Initialize Component using Stripe Element
    */
   private async initElement(showButton: boolean = true) {
+    console.log(`init Element run. show Button is ${showButton}`);
     const elements = this.stripe.elements();
     const paymentRequest = this.stripe.paymentRequest(this.paymentRequestOption);
     const paymentRequestButton = elements.create('paymentRequestButton', {
