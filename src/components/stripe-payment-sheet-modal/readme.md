@@ -2,6 +2,7 @@
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property                           | Attribute                               | Description                                                                                                                                                                                                                                                | Type                                                      | Default     |
@@ -20,11 +21,13 @@
 | `stripeDidLoaded`                  | --                                      | Stripe.js class loaded handler                                                                                                                                                                                                                             | `(event: StripeLoadedEvent) => Promise<void>`             | `undefined` |
 | `zip`                              | `zip`                                   | If true, show zip code field                                                                                                                                                                                                                               | `boolean`                                                 | `true`      |
 
+
 ## Events
 
 | Event    | Description | Type               |
 | -------- | ----------- | ------------------ |
 | `closed` |             | `CustomEvent<any>` |
+
 
 ## Methods
 
@@ -36,6 +39,8 @@ Remove the modal
 
 Type: `Promise<void>`
 
+
+
 ### `getStripePaymentSheetElement() => Promise<HTMLStripePaymentElement>`
 
 Get the inner component
@@ -43,6 +48,8 @@ Get the inner component
 #### Returns
 
 Type: `Promise<HTMLStripePaymentElement>`
+
+
 
 ### `present() => Promise<unknown>`
 
@@ -52,13 +59,18 @@ open modal
 
 Type: `Promise<unknown>`
 
+
+
 ### `setPaymentRequestButton(options: PaymentRequestButtonOption) => Promise<void>`
+
 
 Add payment request button
 
 #### Returns
 
 Type: `Promise<void>`
+
+
 
 ### `updateProgress(progress: ProgressStatus) => Promise<HTMLStripePaymentElement>`
 
@@ -68,6 +80,9 @@ Update Stripe client loading process
 
 Type: `Promise<HTMLStripePaymentElement>`
 
+
+
+
 ## Dependencies
 
 ### Depends on
@@ -76,7 +91,6 @@ Type: `Promise<HTMLStripePaymentElement>`
 - [stripe-payment](../stripe-payment-sheet)
 
 ### Graph
-
 ```mermaid
 graph TD;
   stripe-payment-sheet --> stripe-sheet
@@ -86,6 +100,6 @@ graph TD;
   style stripe-payment-sheet fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
----
+----------------------------------------------
 
-_Built with [StencilJS](https://stenciljs.com/)_
+*Built with [StencilJS](https://stenciljs.com/)*
