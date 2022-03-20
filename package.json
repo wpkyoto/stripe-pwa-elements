@@ -30,11 +30,11 @@
     "release": "np"
   },
   "dependencies": {
-    "@stencil/core": "^2.0.1",
-    "@stripe/stripe-js": "^1.16.0",
+    "@stencil/core": "^2.14.2",
+    "@stripe/stripe-js": "^1.25.0",
     "i18next": "^20.3.3",
     "i18next-browser-languagedetector": "^6.1.2",
-    "ionicons": "^5.5.2"
+    "ionicons": "^6.0.1"
   },
   "keywords": [
     "stripe",
@@ -58,8 +58,8 @@
   "author": "Hidetaka Okamoto <info@wp-kyoto.net> (https://wp-kyoto.net)",
   "license": "MIT",
   "devDependencies": {
-    "@stencil/eslint-plugin": "^0.3.1",
-    "@stencil/sass": "^1.4.1",
+    "@stencil/eslint-plugin": "^0.4.0",
+    "@stencil/sass": "^1.5.2",
     "@types/jest": "^26.0.24",
     "@types/puppeteer": "^5.4.3",
     "@typescript-eslint/eslint-plugin": "^4.28.3",
@@ -72,7 +72,7 @@
     "prettier": "^2.3.2",
     "prettier-eslint": "^12.0.0",
     "prettier-eslint-cli": "^5.0.1",
-    "puppeteer": "^5.5.0",
-    "typescript": "^4.3.5"
+    "puppeteer": "^13.5.1",
+    "typescript": "^4.5.4"
   }
 }
