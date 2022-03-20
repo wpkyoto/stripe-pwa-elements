@@ -176,9 +176,10 @@ export class StripePaymentRequestButton {
   /**
    * Get Stripe.js, and initialize elements
    * @param publishableKey
+   * @param showButton
    */
   @Method()
-  public async initStripe(publishableKey: string) {
+  public async initStripe(publishableKey: string, showButton = true) {
     this.loadStripeStatus = 'loading';
     loadStripe(publishableKey)
       .then(stripe => {
@@ -199,7 +200,7 @@ export class StripePaymentRequestButton {
           return;
         }
 
-        return this.initElement();
+        return this.initElement(showButton);
       })
       .then(() => {
         if (!this.stripe) {
@@ -213,7 +214,7 @@ export class StripePaymentRequestButton {
   /**
    * Initialize Component using Stripe Element
    */
-  private async initElement() {
+  private async initElement(showButton: boolean) {
     const elements = this.stripe.elements();
     const paymentRequest = this.stripe.paymentRequest(this.paymentRequestOption);
     const paymentRequestButton = elements.create('paymentRequestButton', {
@@ -224,10 +225,12 @@ export class StripePaymentRequestButton {
     const paymentRequestSupport = await paymentRequest.canMakePayment();
 
     if (paymentRequestSupport) {
-      // Display the Pay button by mounting the Element in the DOM.
-      paymentRequestButton.mount(paymentRequestButtonElement);
-      // Show the payment request section.
-      this.el.querySelector('#payment-request').classList.add('visible');
+      if (showButton) {
+        // Display the Pay button by mounting the Element in the DOM.
+        paymentRequestButton.mount(paymentRequestButtonElement);
+        // Show the payment request section.
+        this.el.querySelector('#payment-request').classList.add('visible');
+      }
 
       if (this.paymentMethodEventHandler) {
         paymentRequest.on('paymentmethod', event => {
@@ -245,6 +248,14 @@ export class StripePaymentRequestButton {
         paymentRequest.on('shippingaddresschange', event => {
           this.shippingAddressEventHandler(event, this.stripe);
         });
+      }
+
+      if (!showButton) {
+        /**
+         * This method must be called as the result of a user interaction (for example, in a click handler).
+         * https://stripe.com/docs/js/payment_request/show
+         */
+        paymentRequest.show();
       }
     }
   }
