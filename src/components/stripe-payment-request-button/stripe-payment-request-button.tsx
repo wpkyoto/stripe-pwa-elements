@@ -44,6 +44,7 @@ export class StripePaymentRequestButton {
       disableWallets: ['applePay', 'googlePay', 'browserCard'].filter(method => method !== type) as PaymentRequestWallet[],
     });
     const paymentRequestSupport = await paymentRequest.canMakePayment();
+    console.log(paymentRequestSupport);
 
     if (!paymentRequestSupport) {
       throw 'This device can not use.';
@@ -244,7 +245,6 @@ export class StripePaymentRequestButton {
    * Initialize Component using Stripe Element
    */
   private async initElement(showButton = true) {
-    console.log(`init Element run. show Button is ${showButton}`);
     const paymentRequest = this.stripe.paymentRequest(this.paymentRequestOption);
 
     // Check if the Payment Request is available (or Apple Pay on the Web).
