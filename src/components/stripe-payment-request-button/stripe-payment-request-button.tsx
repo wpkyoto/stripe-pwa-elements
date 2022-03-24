@@ -32,8 +32,10 @@ export class StripePaymentRequestButton {
     if (this.publishableKey === undefined) {
       throw 'You should run this method run, after set publishableKey.';
     }
+    console.log(1);
 
     const stripe = await loadStripe(this.publishableKey);
+    console.log(2);
     const paymentRequest = stripe.paymentRequest({
       country: 'US',
       currency: 'usd',
@@ -43,7 +45,9 @@ export class StripePaymentRequestButton {
       },
       disableWallets: ['applePay', 'googlePay', 'browserCard'].filter(method => method !== type) as PaymentRequestWallet[],
     });
+    console.log(3);
     const paymentRequestSupport = await paymentRequest.canMakePayment();
+    console.log(4);
     console.log(paymentRequestSupport);
 
     if (!paymentRequestSupport) {
