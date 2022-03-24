@@ -2,7 +2,6 @@
 
 <!-- Auto Generated Below -->
 
-
 ## Properties
 
 | Property                      | Attribute          | Description                                                                         | Type                                                                           | Default                              |
@@ -14,13 +13,11 @@
 | `shippingOptionEventHandler`  | --                 | Set handler of the `paymentRequest.on('shippingoptionchange')` event                | `(event: PaymentRequestShippingOptionEvent, stripe: Stripe) => Promise<void>`  | `undefined`                          |
 | `stripeDidLoaded`             | --                 | Stripe.js class loaded handler                                                      | `(event: StripeLoadedEvent) => Promise<void>`                                  | `undefined`                          |
 
-
 ## Events
 
 | Event          | Description                | Type                               |
 | -------------- | -------------------------- | ---------------------------------- |
 | `stripeLoaded` | Stripe Client loaded event | `CustomEvent<{ stripe: Stripe; }>` |
-
 
 ## Methods
 
@@ -32,8 +29,6 @@ Get Stripe.js, and initialize elements
 
 Type: `Promise<void>`
 
-
-
 ### `setPaymentMethodEventHandler(handler: PaymentRequestPaymentMethodEventHandler) => Promise<void>`
 
 Register event handler for `paymentRequest.on('paymentmethod'` event.
@@ -42,17 +37,11 @@ Register event handler for `paymentRequest.on('paymentmethod'` event.
 
 Type: `Promise<void>`
 
-
-
 ### `setPaymentRequestOption(option: PaymentRequestOptions) => Promise<this>`
-
-
 
 #### Returns
 
 Type: `Promise<this>`
-
-
 
 ### `setPaymentRequestShippingAddressEventHandler(handler: PaymentRequestShippingAddressEventHandler) => Promise<void>`
 
@@ -62,8 +51,6 @@ Register event handler for `paymentRequest.on('shippingaddresschange'` event.
 
 Type: `Promise<void>`
 
-
-
 ### `setPaymentRequestShippingOptionEventHandler(handler: PaymentRequestShippingOptionEventHandler) => Promise<void>`
 
 Register event handler for `paymentRequest.on('shippingoptionchange'` event.
@@ -72,22 +59,20 @@ Register event handler for `paymentRequest.on('shippingoptionchange'` event.
 
 Type: `Promise<void>`
 
-
-
-
 ## Dependencies
 
 ### Used by
 
- - [stripe-payment](../stripe-payment-sheet)
+- [stripe-payment](../stripe-payment-sheet)
 
 ### Graph
+
 ```mermaid
 graph TD;
   stripe-payment --> stripe-payment-request-button
   style stripe-payment-request-button fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
-----------------------------------------------
+---
 
-*Built with [StencilJS](https://stenciljs.com/)*
+_Built with [StencilJS](https://stenciljs.com/)_

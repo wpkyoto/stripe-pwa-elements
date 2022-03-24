@@ -7,7 +7,7 @@ import {
   PaymentRequestPaymentMethodEventHandler,
   PaymentRequestShippingOptionEventHandler,
 } from '../../interfaces';
-import {PaymentRequestWallet} from '@stripe/stripe-js/types/stripe-js/payment-request';
+import { PaymentRequestWallet } from '@stripe/stripe-js/types/stripe-js/payment-request';
 
 @Component({
   tag: 'stripe-payment-request-button',
@@ -32,6 +32,7 @@ export class StripePaymentRequestButton {
     if (this.publishableKey === undefined) {
       throw 'You should run this method run, after set publishableKey.';
     }
+
     const stripe = await loadStripe(this.publishableKey);
     const paymentRequest = stripe.paymentRequest({
       country: 'US',
@@ -43,6 +44,7 @@ export class StripePaymentRequestButton {
       disableWallets: ['applePay', 'googlePay', 'browserCard'].filter(method => method !== type) as PaymentRequestWallet[],
     });
     const paymentRequestSupport = await paymentRequest.canMakePayment();
+
     if (!paymentRequestSupport) {
       throw 'This device can not use.';
     }
@@ -241,7 +243,7 @@ export class StripePaymentRequestButton {
   /**
    * Initialize Component using Stripe Element
    */
-  private async initElement(showButton: boolean = true) {
+  private async initElement(showButton = true) {
     console.log(`init Element run. show Button is ${showButton}`);
     const paymentRequest = this.stripe.paymentRequest(this.paymentRequestOption);
 
@@ -277,6 +279,7 @@ export class StripePaymentRequestButton {
         paymentRequest,
       });
       const paymentRequestButtonElement: HTMLElement = this.el.querySelector('#payment-request-button');
+
       paymentRequestButton.mount(paymentRequestButtonElement);
       // Show the payment request section.
       this.el.querySelector('#payment-request').classList.add('visible');

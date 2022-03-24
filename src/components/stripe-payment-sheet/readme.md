@@ -2,7 +2,6 @@
 
 <!-- Auto Generated Below -->
 
-
 ## Properties
 
 | Property                           | Attribute                               | Description                                                                                                                                                                                                                                                | Type                                                      | Default                              |
@@ -20,7 +19,6 @@
 | `stripeDidLoaded`                  | --                                      | Stripe.js class loaded handler                                                                                                                                                                                                                             | `(event: StripeLoadedEvent) => Promise<void>`             | `undefined`                          |
 | `zip`                              | `zip`                                   | If true, show zip code field                                                                                                                                                                                                                               | `boolean`                                                 | `true`                               |
 
-
 ## Events
 
 | Event                     | Description                                   | Type                                                                                                                                                                                                                                       |
@@ -28,7 +26,6 @@
 | `defaultFormSubmitResult` | Recieve the result of defaultFormSubmit event | `CustomEvent<Error \| { paymentIntent: PaymentIntent; error?: undefined; } \| { paymentIntent?: undefined; error: StripeError; } \| { setupIntent: SetupIntent; error?: undefined; } \| { setupIntent?: undefined; error: StripeError; }>` |
 | `formSubmit`              | Form submit event                             | `CustomEvent<{ stripe: Stripe; cardNumberElement: StripeCardNumberElement; cardExpiryElement: StripeCardExpiryElement; cardCVCElement: StripeCardCvcElement; intentClientSecret?: string; zipCode?: string; }>`                            |
 | `stripeLoaded`            | Stripe Client loaded event                    | `CustomEvent<{ stripe: Stripe; }>`                                                                                                                                                                                                         |
-
 
 ## Methods
 
@@ -40,8 +37,6 @@ Get Stripe.js, and initialize elements
 
 Type: `Promise<void>`
 
-
-
 ### `setErrorMessage(errorMessage: string) => Promise<this>`
 
 Set error message
@@ -50,17 +45,11 @@ Set error message
 
 Type: `Promise<this>`
 
-
-
 ### `setPaymentRequestOption(option: PaymentRequestButtonOption) => Promise<this>`
-
-
 
 #### Returns
 
 Type: `Promise<this>`
-
-
 
 ### `updateProgress(progress: ProgressStatus) => Promise<this>`
 
@@ -70,20 +59,18 @@ Update the form submit progress
 
 Type: `Promise<this>`
 
-
-
-
 ## Dependencies
 
 ### Used by
 
- - [stripe-payment-sheet](../stripe-payment-sheet-modal)
+- [stripe-payment-sheet](../stripe-payment-sheet-modal)
 
 ### Depends on
 
 - [stripe-payment-request-button](../stripe-payment-request-button)
 
 ### Graph
+
 ```mermaid
 graph TD;
   stripe-payment --> stripe-payment-request-button
@@ -91,6 +78,6 @@ graph TD;
   style stripe-payment fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
-----------------------------------------------
+---
 
-*Built with [StencilJS](https://stenciljs.com/)*
+_Built with [StencilJS](https://stenciljs.com/)_
