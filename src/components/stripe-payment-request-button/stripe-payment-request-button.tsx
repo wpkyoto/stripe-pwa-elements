@@ -29,6 +29,7 @@ export class StripePaymentRequestButton {
    */
   @Method()
   public async isAvailable(type: 'applePay' | 'googlePay') {
+    console.log(0);
     if (this.publishableKey === undefined) {
       throw 'You should run this method run, after set publishableKey.';
     }
