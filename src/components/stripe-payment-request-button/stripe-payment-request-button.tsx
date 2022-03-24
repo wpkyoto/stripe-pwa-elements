@@ -25,18 +25,14 @@ export class StripePaymentRequestButton {
   /**
    * Check isAvailable ApplePay or GooglePay.
    * If you run this method, you should run before initStripe.
-   * @param type
    */
   @Method()
   public async isAvailable(type: 'applePay' | 'googlePay') {
-    console.log(0);
     if (this.publishableKey === undefined) {
       throw 'You should run this method run, after set publishableKey.';
     }
-    console.log(1);
 
     const stripe = await loadStripe(this.publishableKey);
-    console.log(2);
     const paymentRequest = stripe.paymentRequest({
       country: 'US',
       currency: 'usd',
@@ -46,12 +42,12 @@ export class StripePaymentRequestButton {
       },
       disableWallets: ['applePay', 'googlePay', 'browserCard'].filter(method => method !== type) as PaymentRequestWallet[],
     });
-    console.log(3);
     const paymentRequestSupport = await paymentRequest.canMakePayment();
-    console.log(4);
     console.log(paymentRequestSupport);
 
-    if (!paymentRequestSupport) {
+    if ((type === 'applePay' && !paymentRequestSupport[type])
+      ||
+      (type === 'googlePay' && !paymentRequestSupport[type])) {
       throw 'This device can not use.';
     }
   }
@@ -191,7 +187,7 @@ export class StripePaymentRequestButton {
   }
 
   constructor() {
-    if (this.publishableKey) {
+    if (this.publishableKey !== undefined && this.paymentRequestOption !== undefined) {
       this.initStripe(this.publishableKey);
     } else {
       this.loadStripeStatus = 'failure';
