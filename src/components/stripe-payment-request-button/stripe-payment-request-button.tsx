@@ -224,41 +224,42 @@ export class StripePaymentRequestButton {
     // Check if the Payment Request is available (or Apple Pay on the Web).
     const paymentRequestSupport = await paymentRequest.canMakePayment();
 
-    if (paymentRequestSupport) {
-      if (showButton) {
-        // Display the Pay button by mounting the Element in the DOM.
-        const paymentRequestButtonElement: HTMLElement = this.el.querySelector('#payment-request-button');
-        paymentRequestButton.mount(paymentRequestButtonElement);
-        // Show the payment request section.
-        this.el.querySelector('#payment-request').classList.add('visible');
-      }
+    if (!paymentRequestSupport) {
+      throw 'paymentRequest is not support.';
+    }
 
-      if (this.paymentMethodEventHandler) {
-        paymentRequest.on('paymentmethod', event => {
-          this.paymentMethodEventHandler(event, this.stripe);
-        });
-      }
+    if (showButton) {
+      // Display the Pay button by mounting the Element in the DOM.
+      const paymentRequestButtonElement: HTMLElement = this.el.querySelector('#payment-request-button');
+      paymentRequestButton.mount(paymentRequestButtonElement);
+      // Show the payment request section.
+      this.el.querySelector('#payment-request').classList.add('visible');
+    }
 
-      if (this.shippingOptionEventHandler) {
-        paymentRequest.on('shippingoptionchange', event => {
-          this.shippingOptionEventHandler(event, this.stripe);
-        });
-      }
+    if (this.paymentMethodEventHandler) {
+      paymentRequest.on('paymentmethod', event => {
+        this.paymentMethodEventHandler(event, this.stripe);
+      });
+    }
 
-      if (this.shippingAddressEventHandler) {
-        paymentRequest.on('shippingaddresschange', event => {
-          this.shippingAddressEventHandler(event, this.stripe);
-        });
-      }
+    if (this.shippingOptionEventHandler) {
+      paymentRequest.on('shippingoptionchange', event => {
+        this.shippingOptionEventHandler(event, this.stripe);
+      });
+    }
 
-      if (!showButton) {
-        /**
-         * This method must be called as the result of a user interaction (for example, in a click handler).
-         * https://stripe.com/docs/js/payment_request/show
-         */
-        console.log('Set show Button `false`.')
-        paymentRequest.show();
-      }
+    if (this.shippingAddressEventHandler) {
+      paymentRequest.on('shippingaddresschange', event => {
+        this.shippingAddressEventHandler(event, this.stripe);
+      });
+    }
+
+    if (!showButton) {
+      /**
+       * This method must be called as the result of a user interaction (for example, in a click handler).
+       * https://stripe.com/docs/js/payment_request/show
+       */
+      paymentRequest.show();
     }
   }
 
