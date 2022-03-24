@@ -45,7 +45,10 @@ export class StripePaymentRequestButton {
     const paymentRequestSupport = await paymentRequest.canMakePayment();
     console.log(paymentRequestSupport);
 
-    if ((type === 'applePay' && !paymentRequestSupport[type])
+    if (
+      !paymentRequestSupport
+      ||
+      (type === 'applePay' && !paymentRequestSupport[type])
       ||
       (type === 'googlePay' && !paymentRequestSupport[type])) {
       throw 'This device can not use.';
