@@ -99,7 +99,6 @@ export namespace Components {
         "initStripe": (publishableKey: string, showButton?: boolean) => Promise<void>;
         /**
           * Check isAvailable ApplePay or GooglePay. If you run this method, you should run before initStripe.
-          * @param type
          */
         "isAvailable": (type: 'applePay' | 'googlePay') => Promise<void>;
         /**
