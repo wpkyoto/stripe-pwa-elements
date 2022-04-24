@@ -43,14 +43,10 @@ export class StripePaymentRequestButton {
       disableWallets: ['applePay', 'googlePay', 'browserCard'].filter(method => method !== type) as PaymentRequestWallet[],
     });
     const paymentRequestSupport = await paymentRequest.canMakePayment();
+
     console.log(paymentRequestSupport);
 
-    if (
-      !paymentRequestSupport
-      ||
-      (type === 'applePay' && !paymentRequestSupport[type])
-      ||
-      (type === 'googlePay' && !paymentRequestSupport[type])) {
+    if (!paymentRequestSupport || (type === 'applePay' && !paymentRequestSupport[type]) || (type === 'googlePay' && !paymentRequestSupport[type])) {
       throw 'This device can not use.';
     }
   }
