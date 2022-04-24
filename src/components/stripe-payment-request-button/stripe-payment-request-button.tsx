@@ -7,6 +7,7 @@ import {
   PaymentRequestPaymentMethodEventHandler,
   PaymentRequestShippingOptionEventHandler,
 } from '../../interfaces';
+import { PaymentRequestWallet } from '@stripe/stripe-js/types/stripe-js/payment-request';
 
 @Component({
   tag: 'stripe-payment-request-button',
@@ -20,6 +21,39 @@ export class StripePaymentRequestButton {
   @State() stripe: Stripe;
 
   @State() paymentRequestOption?: PaymentRequestOptions;
+
+  /**
+   * Check isAvailable ApplePay or GooglePay.
+   * If you run this method, you should run before initStripe.
+   */
+  @Method()
+  public async isAvailable(type: 'applePay' | 'googlePay') {
+    if (this.publishableKey === undefined) {
+      throw 'You should run this method run, after set publishableKey.';
+    }
+
+    const stripe = await loadStripe(this.publishableKey);
+    const paymentRequest = stripe.paymentRequest({
+      country: 'US',
+      currency: 'usd',
+      total: {
+        label: 'Demo total',
+        amount: 1099,
+      },
+      disableWallets: ['applePay', 'googlePay', 'browserCard'].filter(method => method !== type) as PaymentRequestWallet[],
+    });
+    const paymentRequestSupport = await paymentRequest.canMakePayment();
+    console.log(paymentRequestSupport);
+
+    if (
+      !paymentRequestSupport
+      ||
+      (type === 'applePay' && !paymentRequestSupport[type])
+      ||
+      (type === 'googlePay' && !paymentRequestSupport[type])) {
+      throw 'This device can not use.';
+    }
+  }
 
   /**
    * Set handler of the `paymentRequest.on('paymentmethod'` event.
@@ -156,7 +190,7 @@ export class StripePaymentRequestButton {
   }
 
   constructor() {
-    if (this.publishableKey) {
+    if (this.publishableKey !== undefined && this.paymentRequestOption !== undefined) {
       this.initStripe(this.publishableKey);
     } else {
       this.loadStripeStatus = 'failure';
@@ -176,9 +210,10 @@ export class StripePaymentRequestButton {
   /**
    * Get Stripe.js, and initialize elements
    * @param publishableKey
+   * @param showButton
    */
   @Method()
-  public async initStripe(publishableKey: string) {
+  public async initStripe(publishableKey: string, showButton = true) {
     this.loadStripeStatus = 'loading';
     loadStripe(publishableKey)
       .then(stripe => {
@@ -199,7 +234,7 @@ export class StripePaymentRequestButton {
           return;
         }
 
-        return this.initElement();
+        return this.initElement(showButton);
       })
       .then(() => {
         if (!this.stripe) {
@@ -213,39 +248,51 @@ export class StripePaymentRequestButton {
   /**
    * Initialize Component using Stripe Element
    */
-  private async initElement() {
-    const elements = this.stripe.elements();
+  private async initElement(showButton = true) {
     const paymentRequest = this.stripe.paymentRequest(this.paymentRequestOption);
-    const paymentRequestButton = elements.create('paymentRequestButton', {
-      paymentRequest,
-    });
-    const paymentRequestButtonElement: HTMLElement = this.el.querySelector('#payment-request-button');
+
     // Check if the Payment Request is available (or Apple Pay on the Web).
     const paymentRequestSupport = await paymentRequest.canMakePayment();
 
-    if (paymentRequestSupport) {
+    if (!paymentRequestSupport) {
+      throw 'paymentRequest is not support.';
+    }
+
+    if (this.paymentMethodEventHandler) {
+      paymentRequest.on('paymentmethod', event => {
+        this.paymentMethodEventHandler(event, this.stripe);
+      });
+    }
+
+    if (this.shippingOptionEventHandler) {
+      paymentRequest.on('shippingoptionchange', event => {
+        this.shippingOptionEventHandler(event, this.stripe);
+      });
+    }
+
+    if (this.shippingAddressEventHandler) {
+      paymentRequest.on('shippingaddresschange', event => {
+        this.shippingAddressEventHandler(event, this.stripe);
+      });
+    }
+
+    if (showButton) {
       // Display the Pay button by mounting the Element in the DOM.
+      const elements = this.stripe.elements();
+      const paymentRequestButton = elements.create('paymentRequestButton', {
+        paymentRequest,
+      });
+      const paymentRequestButtonElement: HTMLElement = this.el.querySelector('#payment-request-button');
+
       paymentRequestButton.mount(paymentRequestButtonElement);
       // Show the payment request section.
       this.el.querySelector('#payment-request').classList.add('visible');
-
-      if (this.paymentMethodEventHandler) {
-        paymentRequest.on('paymentmethod', event => {
-          this.paymentMethodEventHandler(event, this.stripe);
-        });
-      }
-
-      if (this.shippingOptionEventHandler) {
-        paymentRequest.on('shippingoptionchange', event => {
-          this.shippingOptionEventHandler(event, this.stripe);
-        });
-      }
-
-      if (this.shippingAddressEventHandler) {
-        paymentRequest.on('shippingaddresschange', event => {
-          this.shippingAddressEventHandler(event, this.stripe);
-        });
-      }
+    } else {
+      /**
+       * This method must be called as the result of a user interaction (for example, in a click handler).
+       * https://stripe.com/docs/js/payment_request/show
+       */
+      paymentRequest.show();
     }
   }
 
