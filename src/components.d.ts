@@ -25,9 +25,10 @@ export namespace Components {
         /**
           * Get Stripe.js, and initialize elements
           * @param publishableKey
+          * @param options
           * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {    tripeElement.initStripe('pk_test_XXXXXXXXX')  }) ```
          */
-        "initStripe": (publishableKey: string) => Promise<void>;
+        "initStripe": (publishableKey: string, options?: { stripeAccount?: string; }) => Promise<void>;
         /**
           * The client secret from paymentIntent.create response
           * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.setAttribute('intent-client-secret', 'dummy')   }) ```
@@ -94,9 +95,9 @@ export namespace Components {
         /**
           * Get Stripe.js, and initialize elements
           * @param publishableKey
-          * @param showButton
+          * @param options
          */
-        "initStripe": (publishableKey: string, showButton?: boolean) => Promise<void>;
+        "initStripe": (publishableKey: string, options?: { showButton?: boolean; stripeAccount?: string; }) => Promise<void>;
         /**
           * Check isAvailable ApplePay or GooglePay. If you run this method, you should run before initStripe.
          */

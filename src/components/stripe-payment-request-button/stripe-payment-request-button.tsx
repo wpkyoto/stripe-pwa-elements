@@ -15,6 +15,7 @@ import { PaymentRequestWallet } from '@stripe/stripe-js/types/stripe-js/payment-
   shadow: false,
 })
 export class StripePaymentRequestButton {
+  private stripeAccount: string;
   @Element() el: HTMLStripePaymentRequestButtonElement;
   @State() loadStripeStatus: '' | 'loading' | 'success' | 'failure' = '';
 
@@ -32,7 +33,9 @@ export class StripePaymentRequestButton {
       throw 'You should run this method run, after set publishableKey.';
     }
 
-    const stripe = await loadStripe(this.publishableKey);
+    const stripe = await loadStripe(this.publishableKey, {
+      stripeAccount: this.stripeAccount,
+    });
     const paymentRequest = stripe.paymentRequest({
       country: 'US',
       currency: 'usd',
@@ -43,8 +46,6 @@ export class StripePaymentRequestButton {
       disableWallets: ['applePay', 'googlePay', 'browserCard'].filter(method => method !== type) as PaymentRequestWallet[],
     });
     const paymentRequestSupport = await paymentRequest.canMakePayment();
-
-    console.log(paymentRequestSupport);
 
     if (!paymentRequestSupport || (type === 'applePay' && !paymentRequestSupport[type]) || (type === 'googlePay' && !paymentRequestSupport[type])) {
       throw 'This device can not use.';
@@ -187,7 +188,9 @@ export class StripePaymentRequestButton {
 
   constructor() {
     if (this.publishableKey !== undefined && this.paymentRequestOption !== undefined) {
-      this.initStripe(this.publishableKey);
+      this.initStripe(this.publishableKey, {
+        stripeAccount: this.stripeAccount,
+      });
     } else {
       this.loadStripeStatus = 'failure';
     }
@@ -206,12 +209,17 @@ export class StripePaymentRequestButton {
   /**
    * Get Stripe.js, and initialize elements
    * @param publishableKey
-   * @param showButton
+   * @param options
    */
   @Method()
-  public async initStripe(publishableKey: string, showButton = true) {
+  public async initStripe(publishableKey: string, options: {
+    showButton?: boolean,
+    stripeAccount?: string
+  } = undefined) {
     this.loadStripeStatus = 'loading';
-    loadStripe(publishableKey)
+    loadStripe(publishableKey, {
+      stripeAccount: options?.stripeAccount,
+    })
       .then(stripe => {
         this.loadStripeStatus = 'success';
         stripe.registerAppInfo({
@@ -230,7 +238,7 @@ export class StripePaymentRequestButton {
           return;
         }
 
-        return this.initElement(showButton);
+        return this.initElement(options?.showButton === true);
       })
       .then(() => {
         if (!this.stripe) {

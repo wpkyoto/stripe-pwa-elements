@@ -65,6 +65,7 @@ export class StripePayment {
   /**
    * Get Stripe.js, and initialize elements
    * @param publishableKey
+   * @param options
    * @example
    * ```
    * const stripeElement = document.createElement('stripe-card-element');
@@ -76,9 +77,13 @@ export class StripePayment {
    * ```
    */
   @Method()
-  public async initStripe(publishableKey: string) {
+  public async initStripe(publishableKey: string, options:  {
+    stripeAccount?: string
+  } = undefined) {
     this.loadStripeStatus = 'loading';
-    loadStripe(publishableKey)
+    loadStripe(publishableKey, {
+      stripeAccount: options?.stripeAccount
+    })
       .then(stripe => {
         this.loadStripeStatus = 'success';
         stripe.registerAppInfo({

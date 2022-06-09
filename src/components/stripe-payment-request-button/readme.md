@@ -24,7 +24,7 @@
 
 ## Methods
 
-### `initStripe(publishableKey: string, showButton?: boolean) => Promise<void>`
+### `initStripe(publishableKey: string, options?: { showButton?: boolean; stripeAccount?: string; }) => Promise<void>`
 
 Get Stripe.js, and initialize elements
 
