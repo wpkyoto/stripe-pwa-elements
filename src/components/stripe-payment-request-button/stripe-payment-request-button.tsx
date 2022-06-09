@@ -212,10 +212,13 @@ export class StripePaymentRequestButton {
    * @param options
    */
   @Method()
-  public async initStripe(publishableKey: string, options: {
-    showButton?: boolean,
-    stripeAccount?: string
-  } = undefined) {
+  public async initStripe(
+    publishableKey: string,
+    options: {
+      showButton?: boolean;
+      stripeAccount?: string;
+    } = undefined,
+  ) {
     this.loadStripeStatus = 'loading';
     loadStripe(publishableKey, {
       stripeAccount: options?.stripeAccount,
