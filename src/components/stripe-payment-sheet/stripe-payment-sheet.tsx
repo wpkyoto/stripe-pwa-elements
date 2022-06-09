@@ -77,12 +77,15 @@ export class StripePayment {
    * ```
    */
   @Method()
-  public async initStripe(publishableKey: string, options:  {
-    stripeAccount?: string
-  } = undefined) {
+  public async initStripe(
+    publishableKey: string,
+    options: {
+      stripeAccount?: string;
+    } = undefined,
+  ) {
     this.loadStripeStatus = 'loading';
     loadStripe(publishableKey, {
-      stripeAccount: options?.stripeAccount
+      stripeAccount: options?.stripeAccount,
     })
       .then(stripe => {
         this.loadStripeStatus = 'success';
