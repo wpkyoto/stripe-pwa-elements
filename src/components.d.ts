@@ -72,6 +72,11 @@ export namespace Components {
          */
         "showPaymentRequestButton": boolean;
         /**
+          * Optional. Making API calls for connected accounts
+          * @info https://stripe.com/docs/connect/authentication
+         */
+        "stripeAccount": string;
+        /**
           * Stripe.js class loaded handler
          */
         "stripeDidLoaded"?: StripeDidLoadedHandler;
@@ -138,6 +143,11 @@ export namespace Components {
           * @example ```  element.setPaymentRequestShippingOptionEventHandler(async (event, stripe) => {   event.updateWith({status: 'success'});  }) ```
          */
         "shippingOptionEventHandler"?: PaymentRequestShippingOptionEventHandler;
+        /**
+          * Optional. Making API calls for connected accounts
+          * @info https://stripe.com/docs/connect/authentication
+         */
+        "stripeAccount": string;
         /**
           * Stripe.js class loaded handler
          */
@@ -208,6 +218,11 @@ export namespace Components {
          */
         "showLabel": boolean;
         /**
+          * Optional. Making API calls for connected accounts
+          * @info https://stripe.com/docs/connect/authentication
+         */
+        "stripeAccount": string;
+        /**
           * Stripe.js class loaded handler
          */
         "stripeDidLoaded"?: StripeDidLoadedHandler;
@@ -242,6 +257,22 @@ export namespace Components {
          */
         "toggleModal": () => Promise<void>;
     }
+}
+export interface StripePaymentCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLStripePaymentElement;
+}
+export interface StripePaymentRequestButtonCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLStripePaymentRequestButtonElement;
+}
+export interface StripePaymentSheetCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLStripePaymentSheetElement;
+}
+export interface StripeSheetCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLStripeSheetElement;
 }
 declare global {
     interface HTMLStripePaymentElement extends Components.StripePayment, HTMLStencilElement {
@@ -303,17 +334,17 @@ declare namespace LocalJSX {
           * Recieve the result of defaultFormSubmit event
           * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.addEventListener('defaultFormSubmitResult', async ({detail}) => {       if (detail instanceof Error) {         console.error(detail)       } else {         console.log(detail)       }     })   })
          */
-        "onDefaultFormSubmitResult"?: (event: CustomEvent<DefaultFormSubmitResult>) => void;
+        "onDefaultFormSubmitResult"?: (event: StripePaymentCustomEvent<DefaultFormSubmitResult>) => void;
         /**
           * Form submit event
           * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement       .addEventListener('formSubmit', async props => {         const {           detail: { stripe, cardNumber, event },         } = props;         const result = await stripe.createPaymentMethod({           type: 'card',           card: cardNumber,         });         console.log(result);       })   })
          */
-        "onFormSubmit"?: (event: CustomEvent<FormSubmitEvent>) => void;
+        "onFormSubmit"?: (event: StripePaymentCustomEvent<FormSubmitEvent>) => void;
         /**
           * Stripe Client loaded event
           * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement      .addEventListener('stripeLoaded', async ({ detail: {stripe} }) => {       stripe         .createSource({           type: 'ideal',           amount: 1099,           currency: 'eur',           owner: {             name: 'Jenny Rosen',           },           redirect: {             return_url: 'https://shop.example.com/crtA6B28E1',           },         })         .then(function(result) {           // Handle result.error or result.source         });       });   }) ```
          */
-        "onStripeLoaded"?: (event: CustomEvent<StripeLoadedEvent>) => void;
+        "onStripeLoaded"?: (event: StripePaymentCustomEvent<StripeLoadedEvent>) => void;
         /**
           * Your Stripe publishable API key.
          */
@@ -335,6 +366,11 @@ declare namespace LocalJSX {
          */
         "showPaymentRequestButton"?: boolean;
         /**
+          * Optional. Making API calls for connected accounts
+          * @info https://stripe.com/docs/connect/authentication
+         */
+        "stripeAccount"?: string;
+        /**
           * Stripe.js class loaded handler
          */
         "stripeDidLoaded"?: StripeDidLoadedHandler;
@@ -352,7 +388,7 @@ declare namespace LocalJSX {
           * Stripe Client loaded event
           * @example ``` stripeElement  .addEventListener('stripeLoaded', async ({ detail: {stripe} }) => {   stripe     .createSource({       type: 'ideal',       amount: 1099,       currency: 'eur',       owner: {         name: 'Jenny Rosen',       },       redirect: {         return_url: 'https://shop.example.com/crtA6B28E1',       },     })     .then(function(result) {       // Handle result.error or result.source     });   }); ```
          */
-        "onStripeLoaded"?: (event: CustomEvent<StripeLoadedEvent>) => void;
+        "onStripeLoaded"?: (event: StripePaymentRequestButtonCustomEvent<StripeLoadedEvent>) => void;
         /**
           * Set handler of the `paymentRequest.on('paymentmethod'` event.
           * @example ```  element.setPaymentMethodEventHandler(async (event, stripe) => { // Confirm the PaymentIntent with the payment method returned from the payment request.   const {error} = await stripe.confirmCardPayment(     paymentIntent.client_secret,     {      payment_method: event.paymentMethod.id,      shipping: {        name: event.shippingAddress.recipient,        phone: event.shippingAddress.phone,        address: {          line1: event.shippingAddress.addressLine[0],          city: event.shippingAddress.city,          postal_code: event.shippingAddress.postalCode,          state: event.shippingAddress.region,          country: event.shippingAddress.country,        },      },    },    {handleActions: false}  ); ```
@@ -372,6 +408,11 @@ declare namespace LocalJSX {
           * @example ```  element.setPaymentRequestShippingOptionEventHandler(async (event, stripe) => {   event.updateWith({status: 'success'});  }) ```
          */
         "shippingOptionEventHandler"?: PaymentRequestShippingOptionEventHandler;
+        /**
+          * Optional. Making API calls for connected accounts
+          * @info https://stripe.com/docs/connect/authentication
+         */
+        "stripeAccount"?: string;
         /**
           * Stripe.js class loaded handler
          */
@@ -401,7 +442,7 @@ declare namespace LocalJSX {
           * @example ``` <stripe-payment-sheet intent-type="setup" /> ```
          */
         "intentType"?: IntentType;
-        "onClosed"?: (event: CustomEvent<any>) => void;
+        "onClosed"?: (event: StripePaymentSheetCustomEvent<any>) => void;
         /**
           * Modal state. If true, the modal will open
          */
@@ -427,6 +468,11 @@ declare namespace LocalJSX {
          */
         "showLabel"?: boolean;
         /**
+          * Optional. Making API calls for connected accounts
+          * @info https://stripe.com/docs/connect/authentication
+         */
+        "stripeAccount"?: string;
+        /**
           * Stripe.js class loaded handler
          */
         "stripeDidLoaded"?: StripeDidLoadedHandler;
@@ -436,7 +482,7 @@ declare namespace LocalJSX {
         "zip"?: boolean;
     }
     interface StripeSheet {
-        "onClose"?: (event: CustomEvent<any>) => void;
+        "onClose"?: (event: StripeSheetCustomEvent<any>) => void;
         /**
           * Modal state. If true, the modal will open
          */

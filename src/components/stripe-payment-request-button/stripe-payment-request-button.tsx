@@ -15,7 +15,6 @@ import { PaymentRequestWallet } from '@stripe/stripe-js/types/stripe-js/payment-
   shadow: false,
 })
 export class StripePaymentRequestButton {
-  private stripeAccount: string;
   @Element() el: HTMLStripePaymentRequestButtonElement;
   @State() loadStripeStatus: '' | 'loading' | 'success' | 'failure' = '';
 
@@ -136,6 +135,12 @@ export class StripePaymentRequestButton {
   @Prop() publishableKey: string;
 
   /**
+   * Optional. Making API calls for connected accounts
+   * @info https://stripe.com/docs/connect/authentication
+   */
+  @Prop() stripeAccount: string;
+
+  /**
    * Overwrite the application name that registered
    * For wrapper library (like Capacitor)
    */
@@ -241,7 +246,8 @@ export class StripePaymentRequestButton {
           return;
         }
 
-        return this.initElement(options?.showButton === true);
+        // 後方互換のため、明確にfalseにしていないものはtrue扱い
+        return this.initElement(!options?.showButton === false);
       })
       .then(() => {
         if (!this.stripe) {

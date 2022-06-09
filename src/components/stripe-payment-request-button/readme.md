@@ -12,6 +12,7 @@
 | `publishableKey`              | `publishable-key`  | Your Stripe publishable API key.                                                    | `string`                                                                       | `undefined`                          |
 | `shippingAddressEventHandler` | --                 | Set handler of the `paymentRequest.on('shippingaddresschange')` event               | `(event: PaymentRequestShippingAddressEvent, stripe: Stripe) => Promise<void>` | `undefined`                          |
 | `shippingOptionEventHandler`  | --                 | Set handler of the `paymentRequest.on('shippingoptionchange')` event                | `(event: PaymentRequestShippingOptionEvent, stripe: Stripe) => Promise<void>`  | `undefined`                          |
+| `stripeAccount`               | `stripe-account`   | Optional. Making API calls for connected accounts                                   | `string`                                                                       | `undefined`                          |
 | `stripeDidLoaded`             | --                 | Stripe.js class loaded handler                                                      | `(event: StripeLoadedEvent) => Promise<void>`                                  | `undefined`                          |
 
 

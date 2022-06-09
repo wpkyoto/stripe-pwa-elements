@@ -197,6 +197,12 @@ export class StripePayment {
   @Prop() publishableKey: string;
 
   /**
+   * Optional. Making API calls for connected accounts
+   * @info https://stripe.com/docs/connect/authentication
+   */
+  @Prop() stripeAccount: string;
+
+  /**
    * Overwrite the application name that registered
    * For wrapper library (like Capacitor)
    */
@@ -378,7 +384,9 @@ export class StripePayment {
       return;
     }
 
-    this.initStripe(this.publishableKey);
+    this.initStripe(this.publishableKey, {
+      stripeAccount: this.stripeAccount,
+    });
     this.createPaymentRequestButton();
   }
 
@@ -417,7 +425,9 @@ export class StripePayment {
 
   constructor() {
     if (this.publishableKey) {
-      this.initStripe(this.publishableKey);
+      this.initStripe(this.publishableKey, {
+        stripeAccount: this.stripeAccount,
+      });
     } else {
       this.loadStripeStatus = 'failure';
     }
