@@ -169,7 +169,7 @@ export namespace Components {
         /**
           * Get the inner component
          */
-        "getStripePaymentSheetElement": () => Promise<HTMLStripePaymentElement>;
+        "getStripePaymentSheetElement": () => Promise<any>;
         /**
           * Form submit event handler
          */
@@ -229,7 +229,7 @@ export namespace Components {
         /**
           * Update Stripe client loading process
          */
-        "updateProgress": (progress: ProgressStatus) => Promise<HTMLStripePaymentElement>;
+        "updateProgress": (progress: ProgressStatus) => Promise<any>;
         /**
           * If true, show zip code field
          */
