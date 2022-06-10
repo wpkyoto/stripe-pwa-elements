@@ -1,6 +1,6 @@
 import { Component, Prop, h, State, Method, EventEmitter, Event, Element } from '@stencil/core';
 import { loadStripe, Stripe, StripeCardCvcElement, StripeCardExpiryElement, StripeCardNumberElement } from '@stripe/stripe-js';
-import { checkPlatform } from '../../utils/utils';
+import {checkPlatform, waitForElm} from '../../utils/utils';
 import {
   StripeDidLoadedHandler,
   StripeLoadedEvent,
@@ -449,19 +449,20 @@ export class StripePayment {
     this.cardNumber = elements.create('cardNumber', {
       placeholder: i18n.t('Card Number'),
     });
-    const cardNumberElement: HTMLElement = this.el.querySelector('#card-number');
+
+    const cardNumberElement: HTMLElement = await waitForElm(this.el, '#card-number');
 
     this.cardNumber.mount(cardNumberElement);
     this.cardNumber.on('change', handleCardError);
 
     this.cardExpiry = elements.create('cardExpiry');
-    const cardExpiryElement: HTMLElement = this.el.querySelector('#card-expiry');
+    const cardExpiryElement: HTMLElement = await waitForElm(this.el, '#card-expiry');
 
     this.cardExpiry.mount(cardExpiryElement);
     this.cardExpiry.on('change', handleCardError);
 
     this.cardCVC = elements.create('cardCvc');
-    const cardCVCElement: HTMLElement = this.el.querySelector('#card-cvc');
+    const cardCVCElement: HTMLElement = await waitForElm(this.el, '#card-cvc');
 
     this.cardCVC.mount(cardCVCElement);
     this.cardCVC.on('change', handleCardError);
