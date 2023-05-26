@@ -144,7 +144,7 @@ export class StripePaymentRequestButton {
    * Overwrite the application name that registered
    * For wrapper library (like Capacitor)
    */
-  @Prop() applicationName = '@stripe-elements/stripe-elements';
+  @Prop() applicationName = 'stripe-pwa-elements';
 
   /**
    * Stripe.js class loaded handler

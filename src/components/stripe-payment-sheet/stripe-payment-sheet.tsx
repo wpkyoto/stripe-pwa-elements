@@ -206,7 +206,7 @@ export class StripePayment {
    * Overwrite the application name that registered
    * For wrapper library (like Capacitor)
    */
-  @Prop() applicationName = '@stripe-elements/stripe-elements';
+  @Prop() applicationName = 'stripe-pwa-elements';
 
   /**
    * Show the form label
