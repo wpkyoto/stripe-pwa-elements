@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`stripe-sheet Rendering test should match snapshot (open='true') 1`] = `
+<stripe-sheet class="undefined" open="true">
+  <mock:shadow-root>
+    <div class="modal-row open">
+      <div class="modal-child">
+        <div class="modal-close-button-wrap">
+          <ion-icon class="modal-close-button" name="close" size="large"></ion-icon>
+        </div>
+        <slot></slot>
+      </div>
+    </div>
+  </mock:shadow-root>
+</stripe-sheet>
+`;
+
+exports[`stripe-sheet Rendering test should match snapshot (showCloseButton='false') 1`] = `
+<stripe-sheet class="undefined" show-close-button="false">
+  <mock:shadow-root>
+    <div class="modal-row">
+      <div class="modal-child">
+        <slot></slot>
+      </div>
+    </div>
+  </mock:shadow-root>
+</stripe-sheet>
+`;
+
+exports[`stripe-sheet Rendering test should match snapshot (showCloseButton='true') 1`] = `
+<stripe-sheet class="undefined" show-close-button="true">
+  <mock:shadow-root>
+    <div class="modal-row">
+      <div class="modal-child">
+        <div class="modal-close-button-wrap">
+          <ion-icon class="modal-close-button" name="close" size="large"></ion-icon>
+        </div>
+        <slot></slot>
+      </div>
+    </div>
+  </mock:shadow-root>
+</stripe-sheet>
+`;
