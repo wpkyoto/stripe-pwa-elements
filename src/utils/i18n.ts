@@ -24,7 +24,7 @@ i18next.use(I18nextBrowserLanguageDetector).init({
         'Postal Code': '郵便番号',
       },
     },
-    br: {
+    pt-BR: {
       translation: {
         'Pay': 'Pagar',
         'Failed to load Stripe': 'Falha ao ler Stripe',
@@ -39,7 +39,7 @@ i18next.use(I18nextBrowserLanguageDetector).init({
         'Country or region': 'País ou região',
         'Postal Code': 'Cep',
       },      
-    }
+    },
   },
 });
 
