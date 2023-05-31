@@ -31,11 +31,11 @@
     "release": "np"
   },
   "dependencies": {
-    "@stencil/core": "^2.14.2",
-    "@stripe/stripe-js": "^1.25.0",
-    "i18next": "^20.3.3",
-    "i18next-browser-languagedetector": "^6.1.2",
-    "ionicons": "^6.0.1"
+    "@stencil/core": "^3.3.0",
+    "@stripe/stripe-js": "^1.54.0",
+    "i18next": "^22.5.0",
+    "i18next-browser-languagedetector": "^7.0.2",
+    "ionicons": "^7.1.2"
   },
   "keywords": [
     "stripe",
@@ -60,20 +60,20 @@
   "license": "MIT",
   "devDependencies": {
     "@stencil/eslint-plugin": "^0.4.0",
-    "@stencil/sass": "^1.5.2",
-    "@types/jest": "^26.0.24",
-    "@types/puppeteer": "^5.4.3",
-    "@typescript-eslint/eslint-plugin": "^4.28.3",
-    "@typescript-eslint/parser": "^4.28.3",
-    "eslint": "^7.31.0",
-    "eslint-plugin-react": "^7.24.0",
-    "jest": "^26.6.3",
-    "jest-cli": "^26.6.3",
-    "np": "^7.5.0",
-    "prettier": "^2.3.2",
-    "prettier-eslint": "^12.0.0",
-    "prettier-eslint-cli": "^5.0.1",
-    "puppeteer": "^13.5.1",
-    "typescript": "^4.5.4"
+    "@stencil/sass": "^3.0.3",
+    "@types/jest": "^29.5.1",
+    "@types/puppeteer": "^5.4.7",
+    "@typescript-eslint/eslint-plugin": "^5.59.8",
+    "@typescript-eslint/parser": "^5.59.8",
+    "eslint": "^8.41.0",
+    "eslint-plugin-react": "^7.32.2",
+    "jest": "^29.5.0",
+    "jest-cli": "^29.5.0",
+    "np": "^8.0.2",
+    "prettier": "^2.8.8",
+    "prettier-eslint": "^15.0.1",
+    "prettier-eslint-cli": "^7.1.0",
+    "puppeteer": "^20.4.0",
+    "typescript": "^5.0.4"
   }
 }
