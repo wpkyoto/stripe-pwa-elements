@@ -136,10 +136,6 @@ export class StripePayment {
     return this;
   }
 
-  /**
-   * Error message
-   */
-  @State() errorMessage = '';
 
   /**
    * zip code
@@ -170,7 +166,7 @@ export class StripePayment {
    */
   @Method()
   public async setErrorMessage(errorMessage: string) {
-    this.errorMessage = errorMessage;
+    stripeStore.set('errorMessage', errorMessage);
     return this;
   }
 
@@ -450,7 +446,7 @@ export class StripePayment {
           this.progress = 'success';
         }
       } catch (e) {
-        this.errorMessage = e.message;
+        stripeStore.set('errorMessage', e.message)
         this.progress = 'failure';
       }
     });
@@ -512,7 +508,7 @@ export class StripePayment {
   }
 
   render() {
-    const { errorMessage } = this;
+    const errorMessage = stripeStore.get('errorMessage')
 
     if (this.loadStripeStatus === 'failure') {
       return <p>{i18n.t('Failed to load Stripe')}</p>;
