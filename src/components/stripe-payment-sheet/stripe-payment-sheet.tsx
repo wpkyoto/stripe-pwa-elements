@@ -1,5 +1,6 @@
 import { Component, Prop, h, State, Method, EventEmitter, Event, Element } from '@stencil/core';
-import { loadStripe, Stripe, StripeCardCvcElement, StripeCardExpiryElement, StripeCardNumberElement } from '@stripe/stripe-js';
+import { createStore } from '@stencil/store'
+import { loadStripe, Stripe, StripeCardCvcElement, StripeCardExpiryElement, StripeCardNumberElement, StripeElements } from '@stripe/stripe-js';
 import {checkPlatform, waitForElm} from '../../utils/utils';
 import {
   StripeDidLoadedHandler,
@@ -12,6 +13,9 @@ import {
   DefaultFormSubmitResult,
 } from '../../interfaces';
 import { i18n } from '../../utils/i18n';
+import { stripeStore } from '../../stores/stripe-payment-sheet/store';
+import { PWAStripeCardElement } from '../../stores/stripe-payment-sheet/CardElement';
+import { getAndLoadCardElement } from '../../stores/stripe-payment-sheet';
 
 @Component({
   tag: 'stripe-payment',
@@ -83,38 +87,17 @@ export class StripePayment {
       stripeAccount?: string;
     } = undefined,
   ) {
-    this.loadStripeStatus = 'loading';
-    loadStripe(publishableKey, {
-      stripeAccount: options?.stripeAccount,
+    const stripeAccount = options?.stripeAccount
+
+    stripeStore.set('el', this.el)
+    stripeStore.set('stripeAccount', stripeAccount)
+    stripeStore.set('applicationName', this.applicationName)
+    stripeStore.set('publishableKey' , publishableKey)
+    stripeStore.onChange('loadStripeStatus', async newState => {
+      if (newState !== 'success') {return;}
+      await this.initElement()
+      this.stripeLoadedEventHandler()
     })
-      .then(stripe => {
-        this.loadStripeStatus = 'success';
-        stripe.registerAppInfo({
-          name: this.applicationName,
-        });
-        this.stripe = stripe;
-        return;
-      })
-      .catch(e => {
-        console.log(e);
-        this.errorMessage = e.message;
-        this.loadStripeStatus = 'failure';
-        return;
-      })
-      .then(() => {
-        if (!this.stripe) {
-          return;
-        }
-
-        return this.initElement();
-      })
-      .then(() => {
-        if (!this.stripe) {
-          return;
-        }
-
-        this.stripeLoadedEventHandler();
-      });
   }
 
   /**
@@ -437,38 +420,12 @@ export class StripePayment {
    * Initialize Component using Stripe Element
    */
   private async initElement() {
-    const elements = this.stripe.elements();
-    const handleCardError = ({ error }) => {
-      if (error) {
-        this.errorMessage = error.message;
-      } else {
-        this.errorMessage = '';
-      }
-    };
-
-    this.cardNumber = elements.create('cardNumber', {
-      placeholder: i18n.t('Card Number'),
-    });
-
-    const cardNumberElement: HTMLElement = await waitForElm(this.el, '#card-number');
-
-    this.cardNumber.mount(cardNumberElement);
-    this.cardNumber.on('change', handleCardError);
-
-    this.cardExpiry = elements.create('cardExpiry');
-    const cardExpiryElement: HTMLElement = await waitForElm(this.el, '#card-expiry');
-
-    this.cardExpiry.mount(cardExpiryElement);
-    this.cardExpiry.on('change', handleCardError);
-
-    this.cardCVC = elements.create('cardCvc');
-    const cardCVCElement: HTMLElement = await waitForElm(this.el, '#card-cvc');
-
-    this.cardCVC.mount(cardCVCElement);
-    this.cardCVC.on('change', handleCardError);
-
     document.getElementById('stripe-card-element').addEventListener('submit', async e => {
-      const { cardCVC, cardExpiry, cardNumber, stripe, intentClientSecret } = this;
+      const elements = getAndLoadCardElement();
+      const { cardCVC, cardExpiry, cardNumber } = elements
+      const stripe = stripeStore.get('stripe')
+      const { intentClientSecret } = this
+
       const submitEventProps: FormSubmitEvent = {
         cardCVCElement: cardCVC,
         cardExpiryElement: cardExpiry,
@@ -503,17 +460,14 @@ export class StripePayment {
   }
 
   disconnectedCallback() {
-    if (this.cardNumber) {
-      this.cardNumber.unmount();
-    }
+    const el = stripeStore.get('el')
+    const elements = stripeStore.get('elements')
+    const pwaStripeCardElement = PWAStripeCardElement.getInstance({
+      el,
+      elements,
+    })
 
-    if (this.cardExpiry) {
-      this.cardExpiry.unmount();
-    }
-
-    if (this.cardCVC) {
-      this.cardCVC.unmount();
-    }
+    pwaStripeCardElement.unmount()
   }
 
   /**
