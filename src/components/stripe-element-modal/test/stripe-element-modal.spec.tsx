@@ -82,7 +82,7 @@ describe('stripe-sheet', () => {
       });
 
       expect(page.root).toEqualHtml(`
-      <stripe-sheet class="undefined">
+      <stripe-sheet>
         <mock:shadow-root>
           <div class="modal-row">
             <div class="modal-child">
