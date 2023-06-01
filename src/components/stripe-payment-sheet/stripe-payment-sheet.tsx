@@ -1,7 +1,5 @@
 import { Component, Prop, h, State, Method, EventEmitter, Event, Element } from '@stencil/core';
-import { createStore } from '@stencil/store'
-import { loadStripe, Stripe, StripeCardCvcElement, StripeCardExpiryElement, StripeCardNumberElement, StripeElements } from '@stripe/stripe-js';
-import {checkPlatform, waitForElm} from '../../utils/utils';
+import {checkPlatform} from '../../utils/utils';
 import {
   StripeDidLoadedHandler,
   StripeLoadedEvent,
@@ -14,7 +12,6 @@ import {
 } from '../../interfaces';
 import { i18n } from '../../utils/i18n';
 import { stripeStore } from '../../stores/stripe-payment-sheet/store';
-import { PWAStripeCardElement } from '../../stores/stripe-payment-sheet/CardElement';
 import { getAndLoadCardElement } from '../../stores/stripe-payment-sheet';
 
 @Component({
@@ -24,16 +21,6 @@ import { getAndLoadCardElement } from '../../stores/stripe-payment-sheet';
 })
 export class StripePayment {
   @Element() el: HTMLStripePaymentElement;
-
-  /**
-   * Status of the Stripe client initilizing process
-   */
-  @State() loadStripeStatus: ProgressStatus = '';
-
-  /**
-   * Stripe client class
-   */
-  @State() stripe: Stripe;
 
   /**
    * Default submit handle type.
@@ -285,7 +272,7 @@ export class StripePayment {
   @Event() stripeLoaded: EventEmitter<StripeLoadedEvent>;
   private stripeLoadedEventHandler() {
     const event: StripeLoadedEvent = {
-      stripe: this.stripe,
+      stripe: stripeStore.get('stripe'),
     };
 
     if (this.stripeDidLoaded) {
@@ -318,7 +305,8 @@ export class StripePayment {
    */
   @Event() formSubmit: EventEmitter<FormSubmitEvent>;
   private async formSubmitEventHandler() {
-    const { cardCVC, cardExpiry, cardNumber, stripe } = this;
+    const { cardCVC, cardExpiry, cardNumber } = getAndLoadCardElement();
+    const stripe = stripeStore.get('stripe')
 
     this.formSubmit.emit({
       cardCVCElement: cardCVC,
@@ -350,16 +338,12 @@ export class StripePayment {
     this.defaultFormSubmitResult.emit(result);
   }
 
-  private cardNumber!: StripeCardNumberElement;
-  private cardExpiry!: StripeCardExpiryElement;
-  private cardCVC!: StripeCardCvcElement;
-
   componentWillUpdate() {
     if (!this.publishableKey) {
       return;
     }
 
-    if (['success', 'loading'].includes(this.loadStripeStatus)) {
+    if (['success', 'loading'].includes(stripeStore.get('loadStripeStatus'))) {
       return;
     }
 
@@ -408,7 +392,7 @@ export class StripePayment {
         stripeAccount: this.stripeAccount,
       });
     } else {
-      this.loadStripeStatus = 'failure';
+      stripeStore.set('loadStripeStatus', 'failure')
     }
   }
 
@@ -456,14 +440,7 @@ export class StripePayment {
   }
 
   disconnectedCallback() {
-    const el = stripeStore.get('el')
-    const elements = stripeStore.get('elements')
-    const pwaStripeCardElement = PWAStripeCardElement.getInstance({
-      el,
-      elements,
-    })
-
-    pwaStripeCardElement.unmount()
+    getAndLoadCardElement().unmount()
   }
 
   /**
@@ -510,7 +487,7 @@ export class StripePayment {
   render() {
     const errorMessage = stripeStore.get('errorMessage')
 
-    if (this.loadStripeStatus === 'failure') {
+    if (stripeStore.get('loadStripeStatus') === 'failure') {
       return <p>{i18n.t('Failed to load Stripe')}</p>;
     }
 

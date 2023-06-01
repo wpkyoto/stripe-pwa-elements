@@ -1,15 +1,19 @@
 import { newSpecPage } from '@stencil/core/testing';
 import { StripePayment } from '../stripe-payment-sheet';
+import { stripeStore } from '../../../stores/stripe-payment-sheet/store';
 
 describe('stripe-payment', () => {
+  beforeEach(() => {
+    stripeStore.dispose();
+  });
   it('renders', async () => {
     const page = await newSpecPage({
       components: [StripePayment],
-      html: `<stripe-payment></stripe-payment>`,
+      html: `<stripe-payment publishable-key='pk_test_xxx'></stripe-payment>`,
     });
 
     expect(page.root).toEqualHtml(`
- <stripe-payment class="undefined">
+ <stripe-payment class="undefined"  publishable-key='pk_test_xxx'>
       <div class="stripe-payment-sheet-wrap">
         <form id="stripe-card-element">
           <div class="stripe-heading">
@@ -66,11 +70,11 @@ describe('stripe-payment', () => {
   it('render [No zip code]', async () => {
     const page = await newSpecPage({
       components: [StripePayment],
-      html: `<stripe-payment zip="false"></stripe-payment>`,
+      html: `<stripe-payment zip="false"  publishable-key='pk_test_xxx'></stripe-payment>`,
     });
 
     expect(page.root).toEqualHtml(`
- <stripe-payment class="undefined" zip="false">
+ <stripe-payment class="undefined" zip="false"  publishable-key='pk_test_xxx'>
       <div class="stripe-payment-sheet-wrap">
         <form id="stripe-card-element">
           <div class="stripe-heading">
