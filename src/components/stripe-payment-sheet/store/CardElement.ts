@@ -1,6 +1,6 @@
 import { StripeCardCvcElement, StripeCardExpiryElement, StripeCardNumberElement, StripeElements, } from "@stripe/stripe-js";
-import { i18n } from "../../utils/i18n";
-import { waitForElm } from "../../utils/utils";
+import { i18n } from "../../../utils/i18n";
+import { waitForElm } from "../../../utils/utils";
 import { stripeStore } from "./store";
 
 export type PWAStripeCardElementProps = {

@@ -1,6 +1,6 @@
 import { newSpecPage } from '@stencil/core/testing';
 import { StripePayment } from '../stripe-payment-sheet';
-import { stripeStore } from '../../../stores/stripe-payment-sheet/store';
+import { stripeStore } from '../store';
 
 describe('stripe-payment', () => {
   beforeEach(() => {

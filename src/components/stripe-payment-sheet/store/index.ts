@@ -2,6 +2,8 @@ import { loadStripe } from "@stripe/stripe-js";
 import { stripeStore } from "./store";
 import { PWAStripeCardElement } from "./CardElement";
 
+export * from './store'
+export * from './CardElement'
   const updateStripeAppInfo = () => {
     const stripe = stripeStore.get('stripe')
     if (!stripe) return

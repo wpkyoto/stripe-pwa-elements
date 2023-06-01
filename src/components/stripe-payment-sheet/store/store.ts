@@ -1,6 +1,6 @@
 import { Stripe, StripeElements } from "@stripe/stripe-js";
 import { createStore } from '@stencil/store'
-import { ProgressStatus } from "../../interfaces";
+import { ProgressStatus } from "../../../interfaces";
 
 export type StripeStoreState = {
     /**

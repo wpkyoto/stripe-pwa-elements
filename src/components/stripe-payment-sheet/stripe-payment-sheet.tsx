@@ -11,8 +11,7 @@ import {
   DefaultFormSubmitResult,
 } from '../../interfaces';
 import { i18n } from '../../utils/i18n';
-import { stripeStore } from '../../stores/stripe-payment-sheet/store';
-import { getAndLoadCardElement } from '../../stores/stripe-payment-sheet';
+import { stripeStore, getAndLoadCardElement } from './store';
 
 @Component({
   tag: 'stripe-payment',
