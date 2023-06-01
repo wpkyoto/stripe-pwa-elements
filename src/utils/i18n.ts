@@ -24,7 +24,7 @@ i18next.use(I18nextBrowserLanguageDetector).init({
         'Postal Code': '郵便番号',
       },
     },
-    pt-BR: {
+    'pt-BR': {
       translation: {
         'Pay': 'Pagar',
         'Failed to load Stripe': 'Falha ao ler Stripe',
