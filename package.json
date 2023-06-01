@@ -59,7 +59,7 @@
   "author": "Hidetaka Okamoto <info@wp-kyoto.net> (https://wp-kyoto.net)",
   "license": "MIT",
   "devDependencies": {
-    "@stencil/eslint-plugin": "^0.4.0",
+    "@stencil-community/eslint-plugin": "^0.5.0",
     "@stencil/sass": "^3.0.3",
     "@types/jest": "^27.0.3",
     "@types/puppeteer": "^5.4.7",
@@ -74,6 +74,6 @@
     "prettier-eslint": "^15.0.1",
     "prettier-eslint-cli": "^7.1.0",
     "puppeteer": "^20.4.0",
-    "typescript": "^5.0.4"
+    "typescript": "^4.9.5"
   }
 }

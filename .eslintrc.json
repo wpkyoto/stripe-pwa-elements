@@ -5,7 +5,7 @@
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:@stencil/recommended"
+    "plugin:@stencil-community/recommended"
   ],
   "settings": {
     "react": {
