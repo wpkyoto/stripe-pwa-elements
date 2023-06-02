@@ -1,4 +1,4 @@
-import { Component, Prop, h, State, Method, EventEmitter, Event, Element } from '@stencil/core';
+import { Component, Prop, h, State, Method, EventEmitter, Event, Element, Watch } from '@stencil/core';
 import {checkPlatform} from '../../utils/utils';
 import {
   StripeDidLoadedHandler,
@@ -74,13 +74,13 @@ export class StripePayment {
     } = undefined,
   ) {
     const stripeAccount = options?.stripeAccount
-
     stripeStore.set('el', this.el)
     stripeStore.set('stripeAccount', stripeAccount)
     stripeStore.set('applicationName', this.applicationName)
     stripeStore.set('publishableKey' , publishableKey)
     stripeStore.onChange('loadStripeStatus', async newState => {
       if (newState !== 'success') {return;}
+
       await this.initElement()
       this.stripeLoadedEventHandler()
     })
@@ -160,12 +160,24 @@ export class StripePayment {
    * Your Stripe publishable API key.
    */
   @Prop() publishableKey: string;
+  @Watch('publishableKey')
+  updatePublishableKey(publishableKey: string) {
+    this.initStripe(publishableKey, {
+      stripeAccount: stripeStore.get('stripeAccount')
+    })
+  } 
 
   /**
    * Optional. Making API calls for connected accounts
    * @info https://stripe.com/docs/connect/authentication
    */
   @Prop() stripeAccount: string;
+  @Watch('stripeAccount')
+  updateStripeAccountId(stripeAccount: string) {
+    this.initStripe(stripeStore.get('publishableKey'), {
+      stripeAccount: stripeAccount
+    })
+  }
 
   /**
    * Overwrite the application name that registered

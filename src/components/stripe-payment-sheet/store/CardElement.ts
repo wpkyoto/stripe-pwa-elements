@@ -26,6 +26,16 @@ export  class PWAStripeCardElement {
       this.init()
     }
     /**
+     * Re-create the instance when you replace the API key
+     * @param props 
+     * @returns 
+     */
+    public static recreateInstance(props: PWAStripeCardElementProps) {
+      if (this._instance) this._instance.unmount()
+      this._instance = new PWAStripeCardElement(props)
+      return this._instance
+    }
+    /**
      * Init each Card Elements
      */
     private async init() {
