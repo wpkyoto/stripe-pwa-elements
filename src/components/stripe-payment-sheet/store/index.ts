@@ -40,7 +40,7 @@ export const configureStripeJSClient = async () => {
     updateStripeAppInfo()
     stripeStore.set('stripe', stripe)
     stripeStore.set('loadStripeStatus', 'success')
-
+    
     /**
      * Init Stripe Elements
      */

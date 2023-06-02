@@ -69,3 +69,11 @@ export type PaymentRequestButtonOption = PaymentRequestOptions & {
  */
 export type IntentType = 'setup' | 'payment';
 export type DefaultFormSubmitResult = Error | PaymentIntentResult | SetupIntentResult;
+
+/**
+ * Stripe.js client options
+ * @see https://stripe.com/docs/js/initializing#init_stripe_js-options
+ */
+export type InitStripeOptions = {
+  stripeAccount?: string;
+}

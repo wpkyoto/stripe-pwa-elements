@@ -9,9 +9,11 @@ import {
   PaymentRequestButtonOption,
   IntentType,
   DefaultFormSubmitResult,
+  InitStripeOptions,
 } from '../../interfaces';
 import { i18n } from '../../utils/i18n';
 import { stripeStore, getAndLoadCardElement } from './store';
+
 
 @Component({
   tag: 'stripe-payment',
@@ -69,11 +71,10 @@ export class StripePayment {
   @Method()
   public async initStripe(
     publishableKey: string,
-    options: {
-      stripeAccount?: string;
-    } = undefined,
+    options?: InitStripeOptions,
   ) {
     const stripeAccount = options?.stripeAccount
+
     stripeStore.set('el', this.el)
     stripeStore.set('stripeAccount', stripeAccount)
     stripeStore.set('applicationName', this.applicationName)
@@ -162,9 +163,12 @@ export class StripePayment {
   @Prop() publishableKey: string;
   @Watch('publishableKey')
   updatePublishableKey(publishableKey: string) {
-    this.initStripe(publishableKey, {
-      stripeAccount: stripeStore.get('stripeAccount')
-    })
+    const options: InitStripeOptions = {}
+
+    options.stripeAccount = stripeStore.get('stripeAccount')
+    const hasOptionValue = Object.values(options).filter(Boolean).length > 0
+
+    this.initStripe(publishableKey, hasOptionValue ? options: undefined)
   } 
 
   /**
@@ -350,7 +354,7 @@ export class StripePayment {
   }
 
   componentWillUpdate() {
-    if (!this.publishableKey) {
+    if (!stripeStore.get('publishableKey')) {
       return;
     }
 
@@ -358,8 +362,8 @@ export class StripePayment {
       return;
     }
 
-    this.initStripe(this.publishableKey, {
-      stripeAccount: this.stripeAccount,
+    this.initStripe(stripeStore.get('publishableKey'), {
+      stripeAccount: stripeStore.get('stripeAccount')
     });
     this.createPaymentRequestButton();
   }
