@@ -6,6 +6,7 @@ describe('stripe-sheet', () => {
     describe('#openModal', () => {
       it("open props should change to true when the openModal method was called", async () => {
         const component = new StripeSheet()
+
         component.open = false
         await component.openModal()
         expect(component.open).toEqual(true)
@@ -14,6 +15,7 @@ describe('stripe-sheet', () => {
     describe("#closeModal", () => {
       it("open props should change to false when the closeModal method was called", async () => {
         const component = new StripeSheet()
+
         component.close = {
           emit: jest.fn(),
         }
@@ -22,8 +24,10 @@ describe('stripe-sheet', () => {
       })
       it("When the closeModal method called, should called close event at once", async() => {
         const component = new StripeSheet()
+
         component.open = true
         const mockEmitter = jest.fn()
+
         component.close = {
           emit: mockEmitter
         }
@@ -35,6 +39,7 @@ describe('stripe-sheet', () => {
       describe('Props open=true', () => {
         let component = new StripeSheet()
         let mockEmitter = jest.fn()
+
         beforeEach(() => {
           component = new StripeSheet()
           mockEmitter = jest.fn()
@@ -55,6 +60,7 @@ describe('stripe-sheet', () => {
       describe('Props open=false', () => {
         let component = new StripeSheet()
         let mockEmitter = jest.fn()
+
         beforeEach(() => {
           component = new StripeSheet()
           mockEmitter = jest.fn()
@@ -102,6 +108,7 @@ describe('stripe-sheet', () => {
         components: [StripeSheet],
         html: `<stripe-sheet open="true"></stripe-sheet>`,
       })
+
       expect(page.root).toMatchSnapshot()
     })
 
@@ -110,6 +117,7 @@ describe('stripe-sheet', () => {
         components: [StripeSheet],
         html: `<stripe-sheet show-close-button="true"></stripe-sheet>`,
       })
+
       expect(page.root).toMatchSnapshot()
     })
     it("should match snapshot (showCloseButton='false')", async () => {
@@ -117,6 +125,7 @@ describe('stripe-sheet', () => {
         components: [StripeSheet],
         html: `<stripe-sheet show-close-button="false"></stripe-sheet>`,
       })
+
       expect(page.root).toMatchSnapshot()
     })
   })

@@ -5,10 +5,10 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { DefaultFormSubmitResult, FormSubmitEvent, FormSubmitHandler, IntentType, PaymentRequestButtonOption, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
+import { DefaultFormSubmitResult, FormSubmitEvent, FormSubmitHandler, InitStripeOptions, IntentType, PaymentRequestButtonOption, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
 import { PaymentRequestWallet } from "@stripe/stripe-js/types/stripe-js/payment-request";
 import { PaymentRequestOptions } from "@stripe/stripe-js";
-export { DefaultFormSubmitResult, FormSubmitEvent, FormSubmitHandler, IntentType, PaymentRequestButtonOption, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
+export { DefaultFormSubmitResult, FormSubmitEvent, FormSubmitHandler, InitStripeOptions, IntentType, PaymentRequestButtonOption, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
 export { PaymentRequestWallet } from "@stripe/stripe-js/types/stripe-js/payment-request";
 export { PaymentRequestOptions } from "@stripe/stripe-js";
 export namespace Components {
@@ -31,7 +31,7 @@ export namespace Components {
           * @param options
           * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {    tripeElement.initStripe('pk_test_XXXXXXXXX')  }) ```
          */
-        "initStripe": (publishableKey: string, options?: { stripeAccount?: string; }) => Promise<void>;
+        "initStripe": (publishableKey: string, options?: InitStripeOptions) => Promise<void>;
         /**
           * The client secret from paymentIntent.create response
           * @example ``` const stripeElement = document.createElement('stripe-card-element'); customElements  .whenDefined('stripe-card-element')  .then(() => {     stripeElement.setAttribute('intent-client-secret', 'dummy')   }) ```
