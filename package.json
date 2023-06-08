@@ -9,7 +9,7 @@
   "types": "dist/types/components.d.ts",
   "collection": "dist/collection/collection-manifest.json",
   "collection:main": "dist/collection/index.js",
-  "unpkg": "dist/stripe-elements/stripe-elements.esm.js",
+  "unpkg": "dist/wpkyoto/stripe-pwa-elements.esm.js",
   "files": [
     "dist/",
     "loader/"
@@ -42,11 +42,11 @@
     "web component"
   ],
   "bugs": {
-    "url": "https://github.com/stripe-elements/stripe-elements/issues"
+    "url": "https://github.com/wpkyoto/stripe-pwa-elements/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/stripe-elements/stripe-elements.git"
+    "url": "https://github.com/wpkyoto/stripe-pwa-elements.git"
   },
   "publishConfig": {
     "access": "public"
