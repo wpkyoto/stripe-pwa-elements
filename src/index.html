@@ -12,12 +12,15 @@
 
     <script>
       const targetElement = document.getElementById('stripe');
-      const paymentSheetModal = document.createElement('stripe-payment-sheet');
+      const paymentSheetModal = document.createElement('stripe-sheet');
+      const paymentElement = document.createElement('stripe-payment-element');
+      paymentSheetModal.appendChild(paymentElement);
       targetElement.appendChild(paymentSheetModal);
       customElements
-        .whenDefined('stripe-payment-sheet')
+        .whenDefined('stripe-sheet')
+        .then(() => customElements.whenDefined('stripe-payment-element'))
         .then(() => {
-          paymentSheetModal.setAttribute('publishable-key', 'pk_test_51EMxG7KVC4SfzSeak35hZaAe91cpzKZE9eOQcVWpa7owYJeS30avCAF0lT1QUMKTbzepTIYgAgjly4AmgZuxxkcS00kQ40cBLe');
+          paymentElement.setAttribute('publishable-key', 'pk_test_51EMxG7KVC4SfzSeak35hZaAe91cpzKZE9eOQcVWpa7owYJeS30avCAF0lT1QUMKTbzepTIYgAgjly4AmgZuxxkcS00kQ40cBLe');
           paymentSheetModal.setAttribute('open', true);
           paymentSheetModal.setAttribute('zip', true);
           //paymentSheetModal.setAttribute('sheet-title', 'Custom')

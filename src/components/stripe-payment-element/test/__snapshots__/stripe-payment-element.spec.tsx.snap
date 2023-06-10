@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`stripe-payment-element renders 1`] = `
+<stripe-payment-element>
+  <div id="payment-element"></div>
+</stripe-payment-element>
+`;
