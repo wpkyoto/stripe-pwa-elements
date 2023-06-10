@@ -95,6 +95,12 @@ export namespace Components {
          */
         "zip": boolean;
     }
+    interface StripePaymentElement {
+        /**
+          * Your Stripe publishable API key.
+         */
+        "publishableKey": string;
+    }
     interface StripePaymentRequestButton {
         /**
           * Overwrite the application name that registered For wrapper library (like Capacitor)
@@ -284,6 +290,12 @@ declare global {
         prototype: HTMLStripePaymentElement;
         new (): HTMLStripePaymentElement;
     };
+    interface HTMLStripePaymentElementElement extends Components.StripePaymentElement, HTMLStencilElement {
+    }
+    var HTMLStripePaymentElementElement: {
+        prototype: HTMLStripePaymentElementElement;
+        new (): HTMLStripePaymentElementElement;
+    };
     interface HTMLStripePaymentRequestButtonElement extends Components.StripePaymentRequestButton, HTMLStencilElement {
     }
     var HTMLStripePaymentRequestButtonElement: {
@@ -304,6 +316,7 @@ declare global {
     };
     interface HTMLElementTagNameMap {
         "stripe-payment": HTMLStripePaymentElement;
+        "stripe-payment-element": HTMLStripePaymentElementElement;
         "stripe-payment-request-button": HTMLStripePaymentRequestButtonElement;
         "stripe-payment-sheet": HTMLStripePaymentSheetElement;
         "stripe-sheet": HTMLStripeSheetElement;
@@ -381,6 +394,12 @@ declare namespace LocalJSX {
           * If true, show zip code field
          */
         "zip"?: boolean;
+    }
+    interface StripePaymentElement {
+        /**
+          * Your Stripe publishable API key.
+         */
+        "publishableKey"?: string;
     }
     interface StripePaymentRequestButton {
         /**
@@ -497,6 +516,7 @@ declare namespace LocalJSX {
     }
     interface IntrinsicElements {
         "stripe-payment": StripePayment;
+        "stripe-payment-element": StripePaymentElement;
         "stripe-payment-request-button": StripePaymentRequestButton;
         "stripe-payment-sheet": StripePaymentSheet;
         "stripe-sheet": StripeSheet;
@@ -507,6 +527,7 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "stripe-payment": LocalJSX.StripePayment & JSXBase.HTMLAttributes<HTMLStripePaymentElement>;
+            "stripe-payment-element": LocalJSX.StripePaymentElement & JSXBase.HTMLAttributes<HTMLStripePaymentElementElement>;
             "stripe-payment-request-button": LocalJSX.StripePaymentRequestButton & JSXBase.HTMLAttributes<HTMLStripePaymentRequestButtonElement>;
             "stripe-payment-sheet": LocalJSX.StripePaymentSheet & JSXBase.HTMLAttributes<HTMLStripePaymentSheetElement>;
             "stripe-sheet": LocalJSX.StripeSheet & JSXBase.HTMLAttributes<HTMLStripeSheetElement>;
