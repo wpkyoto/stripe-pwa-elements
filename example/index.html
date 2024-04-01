@@ -40,7 +40,7 @@
       <div id="stripe"></div>
       <div id="result"></div>
 
-    
+
     <script>
         const form = document.getElementById('open-modal-form')
         const resultElement = document.getElementById('result')
@@ -57,7 +57,7 @@
                     modalElement.innerHTML = ''
                 })
             })
-        
+
         form.addEventListener('submit', async (event) => {
             event.preventDefault()
             const stripePublishableAPIKey = document['open-modal-form']['stripe-publishable-api-key'].value
@@ -99,13 +99,13 @@
                 requestShipping: false,
                 requestPayerEmail: false,
             });
-            
+
             /**
              * Load Stripe Client
              **/
             await stripePaymentRequestElement.initStripe(stripePublishableAPIKey)
-            await stripeElement.initStripe(stripePublishableAPIKey)
-
+            stripeElement.setAttribute('publishable-key', stripePublishableAPIKey);
+            stripeElement.setAttribute('open', true);
 
             /**
              * Set the payment intent client secret
@@ -123,11 +123,11 @@
              **/
             stripeElement.addEventListener('formSubmit', async props => {
               const {
-                detail: { stripe, cardNumber, event },
+                detail: { stripe, cardNumberElement, event },
               } = props;
               const result = await stripe.createPaymentMethod({
                 type: 'card',
-                card: cardNumber,
+                card: cardNumberElement,
               });
               resultElement.innerHTML = `<pre><code>${JSON.stringify(result,null,2)}</code></pre>`
               stripeElement.updateProgress('success');
