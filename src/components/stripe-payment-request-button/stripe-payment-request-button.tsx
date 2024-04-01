@@ -7,7 +7,7 @@ import {
   PaymentRequestPaymentMethodEventHandler,
   PaymentRequestShippingOptionEventHandler,
 } from '../../interfaces';
-import { PaymentRequestWallet } from '@stripe/stripe-js/types/stripe-js/payment-request';
+import { PaymentRequestWallet } from '@stripe/stripe-js';
 
 @Component({
   tag: 'stripe-payment-request-button',

@@ -6,11 +6,9 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { DefaultFormSubmitResult, FormSubmitEvent, FormSubmitHandler, InitStripeOptions, IntentType, PaymentRequestButtonOption, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
-import { PaymentRequestWallet } from "@stripe/stripe-js/types/stripe-js/payment-request";
-import { PaymentRequestOptions } from "@stripe/stripe-js";
+import { PaymentRequestOptions, PaymentRequestWallet } from "@stripe/stripe-js";
 export { DefaultFormSubmitResult, FormSubmitEvent, FormSubmitHandler, InitStripeOptions, IntentType, PaymentRequestButtonOption, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
-export { PaymentRequestWallet } from "@stripe/stripe-js/types/stripe-js/payment-request";
-export { PaymentRequestOptions } from "@stripe/stripe-js";
+export { PaymentRequestOptions, PaymentRequestWallet } from "@stripe/stripe-js";
 export namespace Components {
     interface StripePayment {
         /**
