@@ -1,5 +1,5 @@
 import { Component, Prop, h, State, Method, EventEmitter, Event, Element, Watch } from '@stencil/core';
-import {checkPlatform} from '../../utils/utils';
+import { checkPlatform } from '../../utils/utils';
 import {
   StripeDidLoadedHandler,
   StripeLoadedEvent,
@@ -13,7 +13,6 @@ import {
 } from '../../interfaces';
 import { i18n } from '../../utils/i18n';
 import { stripeStore, getAndLoadCardElement } from './store';
-
 
 @Component({
   tag: 'stripe-payment',
@@ -69,22 +68,21 @@ export class StripePayment {
    * ```
    */
   @Method()
-  public async initStripe(
-    publishableKey: string,
-    options?: InitStripeOptions,
-  ) {
-    const stripeAccount = options?.stripeAccount
+  public async initStripe(publishableKey: string, options?: InitStripeOptions) {
+    const stripeAccount = options?.stripeAccount;
 
-    stripeStore.set('el', this.el)
-    stripeStore.set('stripeAccount', stripeAccount)
-    stripeStore.set('applicationName', this.applicationName)
-    stripeStore.set('publishableKey' , publishableKey)
+    stripeStore.set('el', this.el);
+    stripeStore.set('stripeAccount', stripeAccount);
+    stripeStore.set('applicationName', this.applicationName);
+    stripeStore.set('publishableKey', publishableKey);
     stripeStore.onChange('loadStripeStatus', async newState => {
-      if (newState !== 'success') {return;}
+      if (newState !== 'success') {
+        return;
+      }
 
-      await this.initElement()
-      this.stripeLoadedEventHandler()
-    })
+      await this.initElement();
+      this.stripeLoadedEventHandler();
+    });
   }
 
   /**
@@ -122,7 +120,6 @@ export class StripePayment {
     this.progress = progress;
     return this;
   }
-
 
   /**
    * zip code
@@ -163,13 +160,13 @@ export class StripePayment {
   @Prop() publishableKey: string;
   @Watch('publishableKey')
   updatePublishableKey(publishableKey: string) {
-    const options: InitStripeOptions = {}
+    const options: InitStripeOptions = {};
 
-    options.stripeAccount = stripeStore.get('stripeAccount')
-    const hasOptionValue = Object.values(options).filter(Boolean).length > 0
+    options.stripeAccount = stripeStore.get('stripeAccount');
+    const hasOptionValue = Object.values(options).filter(Boolean).length > 0;
 
-    this.initStripe(publishableKey, hasOptionValue ? options: undefined)
-  } 
+    this.initStripe(publishableKey, hasOptionValue ? options : undefined);
+  }
 
   /**
    * Optional. Making API calls for connected accounts
@@ -179,8 +176,8 @@ export class StripePayment {
   @Watch('stripeAccount')
   updateStripeAccountId(stripeAccount: string) {
     this.initStripe(stripeStore.get('publishableKey'), {
-      stripeAccount: stripeAccount
-    })
+      stripeAccount: stripeAccount,
+    });
   }
 
   /**
@@ -321,7 +318,7 @@ export class StripePayment {
   @Event() formSubmit: EventEmitter<FormSubmitEvent>;
   private async formSubmitEventHandler() {
     const { cardCVC, cardExpiry, cardNumber } = getAndLoadCardElement();
-    const stripe = stripeStore.get('stripe')
+    const stripe = stripeStore.get('stripe');
 
     this.formSubmit.emit({
       cardCVCElement: cardCVC,
@@ -363,7 +360,7 @@ export class StripePayment {
     }
 
     this.initStripe(stripeStore.get('publishableKey'), {
-      stripeAccount: stripeStore.get('stripeAccount')
+      stripeAccount: stripeStore.get('stripeAccount'),
     });
     this.createPaymentRequestButton();
   }
@@ -407,7 +404,7 @@ export class StripePayment {
         stripeAccount: this.stripeAccount,
       });
     } else {
-      stripeStore.set('loadStripeStatus', 'failure')
+      stripeStore.set('loadStripeStatus', 'failure');
     }
   }
 
@@ -417,9 +414,9 @@ export class StripePayment {
   private async initElement() {
     document.getElementById('stripe-card-element').addEventListener('submit', async e => {
       const elements = getAndLoadCardElement();
-      const { cardCVC, cardExpiry, cardNumber } = elements
-      const stripe = stripeStore.get('stripe')
-      const { intentClientSecret } = this
+      const { cardCVC, cardExpiry, cardNumber } = elements;
+      const stripe = stripeStore.get('stripe');
+      const { intentClientSecret } = this;
 
       const submitEventProps: FormSubmitEvent = {
         cardCVCElement: cardCVC,
@@ -445,7 +442,7 @@ export class StripePayment {
           this.progress = 'success';
         }
       } catch (e) {
-        stripeStore.set('errorMessage', e.message)
+        stripeStore.set('errorMessage', e.message);
         this.progress = 'failure';
       }
     });
@@ -455,7 +452,7 @@ export class StripePayment {
   }
 
   disconnectedCallback() {
-    getAndLoadCardElement().unmount()
+    getAndLoadCardElement().unmount();
   }
 
   /**
@@ -500,7 +497,7 @@ export class StripePayment {
   }
 
   render() {
-    const errorMessage = stripeStore.get('errorMessage')
+    const errorMessage = stripeStore.get('errorMessage');
 
     if (stripeStore.get('loadStripeStatus') === 'failure') {
       return <p>{i18n.t('Failed to load Stripe')}</p>;
