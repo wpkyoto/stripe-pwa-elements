@@ -13,6 +13,7 @@ import {
 } from '../../interfaces';
 import { i18n } from '../../utils/i18n';
 import { stripeStore, getAndLoadCardElement } from './store';
+import { StripeAPIError } from '../../utils/error';
 
 @Component({
   tag: 'stripe-payment',
@@ -391,8 +392,13 @@ export class StripePayment {
         });
       })();
 
+      if (result.error) {
+        throw new StripeAPIError(result.error);
+      }
+
       this.defaultFormSubmitResultHandler(result);
     } catch (e) {
+      console.error(e)
       this.defaultFormSubmitResultHandler(e);
       throw e;
     }
@@ -531,7 +537,7 @@ export class StripePayment {
                   <div id="card-cvc" />
                 </label>
               </div>
-              <div id="card-errors" class="element-errors">
+              <div id="card-errors" class="stripe-element-errors">
                 {errorMessage}
               </div>
             </fieldset>

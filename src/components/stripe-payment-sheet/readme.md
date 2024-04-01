@@ -33,7 +33,7 @@
 
 ## Methods
 
-### `initStripe(publishableKey: string, options?: { stripeAccount?: string; }) => Promise<void>`
+### `initStripe(publishableKey: string, options?: InitStripeOptions) => Promise<void>`
 
 Get Stripe.js, and initialize elements
 
