@@ -54,7 +54,8 @@ export class StripeSheet {
   @Event() close: EventEmitter;
 
   componentDidLoad() {
-    this.el.classList.add(checkPlatform());
+    const platformName = checkPlatform()
+    if (platformName) this.el.classList.add(platformName);
   }
 
   render() {
