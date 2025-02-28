@@ -34,6 +34,7 @@ export const configureStripeJSClient = async () => {
   const stripeAccount = stripeStore.get('stripeAccount')
   const apiKey = stripeStore.get('publishableKey')
   try {
+    console.log('Initializing Stripe client...');
     const stripe = await loadStripe(apiKey, {
       stripeAccount,
     })
@@ -44,15 +45,16 @@ export const configureStripeJSClient = async () => {
     /**
      * Init Stripe Elements
      */
+    console.log('Creating Stripe Elements...');
     const elements = stripe.elements()
     stripeStore.set('elements', elements)
+    console.log('Initializing card elements...');
     getAndLoadCardElement()
   } catch (e) {
-    console.log(e)
+    console.error('Failed to initialize Stripe:', e)
     stripeStore.set('errorMessage', e.message)
     stripeStore.set('loadStripeStatus', 'failure')
   }
-
 }
 
 
