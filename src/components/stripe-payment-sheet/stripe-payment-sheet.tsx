@@ -537,10 +537,10 @@ export class StripePayment {
                   <div id="card-cvc" />
                 </label>
               </div>
-              <div id="card-errors" class="stripe-element-errors">
-                {errorMessage}
-              </div>
             </fieldset>
+          </div>
+          <div id="card-errors" class="stripe-element-errors">
+            {errorMessage}
           </div>
           {this.zip ? (
             <div style={{ marginTop: '1.5rem' }}>

@@ -28,9 +28,9 @@ exports[`stripe-payment rendering test api key and zip code props 1`] = `
               <div id="card-cvc"></div>
             </label>
           </div>
-          <div class="stripe-element-errors" id="card-errors"></div>
         </fieldset>
       </div>
+      <div class="stripe-element-errors" id="card-errors"></div>
       <div style="margin-top: 32px;">
         <button type="submit">
           Pay
@@ -69,9 +69,9 @@ exports[`stripe-payment rendering test should load stripe after setting the publ
               <div id="card-cvc"></div>
             </label>
           </div>
-          <div class="stripe-element-errors" id="card-errors"></div>
         </fieldset>
       </div>
+      <div class="stripe-element-errors" id="card-errors"></div>
       <div style="margin-top: 32px;">
         <button type="submit">
           Pay
@@ -110,9 +110,9 @@ exports[`stripe-payment rendering test with the api key 1`] = `
               <div id="card-cvc"></div>
             </label>
           </div>
-          <div class="stripe-element-errors" id="card-errors"></div>
         </fieldset>
       </div>
+      <div class="stripe-element-errors" id="card-errors"></div>
       <div style="margin-top: 1.5rem;">
         <div class="stripe-section-title">
           Country or region

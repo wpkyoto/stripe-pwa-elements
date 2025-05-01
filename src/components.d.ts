@@ -107,7 +107,7 @@ export namespace Components {
         /**
           * Check isAvailable ApplePay or GooglePay. If you run this method, you should run before initStripe.
          */
-        "isAvailable": (type: 'applePay' | 'googlePay') => Promise<void>;
+        "isAvailable": (type: "applePay" | "googlePay") => Promise<void>;
         /**
           * Set handler of the `paymentRequest.on('paymentmethod'` event.
           * @example ```  element.setPaymentMethodEventHandler(async (event, stripe) => { // Confirm the PaymentIntent with the payment method returned from the payment request.   const {error} = await stripe.confirmCardPayment(     paymentIntent.client_secret,     {      payment_method: event.paymentMethod.id,      shipping: {        name: event.shippingAddress.recipient,        phone: event.shippingAddress.phone,        address: {          line1: event.shippingAddress.addressLine[0],          city: event.shippingAddress.city,          postal_code: event.shippingAddress.postalCode,          state: event.shippingAddress.region,          country: event.shippingAddress.country,        },      },    },    {handleActions: false}  ); ```
@@ -276,25 +276,71 @@ export interface StripeSheetCustomEvent<T> extends CustomEvent<T> {
     target: HTMLStripeSheetElement;
 }
 declare global {
+    interface HTMLStripePaymentElementEventMap {
+        "stripeLoaded": StripeLoadedEvent;
+        "formSubmit": FormSubmitEvent;
+        "defaultFormSubmitResult": DefaultFormSubmitResult;
+    }
     interface HTMLStripePaymentElement extends Components.StripePayment, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLStripePaymentElementEventMap>(type: K, listener: (this: HTMLStripePaymentElement, ev: StripePaymentCustomEvent<HTMLStripePaymentElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLStripePaymentElementEventMap>(type: K, listener: (this: HTMLStripePaymentElement, ev: StripePaymentCustomEvent<HTMLStripePaymentElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
     var HTMLStripePaymentElement: {
         prototype: HTMLStripePaymentElement;
         new (): HTMLStripePaymentElement;
     };
+    interface HTMLStripePaymentRequestButtonElementEventMap {
+        "stripeLoaded": StripeLoadedEvent;
+    }
     interface HTMLStripePaymentRequestButtonElement extends Components.StripePaymentRequestButton, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLStripePaymentRequestButtonElementEventMap>(type: K, listener: (this: HTMLStripePaymentRequestButtonElement, ev: StripePaymentRequestButtonCustomEvent<HTMLStripePaymentRequestButtonElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLStripePaymentRequestButtonElementEventMap>(type: K, listener: (this: HTMLStripePaymentRequestButtonElement, ev: StripePaymentRequestButtonCustomEvent<HTMLStripePaymentRequestButtonElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
     var HTMLStripePaymentRequestButtonElement: {
         prototype: HTMLStripePaymentRequestButtonElement;
         new (): HTMLStripePaymentRequestButtonElement;
     };
+    interface HTMLStripePaymentSheetElementEventMap {
+        "closed": any;
+    }
     interface HTMLStripePaymentSheetElement extends Components.StripePaymentSheet, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLStripePaymentSheetElementEventMap>(type: K, listener: (this: HTMLStripePaymentSheetElement, ev: StripePaymentSheetCustomEvent<HTMLStripePaymentSheetElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLStripePaymentSheetElementEventMap>(type: K, listener: (this: HTMLStripePaymentSheetElement, ev: StripePaymentSheetCustomEvent<HTMLStripePaymentSheetElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
     var HTMLStripePaymentSheetElement: {
         prototype: HTMLStripePaymentSheetElement;
         new (): HTMLStripePaymentSheetElement;
     };
+    interface HTMLStripeSheetElementEventMap {
+        "close": any;
+    }
     interface HTMLStripeSheetElement extends Components.StripeSheet, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLStripeSheetElementEventMap>(type: K, listener: (this: HTMLStripeSheetElement, ev: StripeSheetCustomEvent<HTMLStripeSheetElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLStripeSheetElementEventMap>(type: K, listener: (this: HTMLStripeSheetElement, ev: StripeSheetCustomEvent<HTMLStripeSheetElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
     }
     var HTMLStripeSheetElement: {
         prototype: HTMLStripeSheetElement;

@@ -2,7 +2,7 @@
 
 exports[`stripe-sheet Rendering test should match snapshot (open='true') 1`] = `
 <stripe-sheet open="true">
-  <mock:shadow-root>
+  <template shadowrootmode="open">
     <div class="modal-row open">
       <div class="modal-child">
         <div class="modal-close-button-wrap">
@@ -11,25 +11,25 @@ exports[`stripe-sheet Rendering test should match snapshot (open='true') 1`] = `
         <slot></slot>
       </div>
     </div>
-  </mock:shadow-root>
+  </template>
 </stripe-sheet>
 `;
 
 exports[`stripe-sheet Rendering test should match snapshot (showCloseButton='false') 1`] = `
 <stripe-sheet show-close-button="false">
-  <mock:shadow-root>
+  <template shadowrootmode="open">
     <div class="modal-row">
       <div class="modal-child">
         <slot></slot>
       </div>
     </div>
-  </mock:shadow-root>
+  </template>
 </stripe-sheet>
 `;
 
 exports[`stripe-sheet Rendering test should match snapshot (showCloseButton='true') 1`] = `
 <stripe-sheet show-close-button="true">
-  <mock:shadow-root>
+  <template shadowrootmode="open">
     <div class="modal-row">
       <div class="modal-child">
         <div class="modal-close-button-wrap">
@@ -38,6 +38,6 @@ exports[`stripe-sheet Rendering test should match snapshot (showCloseButton='tru
         <slot></slot>
       </div>
     </div>
-  </mock:shadow-root>
+  </template>
 </stripe-sheet>
 `;
