@@ -129,7 +129,7 @@ export namespace Components {
         "intentClientSecret"?: string;
         /**
           * Default submit handle type. If you want to use `setupIntent`, should update this attribute.
-          * @example ``` <stripe-payment-sheet intent-type="setup" /> ```
+          * @example ``` <stripe-card-element intent-type="setup" /> ```
           * @default 'payment'
          */
         "intentType": IntentType;
@@ -470,7 +470,7 @@ declare namespace LocalJSX {
         "intentClientSecret"?: string;
         /**
           * Default submit handle type. If you want to use `setupIntent`, should update this attribute.
-          * @example ``` <stripe-payment-sheet intent-type="setup" /> ```
+          * @example ``` <stripe-card-element intent-type="setup" /> ```
           * @default 'payment'
          */
         "intentType"?: IntentType;
