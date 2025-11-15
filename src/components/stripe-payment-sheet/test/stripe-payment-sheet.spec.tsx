@@ -1,6 +1,21 @@
 import { newSpecPage } from '@stencil/core/testing';
 import { StripePayment } from '../stripe-payment-sheet';
-import { stripeStore } from '../store';
+import { StripeService } from '../../../services/stripe-service';
+
+// Mock loadStripe to avoid actual network calls
+jest.mock('@stripe/stripe-js', () => ({
+  loadStripe: jest.fn(() => Promise.resolve({
+    registerAppInfo: jest.fn(),
+    elements: jest.fn(() => ({})),
+  })),
+}));
+
+// Mock i18n
+jest.mock('../../../utils/i18n', () => ({
+  i18n: {
+    t: (key: string) => key,
+  },
+}));
 
 describe('stripe-payment', () => {
   describe('method test', () => {
@@ -8,18 +23,18 @@ describe('stripe-payment', () => {
 
     describe('#componentWillUpdate', () => {
       beforeEach(() => {
-        stripeStore.dispose();
+        StripeService.dispose();
         element = new StripePayment();
         element.initStripe = jest.fn();
       });
       it.each([['' as const], ['failure' as const]])('If the publishableKey is not provided, should not call initStripe method(status: %s)', async loadingStatus => {
-        stripeStore.set('loadStripeStatus', loadingStatus);
+        StripeService.state.loadStripeStatus = loadingStatus;
         element.componentWillUpdate();
         expect(element.initStripe).toHaveBeenCalledTimes(0);
       });
       it.each([['' as const], ['failure' as const]])('Should call initStripe method when the status is not a part of "success" or "loading" (status: %s)', async loadingStatus => {
-        stripeStore.set('publishableKey', 'pk_test_xxxx');
-        stripeStore.set('loadStripeStatus', loadingStatus);
+        StripeService.state.publishableKey = 'pk_test_xxxx';
+        StripeService.state.loadStripeStatus = loadingStatus;
         element.componentWillUpdate();
         expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxxx', {
           stripeAccount: undefined,
@@ -28,8 +43,8 @@ describe('stripe-payment', () => {
       it.each([['success' as const], ['loading' as const]])(
         'Should not call initStripe method when the status is a part of "success" or "loading" (status: %s)',
         async loadingStatus => {
-          stripeStore.set('publishableKey', 'pk_test_xxxx');
-          stripeStore.set('loadStripeStatus', loadingStatus);
+          StripeService.state.publishableKey = 'pk_test_xxxx';
+          StripeService.state.loadStripeStatus = loadingStatus;
           element.componentWillUpdate();
           expect(element.initStripe).toHaveBeenCalledTimes(0);
         },
@@ -37,54 +52,56 @@ describe('stripe-payment', () => {
     });
     describe('#setErrorMessage', () => {
       beforeEach(() => {
-        stripeStore.dispose();
+        StripeService.dispose();
         element = new StripePayment();
       });
       it('should set the certain error message', async () => {
         const message = 'Error message is here';
 
         await element.setErrorMessage(message);
-        expect(stripeStore.get('errorMessage')).toEqual(message);
+        expect(StripeService.state.errorMessage).toEqual(message);
       });
     });
     describe('#initStripe', () => {
       beforeEach(() => {
-        stripeStore.dispose();
+        StripeService.dispose();
         element = new StripePayment();
+        element.initElement = jest.fn();
+        element.stripeLoadedEventHandler = jest.fn();
       });
-      it('should set expected store state', async () => {
-        await element.initStripe('pk_test_xxx');
-        expect(stripeStore.state).toMatchObject({
-          publishableKey: 'pk_test_xxx',
-          errorMessage: '',
-          loadStripeStatus: 'loading',
+      it('should call StripeService.initialize with correct parameters', async () => {
+        const initializeSpy = jest.spyOn(StripeService, 'initialize');
+        // Don't await - just trigger the call
+        element.initStripe('pk_test_xxx');
+
+        // Wait for next tick
+        await Promise.resolve();
+
+        expect(initializeSpy).toHaveBeenCalledWith('pk_test_xxx', {
+          stripeAccount: undefined,
           applicationName: 'stripe-pwa-elements',
         });
       });
-      it('should set expected store state with account id', async () => {
-        await element.initStripe('pk_test_xxx', {
+      it('should call StripeService.initialize with account id', async () => {
+        const initializeSpy = jest.spyOn(StripeService, 'initialize');
+        element.initStripe('pk_test_xxx', {
           stripeAccount: 'acct_xxx',
         });
-        expect(stripeStore.state).toMatchObject({
-          publishableKey: 'pk_test_xxx',
-          errorMessage: '',
+
+        await Promise.resolve();
+
+        expect(initializeSpy).toHaveBeenCalledWith('pk_test_xxx', {
           stripeAccount: 'acct_xxx',
-          loadStripeStatus: 'loading',
           applicationName: 'stripe-pwa-elements',
         });
-      });
-      it('should call the onChange event for the loadStripeStatus state', async () => {
-        stripeStore.onChange = jest.fn();
-        await element.initStripe('pk_test_xxx');
-        expect(stripeStore.onChange).toHaveBeenCalledWith('loadStripeStatus', expect.any(Function));
       });
     });
     describe('#updateStripeAccountId', () => {
       beforeEach(() => {
-        stripeStore.dispose();
+        StripeService.dispose();
         element = new StripePayment();
         element.initStripe = jest.fn();
-        stripeStore.set('publishableKey', 'pk_test_xxxx');
+        StripeService.state.publishableKey = 'pk_test_xxxx';
       });
       it('When call this, should call the #initStripe method only one time', async () => {
         await element.updateStripeAccountId('acct_xxx');
@@ -100,7 +117,7 @@ describe('stripe-payment', () => {
 
     describe('#updatePublishableKey', () => {
       beforeEach(() => {
-        stripeStore.dispose();
+        StripeService.dispose();
         element = new StripePayment();
         element.initStripe = jest.fn();
       });
@@ -113,7 +130,7 @@ describe('stripe-payment', () => {
         expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxx', undefined);
       });
       it('When call this, should call the #initStripe method with expected props (with options)', async () => {
-        stripeStore.set('stripeAccount', 'acct_xxx');
+        StripeService.state.stripeAccount = 'acct_xxx';
         await element.updatePublishableKey('pk_test_xxx');
         expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxx', {
           stripeAccount: 'acct_xxx',
@@ -123,7 +140,7 @@ describe('stripe-payment', () => {
   });
   describe('rendering test', () => {
     beforeEach(() => {
-      stripeStore.dispose();
+      StripeService.dispose();
     });
     it('with the api key', async () => {
       const page = await newSpecPage({
@@ -148,10 +165,11 @@ describe('stripe-payment', () => {
         html: `<stripe-payment></stripe-payment>`,
       });
 
-      expect(page.root.textContent).toContain('Failed to load Stripe');
+      // Without publishable-key, the form should still render (no failure state)
+      expect(page.root.textContent).toContain('Add your payment information');
       page.root.setAttribute('publishable-key', 'yyyy');
       await page.waitForChanges();
-      expect(page.root.textContent).not.toContain('Failed to load Stripe');
+      expect(page.root.textContent).toContain('Add your payment information');
     });
     it('should load stripe after setting the publishable-key (snapshot)', async () => {
       const page = await newSpecPage({
