@@ -8,7 +8,7 @@ describe('utils', () => {
     it('should return a string or undefined', () => {
       const result = checkPlatform();
 
-      // Should return either 'ios', 'android', or undefined      expect(typeof result === 'string' || result === undefined).toBe(true);
+      expect(typeof result === 'string' || result === undefined).toBe(true);
 
       if (typeof result === 'string') {
         expect(['ios', 'android']).toContain(result);
