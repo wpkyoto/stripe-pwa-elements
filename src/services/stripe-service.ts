@@ -30,6 +30,10 @@ type StripeServiceState = {
    */
   errorMessage: string;
   /**
+   * Source of the error (which element type caused it)
+   */
+  errorSource?: 'cardNumber' | 'cardExpiry' | 'cardCvc';
+  /**
    * Overwrite the application name that registered
    * For wrapper library (like Capacitor)
    */
@@ -62,6 +66,61 @@ class StripeServiceClass {
 
   private cardElements?: CardElementInstances;
   private changeListeners: Map<string, Array<() => void>> = new Map();
+
+  /**
+   * Handle card element errors
+   * Only clears error if it's from the same element type
+   */
+  private handleCardError(elementType: 'cardNumber' | 'cardExpiry' | 'cardCvc') {
+    return ({ error }) => {
+      if (error) {
+        this.store.state.errorMessage = error.message;
+        this.store.state.errorSource = elementType;
+        return;
+      }
+
+      // Only clear error if it originated from the same element
+      if (this.store.state.errorSource === elementType) {
+        this.store.state.errorMessage = '';
+        this.store.state.errorSource = undefined;
+      }
+    };
+  }
+
+  /**
+   * Wait for an element to appear in the DOM
+   * @param containerElement - Parent element to search in
+   * @param selector - CSS selector
+   * @param timeout - Timeout in milliseconds (default: 5000ms)
+   * @returns Promise that resolves to the found element or rejects on timeout
+   */
+  private findElement(containerElement: HTMLElement, selector: string, timeout = 5000): Promise<HTMLElement> {
+    return new Promise((resolve, reject) => {
+      const elem = containerElement.querySelector(selector);
+      if (elem) {
+        return resolve(elem as HTMLElement);
+      }
+
+      const timeoutId = setTimeout(() => {
+        observer.disconnect();
+        reject(new Error(`Element "${selector}" not found within ${timeout}ms`));
+      }, timeout);
+
+      const observer = new MutationObserver(() => {
+        const elem = containerElement.querySelector(selector);
+        if (elem) {
+          clearTimeout(timeoutId);
+          observer.disconnect();
+          resolve(elem as HTMLElement);
+        }
+      });
+
+      observer.observe(containerElement, {
+        childList: true,
+        subtree: true,
+      });
+    });
+  }
 
   /**
    * Get the reactive state object
@@ -148,56 +207,25 @@ class StripeServiceClass {
       this.unmountCardElements();
     }
 
-    const handleCardError = ({ error }) => {
-      if (error) {
-        this.store.state.errorMessage = error.message;
-        return;
-      }
-      this.store.state.errorMessage = '';
-    };
-
-    // Helper to find element
-    const findElement = (selector: string): Promise<HTMLElement> => {
-      return new Promise(resolve => {
-        const elem = containerElement.querySelector(selector);
-        if (elem) {
-          return resolve(elem as HTMLElement);
-        }
-
-        const observer = new MutationObserver(() => {
-          const elem = containerElement.querySelector(selector);
-          if (elem) {
-            resolve(elem as HTMLElement);
-            observer.disconnect();
-          }
-        });
-
-        observer.observe(containerElement, {
-          childList: true,
-          subtree: true,
-        });
-      });
-    };
-
     // Create card number element
     const cardNumber = elements.create('cardNumber', {
       placeholder: i18n.t('Card Number'),
     });
-    const cardNumberElement = await findElement('#card-number');
+    const cardNumberElement = await this.findElement(containerElement, '#card-number');
     cardNumber.mount(cardNumberElement);
-    cardNumber.on('change', handleCardError);
+    cardNumber.on('change', this.handleCardError('cardNumber'));
 
     // Create card expiry element
     const cardExpiry = elements.create('cardExpiry');
-    const cardExpiryElement = await findElement('#card-expiry');
+    const cardExpiryElement = await this.findElement(containerElement, '#card-expiry');
     cardExpiry.mount(cardExpiryElement);
-    cardExpiry.on('change', handleCardError);
+    cardExpiry.on('change', this.handleCardError('cardExpiry'));
 
     // Create card CVC element
     const cardCVC = elements.create('cardCvc');
-    const cardCVCElement = await findElement('#card-cvc');
+    const cardCVCElement = await this.findElement(containerElement, '#card-cvc');
     cardCVC.mount(cardCVCElement);
-    cardCVC.on('change', handleCardError);
+    cardCVC.on('change', this.handleCardError('cardCvc'));
 
     this.cardElements = {
       cardNumber,
@@ -244,6 +272,7 @@ class StripeServiceClass {
    */
   clearError() {
     this.store.state.errorMessage = '';
+    this.store.state.errorSource = undefined;
   }
 
   /**
