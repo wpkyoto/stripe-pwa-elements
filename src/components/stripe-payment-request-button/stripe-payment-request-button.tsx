@@ -25,7 +25,7 @@ export class StripePaymentRequestButton {
   /**
    * Store references for cleanup
    */
-  private paymentRequestElement?: StripePaymentRequestButtonElement;
+  private paymentRequestElement?: any;
 
   /**
    * Check isAvailable ApplePay or GooglePay.
