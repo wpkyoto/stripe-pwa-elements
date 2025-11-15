@@ -17,14 +17,14 @@ describe('utils', () => {
   });
 
   describe('waitForElm', () => {
-    let mockElement: HTMLStripePaymentElement;
+    let mockElement: HTMLStripeCardElementElement;
     let mockTarget: HTMLElement;
 
     beforeEach(() => {
       mockTarget = document.createElement('div');
       mockTarget.id = 'target';
 
-      mockElement = document.createElement('stripe-payment') as unknown as HTMLStripePaymentElement;
+      mockElement = document.createElement('stripe-card-element') as unknown as HTMLStripeCardElementElement;
     });
 
     afterEach(() => {

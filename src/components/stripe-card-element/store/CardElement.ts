@@ -4,11 +4,11 @@ import { waitForElm } from '../../../utils/utils';
 import { stripeStore } from './store';
 
 export type PWAStripeCardElementProps = {
-  el: HTMLStripePaymentElement;
+  el: HTMLStripeCardElementElement;
   elements: StripeElements;
 };
 export class PWAStripeCardElement {
-  private el: HTMLStripePaymentElement;
+  private el: HTMLStripeCardElementElement;
   private elements: StripeElements;
   private static _instance: PWAStripeCardElement;
   public cardNumber!: StripeCardNumberElement;

@@ -12,7 +12,7 @@ export const checkPlatform = () => {
   }
 };
 
-export const waitForElm = (el: HTMLStripePaymentElement, selector: string): Promise<HTMLElement> => {
+export const waitForElm = (el: HTMLStripeCardElementElement, selector: string): Promise<HTMLElement> => {
   return new Promise(resolve => {
     if (el.querySelector(selector)) {
       return resolve(el.querySelector(selector) as HTMLElement);
