@@ -273,7 +273,7 @@ export class StripePaymentRequestButton {
     const paymentRequestSupport = await paymentRequest.canMakePayment();
 
     if (!paymentRequestSupport) {
-      throw new Error('paymentRequest is not support.');
+      throw new Error('Payment Request is not supported.');
     }
 
     if (this.paymentMethodEventHandler) {
