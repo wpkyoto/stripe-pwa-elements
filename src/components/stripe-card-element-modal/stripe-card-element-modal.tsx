@@ -2,12 +2,12 @@ import { Component, Prop, h, Method, Element, Event, EventEmitter } from '@stenc
 import { StripeDidLoadedHandler, FormSubmitHandler, ProgressStatus, PaymentRequestButtonOption, IntentType } from '../../interfaces';
 
 @Component({
-  tag: 'stripe-payment-sheet',
-  styleUrl: 'stripe-payment-sheet-modal.css',
+  tag: 'stripe-card-element-modal',
+  styleUrl: 'stripe-card-element-modal.css',
   shadow: false,
 })
-export class StripePaymentSheet {
-  @Element() el: HTMLStripePaymentSheetElement;
+export class StripeCardElementModal {
+  @Element() el: HTMLStripeCardElementModalElement;
 
   /**
    * Your Stripe publishable API key.
@@ -127,7 +127,7 @@ export class StripePaymentSheet {
   @Event() closed: EventEmitter;
 
   componentDidLoad() {
-    const modal = this.el.querySelector('stripe-sheet');
+    const modal = this.el.querySelector('stripe-modal');
 
     modal.addEventListener('close', () => {
       this.closed.emit();
@@ -138,8 +138,8 @@ export class StripePaymentSheet {
    * Get the inner component
    */
   @Method()
-  public async getStripePaymentSheetElement() {
-    return this.el.querySelector('stripe-payment');
+  public async getStripeCardElementElement() {
+    return this.el.querySelector('stripe-card-element');
   }
 
   /**
@@ -150,9 +150,9 @@ export class StripePaymentSheet {
     this.open = true;
 
     return new Promise((resolve, reject) => {
-      const paymentSheet = this.el.querySelector('stripe-payment');
+      const cardElement = this.el.querySelector('stripe-card-element');
 
-      paymentSheet.addEventListener('formSubmit', async props => {
+      cardElement.addEventListener('formSubmit', async props => {
         resolve(props);
       });
       this.el.addEventListener('closed', () => reject());
@@ -164,9 +164,9 @@ export class StripePaymentSheet {
    */
   @Method()
   public async updateProgress(progress: ProgressStatus) {
-    const paymentSheet = this.el.querySelector('stripe-payment');
+    const cardElement = this.el.querySelector('stripe-card-element');
 
-    return paymentSheet.updateProgress(progress);
+    return cardElement.updateProgress(progress);
   }
 
   /**
@@ -174,9 +174,9 @@ export class StripePaymentSheet {
    */
   @Method()
   public async destroy() {
-    const paymentSheet = this.el.querySelector('stripe-payment');
+    const cardElement = this.el.querySelector('stripe-card-element');
 
-    paymentSheet.remove();
+    cardElement.remove();
     this.el.remove();
   }
 
@@ -186,30 +186,30 @@ export class StripePaymentSheet {
    */
   @Method()
   public async setPaymentRequestButton(options: PaymentRequestButtonOption) {
-    const elements = this.el.getElementsByTagName('stripe-payment');
+    const elements = this.el.getElementsByTagName('stripe-card-element');
 
     if (elements.length < 1) {
       return;
     }
 
-    const paymentSheetElement = elements[0];
+    const cardElement = elements[0];
 
-    if (!paymentSheetElement) {
+    if (!cardElement) {
       return;
     }
 
-    paymentSheetElement.setAttribute('show-payment-request-button', 'true');
+    cardElement.setAttribute('show-payment-request-button', 'true');
     if (this.applicationName) {
-      paymentSheetElement.setAttribute('application-name', this.applicationName);
+      cardElement.setAttribute('application-name', this.applicationName);
     }
 
-    paymentSheetElement.setPaymentRequestOption(options);
+    cardElement.setPaymentRequestOption(options);
   }
 
   render() {
     return (
-      <stripe-sheet open={this.open} showCloseButton={this.showCloseButton}>
-        <stripe-payment
+      <stripe-modal open={this.open} showCloseButton={this.showCloseButton}>
+        <stripe-card-element
           showLabel={this.showLabel}
           publishableKey={this.publishableKey}
           intentClientSecret={this.intentClientSecret}
@@ -221,8 +221,8 @@ export class StripePaymentSheet {
           buttonLabel={this.buttonLabel}
           sheetTitle={this.sheetTitle}
           applicationName={this.applicationName}
-        ></stripe-payment>
-      </stripe-sheet>
+        ></stripe-card-element>
+      </stripe-modal>
     );
   }
 }

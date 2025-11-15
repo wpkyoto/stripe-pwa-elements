@@ -1,15 +1,15 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { StripePayment } from '../stripe-payment-sheet';
+import { StripeCardElement } from '../stripe-card-element';
 import { stripeStore } from '../store';
 
-describe('stripe-payment', () => {
+describe('stripe-card-element', () => {
   describe('method test', () => {
-    let element: StripePayment = new StripePayment();
+    let element: StripeCardElement = new StripeCardElement();
 
     describe('#componentWillUpdate', () => {
       beforeEach(() => {
         stripeStore.dispose();
-        element = new StripePayment();
+        element = new StripeCardElement();
         element.initStripe = jest.fn();
       });
       it.each([['' as const], ['failure' as const]])('If the publishableKey is not provided, should not call initStripe method(status: %s)', async loadingStatus => {
@@ -38,7 +38,7 @@ describe('stripe-payment', () => {
     describe('#setErrorMessage', () => {
       beforeEach(() => {
         stripeStore.dispose();
-        element = new StripePayment();
+        element = new StripeCardElement();
       });
       it('should set the certain error message', async () => {
         const message = 'Error message is here';
@@ -50,7 +50,7 @@ describe('stripe-payment', () => {
     describe('#initStripe', () => {
       beforeEach(() => {
         stripeStore.dispose();
-        element = new StripePayment();
+        element = new StripeCardElement();
       });
       it('should set expected store state', async () => {
         await element.initStripe('pk_test_xxx');
@@ -82,7 +82,7 @@ describe('stripe-payment', () => {
     describe('#updateStripeAccountId', () => {
       beforeEach(() => {
         stripeStore.dispose();
-        element = new StripePayment();
+        element = new StripeCardElement();
         element.initStripe = jest.fn();
         stripeStore.set('publishableKey', 'pk_test_xxxx');
       });
@@ -101,7 +101,7 @@ describe('stripe-payment', () => {
     describe('#updatePublishableKey', () => {
       beforeEach(() => {
         stripeStore.dispose();
-        element = new StripePayment();
+        element = new StripeCardElement();
         element.initStripe = jest.fn();
       });
       it('When call this, should call the #initStripe method only one time', async () => {
@@ -127,8 +127,8 @@ describe('stripe-payment', () => {
     });
     it('with the api key', async () => {
       const page = await newSpecPage({
-        components: [StripePayment],
-        html: `<stripe-payment publishable-key='pk_test_xxx'></stripe-payment>`,
+        components: [StripeCardElement],
+        html: `<stripe-card-element publishable-key='pk_test_xxx'></stripe-card-element>`,
       });
 
       expect(page.root).toMatchSnapshot();
@@ -136,16 +136,16 @@ describe('stripe-payment', () => {
 
     it('api key and zip code props', async () => {
       const page = await newSpecPage({
-        components: [StripePayment],
-        html: `<stripe-payment zip="false"  publishable-key='pk_test_xxx'></stripe-payment>`,
+        components: [StripeCardElement],
+        html: `<stripe-card-element zip="false"  publishable-key='pk_test_xxx'></stripe-card-element>`,
       });
 
       expect(page.root).toMatchSnapshot();
     });
     it('should load stripe after setting the publishable-key', async () => {
       const page = await newSpecPage({
-        components: [StripePayment],
-        html: `<stripe-payment></stripe-payment>`,
+        components: [StripeCardElement],
+        html: `<stripe-card-element></stripe-card-element>`,
       });
 
       expect(page.root.textContent).toContain('Failed to load Stripe');
@@ -155,8 +155,8 @@ describe('stripe-payment', () => {
     });
     it('should load stripe after setting the publishable-key (snapshot)', async () => {
       const page = await newSpecPage({
-        components: [StripePayment],
-        html: `<stripe-payment zip="false"'></stripe-payment>`,
+        components: [StripeCardElement],
+        html: `<stripe-card-element zip="false"'></stripe-card-element>`,
       });
 
       page.root.setAttribute('publishable-key', 'yyyy');
