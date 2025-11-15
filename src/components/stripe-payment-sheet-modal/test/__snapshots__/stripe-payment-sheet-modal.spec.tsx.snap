@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`stripe-payment-sheet rendering test should render with all props 1`] = `
+<stripe-payment-sheet application-name="test-app" button-label="Test Button" intent-client-secret="pi_xxx" intent-type="setup" open="true" publishable-key="pk_test_xxx" sheet-title="Test Title" should-use-default-form-submit-action="false" show-close-button="false" show-label="true" stripe-account="acct_xxx" zip="false">
+  <stripe-sheet open="">
+    <stripe-payment applicationname="test-app" buttonlabel="Test Button" intentclientsecret="pi_xxx" intenttype="setup" publishablekey="pk_test_xxx" sheettitle="Test Title" showlabel=""></stripe-payment>
+  </stripe-sheet>
+</stripe-payment-sheet>
+`;
