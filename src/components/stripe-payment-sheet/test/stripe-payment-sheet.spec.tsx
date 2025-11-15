@@ -1,6 +1,7 @@
 import { newSpecPage } from '@stencil/core/testing';
 import { StripePayment } from '../stripe-payment-sheet';
-import { StripeService } from '../../../services/stripe-service';
+import type { IStripeService, ICardElementManager } from '../../../services/interfaces';
+import * as factoryModule from '../../../services/factory';
 
 // Mock loadStripe to avoid actual network calls
 jest.mock('@stripe/stripe-js', () => ({
@@ -17,24 +18,72 @@ jest.mock('../../../utils/i18n', () => ({
   },
 }));
 
+// Mock service implementations
+let mockStripeService: jest.Mocked<IStripeService>;
+let mockCardElementManager: jest.Mocked<ICardElementManager>;
+
 describe('stripe-payment', () => {
+  // Set up mocks before each test
+  beforeEach(() => {
+    // Create fresh mock implementations
+    mockStripeService = {
+      state: {
+        loadStripeStatus: '',
+        applicationName: 'stripe-pwa-elements',
+        publishableKey: undefined,
+        stripeAccount: undefined,
+        stripe: undefined,
+        elements: undefined,
+      },
+      initialize: jest.fn().mockResolvedValue(undefined),
+      onChange: jest.fn().mockReturnValue(jest.fn()),
+      getStripe: jest.fn().mockReturnValue(undefined),
+      getElements: jest.fn().mockReturnValue(undefined),
+      reset: jest.fn(),
+      dispose: jest.fn(),
+    } as any;
+
+    mockCardElementManager = {
+      getState: jest.fn().mockReturnValue({
+        errorMessage: '',
+        errorSource: undefined,
+      }),
+      initialize: jest.fn().mockResolvedValue({
+        cardNumber: {} as any,
+        cardExpiry: {} as any,
+        cardCVC: {} as any,
+      }),
+      getElements: jest.fn().mockReturnValue(undefined),
+      setError: jest.fn(),
+      clearError: jest.fn(),
+      unmount: jest.fn(),
+    } as any;
+
+    // Spy on factory methods to return our mocks
+    jest.spyOn(factoryModule.serviceFactory, 'createStripeService').mockReturnValue(mockStripeService);
+    jest.spyOn(factoryModule.serviceFactory, 'createCardElementManager').mockReturnValue(mockCardElementManager);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   describe('method test', () => {
     let element: StripePayment = new StripePayment();
 
     describe('#componentWillUpdate', () => {
       beforeEach(() => {
-        StripeService.dispose();
         element = new StripePayment();
         element.initStripe = jest.fn();
       });
       it.each([['' as const], ['failure' as const]])('If the publishableKey is not provided, should not call initStripe method(status: %s)', async loadingStatus => {
-        StripeService.state.loadStripeStatus = loadingStatus;
+        mockStripeService.state.loadStripeStatus = loadingStatus;
         element.componentWillUpdate();
         expect(element.initStripe).toHaveBeenCalledTimes(0);
       });
       it.each([['' as const], ['failure' as const]])('Should call initStripe method when the status is not a part of "success" or "loading" (status: %s)', async loadingStatus => {
-        StripeService.state.publishableKey = 'pk_test_xxxx';
-        StripeService.state.loadStripeStatus = loadingStatus;
+        mockStripeService.state.publishableKey = 'pk_test_xxxx';
+        mockStripeService.state.loadStripeStatus = loadingStatus;
         element.componentWillUpdate();
         expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxxx', {
           stripeAccount: undefined,
@@ -43,8 +92,8 @@ describe('stripe-payment', () => {
       it.each([['success' as const], ['loading' as const]])(
         'Should not call initStripe method when the status is a part of "success" or "loading" (status: %s)',
         async loadingStatus => {
-          StripeService.state.publishableKey = 'pk_test_xxxx';
-          StripeService.state.loadStripeStatus = loadingStatus;
+          mockStripeService.state.publishableKey = 'pk_test_xxxx';
+          mockStripeService.state.loadStripeStatus = loadingStatus;
           element.componentWillUpdate();
           expect(element.initStripe).toHaveBeenCalledTimes(0);
         },
@@ -52,49 +101,50 @@ describe('stripe-payment', () => {
     });
     describe('#setErrorMessage', () => {
       beforeEach(() => {
-        StripeService.dispose();
         element = new StripePayment();
       });
       it('should set the certain error message', async () => {
         const message = 'Error message is here';
 
         await element.setErrorMessage(message);
-        expect(StripeService.state.errorMessage).toEqual(message);
+        expect(mockCardElementManager.setError).toHaveBeenCalledWith(message);
       });
     });
     describe('#initStripe', () => {
       beforeEach(() => {
-        StripeService.dispose();
         element = new StripePayment();
 
-        // Mock StripeService dependencies to avoid actual Stripe initialization
-        jest.spyOn(StripeService, 'initialize').mockResolvedValue();
-        jest.spyOn(StripeService, 'initializeCardElements').mockResolvedValue({
+        // Mock DOM element for form submission listener
+        const mockFormElement = {
+          addEventListener: jest.fn(),
+        };
+        jest.spyOn(document, 'getElementById').mockReturnValue(mockFormElement as any);
+
+        // Mock successful initialization
+        mockStripeService.state.loadStripeStatus = 'success';
+        mockStripeService.initialize.mockResolvedValue(undefined);
+        mockCardElementManager.initialize.mockResolvedValue({
           cardNumber: {} as any,
           cardExpiry: {} as any,
           cardCVC: {} as any,
         });
       });
 
-      it('should call StripeService.initialize with correct parameters', async () => {
-        const initializeSpy = jest.spyOn(StripeService, 'initialize').mockResolvedValue();
-
+      it('should call stripeService.initialize with correct parameters', async () => {
         await element.initStripe('pk_test_xxx');
 
-        expect(initializeSpy).toHaveBeenCalledWith('pk_test_xxx', {
+        expect(mockStripeService.initialize).toHaveBeenCalledWith('pk_test_xxx', {
           stripeAccount: undefined,
           applicationName: 'stripe-pwa-elements',
         });
       });
 
-      it('should call StripeService.initialize with account id', async () => {
-        const initializeSpy = jest.spyOn(StripeService, 'initialize').mockResolvedValue();
-
+      it('should call stripeService.initialize with account id', async () => {
         await element.initStripe('pk_test_xxx', {
           stripeAccount: 'acct_xxx',
         });
 
-        expect(initializeSpy).toHaveBeenCalledWith('pk_test_xxx', {
+        expect(mockStripeService.initialize).toHaveBeenCalledWith('pk_test_xxx', {
           stripeAccount: 'acct_xxx',
           applicationName: 'stripe-pwa-elements',
         });
@@ -102,10 +152,9 @@ describe('stripe-payment', () => {
     });
     describe('#updateStripeAccountId', () => {
       beforeEach(() => {
-        StripeService.dispose();
         element = new StripePayment();
         element.initStripe = jest.fn();
-        StripeService.state.publishableKey = 'pk_test_xxxx';
+        mockStripeService.state.publishableKey = 'pk_test_xxxx';
       });
       it('When call this, should call the #initStripe method only one time', async () => {
         await element.updateStripeAccountId('acct_xxx');
@@ -121,7 +170,6 @@ describe('stripe-payment', () => {
 
     describe('#updatePublishableKey', () => {
       beforeEach(() => {
-        StripeService.dispose();
         element = new StripePayment();
         element.initStripe = jest.fn();
       });
@@ -134,7 +182,7 @@ describe('stripe-payment', () => {
         expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxx', undefined);
       });
       it('When call this, should call the #initStripe method with expected props (with options)', async () => {
-        StripeService.state.stripeAccount = 'acct_xxx';
+        mockStripeService.state.stripeAccount = 'acct_xxx';
         await element.updatePublishableKey('pk_test_xxx');
         expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxx', {
           stripeAccount: 'acct_xxx',
@@ -143,9 +191,6 @@ describe('stripe-payment', () => {
     });
   });
   describe('rendering test', () => {
-    beforeEach(() => {
-      StripeService.dispose();
-    });
     it('with the api key', async () => {
       const page = await newSpecPage({
         components: [StripePayment],
