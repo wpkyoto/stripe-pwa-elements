@@ -16,12 +16,12 @@ import { stripeStore, getAndLoadCardElement } from './store';
 import { StripeAPIError } from '../../utils/error';
 
 @Component({
-  tag: 'stripe-payment',
-  styleUrl: 'stripe-payment-sheet.scss',
+  tag: 'stripe-card-element',
+  styleUrl: 'stripe-card-element.scss',
   shadow: false,
 })
-export class StripePayment {
-  @Element() el: HTMLStripePaymentElement;
+export class StripeCardElement {
+  @Element() el: HTMLStripeCardElementElement;
 
   /**
    * Default submit handle type.

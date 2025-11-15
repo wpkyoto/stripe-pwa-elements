@@ -55,7 +55,7 @@ Type: `Promise<void>`
 
 ### Used by
 
- - [stripe-payment-sheet](../stripe-payment-sheet-modal)
+ - [stripe-card-element-modal](../stripe-card-element-modal)
 
 ### Depends on
 
@@ -64,9 +64,9 @@ Type: `Promise<void>`
 ### Graph
 ```mermaid
 graph TD;
-  stripe-sheet --> ion-icon
-  stripe-payment-sheet --> stripe-sheet
-  style stripe-sheet fill:#f9f,stroke:#333,stroke-width:4px
+  stripe-modal --> ion-icon
+  stripe-card-element-modal --> stripe-modal
+  style stripe-modal fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------

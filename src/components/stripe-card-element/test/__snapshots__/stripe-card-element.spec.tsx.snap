@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`stripe-payment rendering test api key and zip code props 1`] = `
-<stripe-payment class="undefined" publishable-key="pk_test_xxx" zip="false">
+exports[`stripe-card-element rendering test api key and zip code props 1`] = `
+<stripe-card-element class="undefined" publishable-key="pk_test_xxx" zip="false">
   <div class="stripe-payment-sheet-wrap">
     <form id="stripe-card-element">
       <div class="stripe-heading">
@@ -38,11 +38,11 @@ exports[`stripe-payment rendering test api key and zip code props 1`] = `
       </div>
     </form>
   </div>
-</stripe-payment>
+</stripe-card-element>
 `;
 
-exports[`stripe-payment rendering test should load stripe after setting the publishable-key (snapshot) 1`] = `
-<stripe-payment '="" class="undefined" publishable-key="yyyy" zip="false">
+exports[`stripe-card-element rendering test should load stripe after setting the publishable-key (snapshot) 1`] = `
+<stripe-card-element '="" class="undefined" publishable-key="yyyy" zip="false">
   <div class="stripe-payment-sheet-wrap">
     <form id="stripe-card-element">
       <div class="stripe-heading">
@@ -79,11 +79,11 @@ exports[`stripe-payment rendering test should load stripe after setting the publ
       </div>
     </form>
   </div>
-</stripe-payment>
+</stripe-card-element>
 `;
 
-exports[`stripe-payment rendering test with the api key 1`] = `
-<stripe-payment class="undefined" publishable-key="pk_test_xxx">
+exports[`stripe-card-element rendering test with the api key 1`] = `
+<stripe-card-element class="undefined" publishable-key="pk_test_xxx">
   <div class="stripe-payment-sheet-wrap">
     <form id="stripe-card-element">
       <div class="stripe-heading">
@@ -134,5 +134,5 @@ exports[`stripe-payment rendering test with the api key 1`] = `
       </div>
     </form>
   </div>
-</stripe-payment>
+</stripe-card-element>
 `;

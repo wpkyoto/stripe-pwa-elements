@@ -26,14 +26,14 @@ stripe-pwa-elements/
 │   └── example2.html
 ├── src/                        # Source code
 │   ├── components/            # Web components
-│   │   ├── stripe-element-modal/          # Modal wrapper component
-│   │   ├── stripe-payment-sheet/          # Main payment sheet component
+│   │   ├── stripe-modal/                  # Modal wrapper component
+│   │   ├── stripe-card-element/           # Card Element component (Stripe Card Elements)
 │   │   │   ├── store/                     # Stencil store for state management
-│   │   │   ├── stripe-payment-sheet.tsx
-│   │   │   ├── stripe-payment-sheet.scss
+│   │   │   ├── stripe-card-element.tsx
+│   │   │   ├── stripe-card-element.scss
 │   │   │   ├── readme.md                  # Auto-generated component docs
 │   │   │   └── test/                      # Component tests
-│   │   ├── stripe-payment-sheet-modal/    # Combined payment sheet with modal
+│   │   ├── stripe-card-element-modal/     # Combined card element with modal
 │   │   └── stripe-payment-request-button/ # Payment Request API button (Beta)
 │   ├── utils/                 # Utility functions
 │   │   ├── error.ts          # Error handling utilities
@@ -57,27 +57,31 @@ stripe-pwa-elements/
 
 ## Core Components
 
-### 1. stripe-payment-sheet
-Main component providing a Stripe card form similar to iOS/Android payment sheets.
-- Location: `src/components/stripe-payment-sheet/`
-- Tag: `<stripe-payment>`
+### 1. stripe-card-element
+Main component providing a Stripe card form using Stripe Card Elements.
+- Location: `src/components/stripe-card-element/`
+- Tag: `<stripe-card-element>`
 - Features: Card number, expiry, CVC, optional ZIP code fields
 - Uses Stencil Store for state management
 - Supports both PaymentIntent and SetupIntent
 
-### 2. stripe-element-modal
+### 2. stripe-modal
 Simple modal wrapper for payment components.
-- Location: `src/components/stripe-element-modal/`
+- Location: `src/components/stripe-modal/`
+- Tag: `<stripe-modal>`
 - Provides modal functionality with open/close events
 
-### 3. stripe-payment-request-button (Beta)
-Payment Request API button component.
-- Location: `src/components/stripe-payment-request-button/`
-- Status: Beta
+### 3. stripe-card-element-modal
+Combined component integrating card element with modal.
+- Location: `src/components/stripe-card-element-modal/`
+- Tag: `<stripe-card-element-modal>`
+- Combines stripe-card-element and stripe-modal
 
-### 4. stripe-payment-sheet-modal
-Combined component integrating payment sheet with modal.
-- Location: `src/components/stripe-payment-sheet-modal/`
+### 4. stripe-payment-request-button (Beta)
+Payment Request API button component (Apple Pay / Google Pay).
+- Location: `src/components/stripe-payment-request-button/`
+- Tag: `<stripe-payment-request-button>`
+- Status: Beta
 
 ## Development Workflows
 

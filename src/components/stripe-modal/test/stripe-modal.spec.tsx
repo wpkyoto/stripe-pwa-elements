@@ -1,11 +1,11 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { StripeSheet } from '../stripe-element-modal';
+import { StripeModal } from '../stripe-modal';
 
-describe('stripe-sheet', () => {
+describe('stripe-modal', () => {
   describe('Component Logic test', () => {
     describe('#openModal', () => {
       it('open props should change to true when the openModal method was called', async () => {
-        const component = new StripeSheet();
+        const component = new StripeModal();
 
         component.open = false;
         await component.openModal();
@@ -14,7 +14,7 @@ describe('stripe-sheet', () => {
     });
     describe('#closeModal', () => {
       it('open props should change to false when the closeModal method was called', async () => {
-        const component = new StripeSheet();
+        const component = new StripeModal();
 
         component.close = {
           emit: jest.fn(),
@@ -23,7 +23,7 @@ describe('stripe-sheet', () => {
         expect(component.open).toEqual(false);
       });
       it('When the closeModal method called, should called close event at once', async () => {
-        const component = new StripeSheet();
+        const component = new StripeModal();
 
         component.open = true;
         const mockEmitter = jest.fn();
@@ -37,11 +37,11 @@ describe('stripe-sheet', () => {
     });
     describe('#toggleModal', () => {
       describe('Props open=true', () => {
-        let component = new StripeSheet();
+        let component = new StripeModal();
         let mockEmitter = jest.fn();
 
         beforeEach(() => {
-          component = new StripeSheet();
+          component = new StripeModal();
           mockEmitter = jest.fn();
           component.open = true;
           component.close = {
@@ -58,11 +58,11 @@ describe('stripe-sheet', () => {
         });
       });
       describe('Props open=false', () => {
-        let component = new StripeSheet();
+        let component = new StripeModal();
         let mockEmitter = jest.fn();
 
         beforeEach(() => {
-          component = new StripeSheet();
+          component = new StripeModal();
           mockEmitter = jest.fn();
           component.open = false;
           component.close = {
@@ -83,12 +83,12 @@ describe('stripe-sheet', () => {
   describe('Rendering test', () => {
     it('renders', async () => {
       const page = await newSpecPage({
-        components: [StripeSheet],
-        html: `<stripe-sheet></stripe-sheet>`,
+        components: [StripeModal],
+        html: `<stripe-modal></stripe-modal>`,
       });
 
       expect(page.root).toEqualHtml(`
-      <stripe-sheet>
+      <stripe-modal>
         <mock:shadow-root>
           <div class="modal-row">
             <div class="modal-child">
@@ -99,14 +99,14 @@ describe('stripe-sheet', () => {
             </div>
           </div>
         </mock:shadow-root>
-      </stripe-sheet>
+      </stripe-modal>
       `);
     });
 
     it("should match snapshot (open='true')", async () => {
       const page = await newSpecPage({
-        components: [StripeSheet],
-        html: `<stripe-sheet open="true"></stripe-sheet>`,
+        components: [StripeModal],
+        html: `<stripe-modal open="true"></stripe-modal>`,
       });
 
       expect(page.root).toMatchSnapshot();
@@ -114,16 +114,16 @@ describe('stripe-sheet', () => {
 
     it("should match snapshot (showCloseButton='true')", async () => {
       const page = await newSpecPage({
-        components: [StripeSheet],
-        html: `<stripe-sheet show-close-button="true"></stripe-sheet>`,
+        components: [StripeModal],
+        html: `<stripe-modal show-close-button="true"></stripe-modal>`,
       });
 
       expect(page.root).toMatchSnapshot();
     });
     it("should match snapshot (showCloseButton='false')", async () => {
       const page = await newSpecPage({
-        components: [StripeSheet],
-        html: `<stripe-sheet show-close-button="false"></stripe-sheet>`,
+        components: [StripeModal],
+        html: `<stripe-modal show-close-button="false"></stripe-modal>`,
       });
 
       expect(page.root).toMatchSnapshot();
