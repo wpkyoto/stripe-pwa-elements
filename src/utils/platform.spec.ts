@@ -154,7 +154,7 @@ describe('platform utilities', () => {
         navigator: {
           userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
         },
-        matchMedia: (query: string) => ({ matches: false }),
+        matchMedia: (_query: string) => ({ matches: false }),
         document: {
           documentElement: {
             classList: {
@@ -246,7 +246,7 @@ describe('platform utilities', () => {
         navigator: {
           userAgent: 'Mozilla/5.0 Chrome/91.0.4472.124 Electron/13.1.7',
         },
-        matchMedia: (query: string) => ({ matches: false }),
+        matchMedia: (_query: string) => ({ matches: false }),
         document: {
           documentElement: {
             classList: {
@@ -330,7 +330,7 @@ describe('platform utilities', () => {
         navigator: {
           userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
         },
-        matchMedia: (query: string) => ({ matches: false }),
+        matchMedia: (_query: string) => ({ matches: false }),
         document: {
           documentElement: {
             classList: {
