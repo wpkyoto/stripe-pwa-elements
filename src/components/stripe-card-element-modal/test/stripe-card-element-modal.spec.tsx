@@ -113,14 +113,14 @@ describe('stripe-card-element-modal', () => {
   });
 
   describe('method test', () => {
-    describe('#getStripePaymentSheetElement', () => {
+    describe('#getStripeCardElementElement', () => {
       it('should return the inner stripe-card-element element', async () => {
         const page = await newSpecPage({
           components: [StripeCardElementModal],
           html: `<stripe-card-element-modal></stripe-card-element-modal>`,
         });
 
-        const element = await page.rootInstance.getStripePaymentSheetElement();
+        const element = await page.rootInstance.getStripeCardElementElement();
         expect(element.tagName.toLowerCase()).toBe('stripe-card-element');
       });
     });

@@ -149,7 +149,7 @@ describe('stripe-card-element', () => {
     describe('#updateProgress', () => {
       beforeEach(() => {
         stripeStore.dispose();
-        element = new StripePayment();
+        element = new StripeCardElement();
       });
 
       it('should update progress to loading', async () => {
@@ -193,7 +193,7 @@ describe('stripe-card-element', () => {
     describe('#setPaymentRequestOption', () => {
       beforeEach(() => {
         stripeStore.dispose();
-        element = new StripePayment();
+        element = new StripeCardElement();
       });
 
       it('should set payment request option', async () => {
@@ -271,8 +271,8 @@ describe('stripe-card-element', () => {
 
     it('should render with custom button label', async () => {
       const page = await newSpecPage({
-        components: [StripePayment],
-        html: `<stripe-payment publishable-key='pk_test_xxx' button-label='Add card'></stripe-payment>`,
+        components: [StripeCardElement],
+        html: `<stripe-card-element publishable-key='pk_test_xxx' button-label='Add card'></stripe-card-element>`,
       });
 
       expect(page.root).toMatchSnapshot();
@@ -280,8 +280,8 @@ describe('stripe-card-element', () => {
 
     it('should render with custom sheet title', async () => {
       const page = await newSpecPage({
-        components: [StripePayment],
-        html: `<stripe-payment publishable-key='pk_test_xxx' sheet-title='Add your payment information'></stripe-payment>`,
+        components: [StripeCardElement],
+        html: `<stripe-card-element publishable-key='pk_test_xxx' sheet-title='Add your payment information'></stripe-card-element>`,
       });
 
       expect(page.root).toMatchSnapshot();
@@ -289,8 +289,8 @@ describe('stripe-card-element', () => {
 
     it('should render with showLabel enabled', async () => {
       const page = await newSpecPage({
-        components: [StripePayment],
-        html: `<stripe-payment publishable-key='pk_test_xxx' show-label="true"></stripe-payment>`,
+        components: [StripeCardElement],
+        html: `<stripe-card-element publishable-key='pk_test_xxx' show-label="true"></stripe-card-element>`,
       });
 
       expect(page.root).toMatchSnapshot();
@@ -298,8 +298,8 @@ describe('stripe-card-element', () => {
 
     it('should render with intentType setup', async () => {
       const page = await newSpecPage({
-        components: [StripePayment],
-        html: `<stripe-payment publishable-key='pk_test_xxx' intent-type='setup'></stripe-payment>`,
+        components: [StripeCardElement],
+        html: `<stripe-card-element publishable-key='pk_test_xxx' intent-type='setup'></stripe-card-element>`,
       });
 
       expect(page.root).toMatchSnapshot();
@@ -307,8 +307,8 @@ describe('stripe-card-element', () => {
 
     it('should render with stripe account', async () => {
       const page = await newSpecPage({
-        components: [StripePayment],
-        html: `<stripe-payment publishable-key='pk_test_xxx' stripe-account='acct_xxx'></stripe-payment>`,
+        components: [StripeCardElement],
+        html: `<stripe-card-element publishable-key='pk_test_xxx' stripe-account='acct_xxx'></stripe-card-element>`,
       });
 
       expect(page.root).toMatchSnapshot();
@@ -316,8 +316,8 @@ describe('stripe-card-element', () => {
 
     it('should disable submit button when progress is loading', async () => {
       const page = await newSpecPage({
-        components: [StripePayment],
-        html: `<stripe-payment publishable-key='pk_test_xxx'></stripe-payment>`,
+        components: [StripeCardElement],
+        html: `<stripe-card-element publishable-key='pk_test_xxx'></stripe-card-element>`,
       });
 
       await page.rootInstance.updateProgress('loading');
@@ -330,8 +330,8 @@ describe('stripe-card-element', () => {
 
     it('should enable submit button when progress is empty', async () => {
       const page = await newSpecPage({
-        components: [StripePayment],
-        html: `<stripe-payment publishable-key='pk_test_xxx'></stripe-payment>`,
+        components: [StripeCardElement],
+        html: `<stripe-card-element publishable-key='pk_test_xxx'></stripe-card-element>`,
       });
 
       await page.rootInstance.updateProgress('');
@@ -345,8 +345,8 @@ describe('stripe-card-element', () => {
 
     it('should display error message when set', async () => {
       const page = await newSpecPage({
-        components: [StripePayment],
-        html: `<stripe-payment publishable-key='pk_test_xxx'></stripe-payment>`,
+        components: [StripeCardElement],
+        html: `<stripe-card-element publishable-key='pk_test_xxx'></stripe-card-element>`,
       });
 
       await page.rootInstance.setErrorMessage('Card declined');
@@ -358,8 +358,8 @@ describe('stripe-card-element', () => {
 
     it('should render zip code field by default', async () => {
       const page = await newSpecPage({
-        components: [StripePayment],
-        html: `<stripe-payment publishable-key='pk_test_xxx'></stripe-payment>`,
+        components: [StripeCardElement],
+        html: `<stripe-card-element publishable-key='pk_test_xxx'></stripe-card-element>`,
       });
 
       const zipInput = page.root.querySelector('#zip');
@@ -368,8 +368,8 @@ describe('stripe-card-element', () => {
 
     it('should not render zip code field when zip is false', async () => {
       const page = await newSpecPage({
-        components: [StripePayment],
-        html: `<stripe-payment publishable-key='pk_test_xxx' zip="false"></stripe-payment>`,
+        components: [StripeCardElement],
+        html: `<stripe-card-element publishable-key='pk_test_xxx' zip="false"></stripe-card-element>`,
       });
 
       const zipInput = page.root.querySelector('#zip');
@@ -383,32 +383,32 @@ describe('stripe-card-element', () => {
     });
 
     it('should have default intentType as payment', () => {
-      const element = new StripePayment();
+      const element = new StripeCardElement();
       expect(element.intentType).toBe('payment');
     });
 
     it('should have default zip as true', () => {
-      const element = new StripePayment();
+      const element = new StripeCardElement();
       expect(element.zip).toBe(true);
     });
 
     it('should have default buttonLabel as Pay', () => {
-      const element = new StripePayment();
+      const element = new StripeCardElement();
       expect(element.buttonLabel).toBe('Pay');
     });
 
     it('should have default applicationName', () => {
-      const element = new StripePayment();
+      const element = new StripeCardElement();
       expect(element.applicationName).toBe('stripe-pwa-elements');
     });
 
     it('should have default showLabel as false', () => {
-      const element = new StripePayment();
+      const element = new StripeCardElement();
       expect(element.showLabel).toBe(false);
     });
 
     it('should have default shouldUseDefaultFormSubmitAction as true', () => {
-      const element = new StripePayment();
+      const element = new StripeCardElement();
       expect(element.shouldUseDefaultFormSubmitAction).toBe(true);
     });
   });
