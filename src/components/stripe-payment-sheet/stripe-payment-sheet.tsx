@@ -440,8 +440,14 @@ export class StripePayment {
     // Initialize card elements
     await this.cardElementManager.initialize(this.el);
 
-    // Add form submit listener
-    document.getElementById('stripe-card-element').addEventListener('submit', async e => {
+    // Add form submit listener scoped to this component instance
+    const formElement = this.el.querySelector('#stripe-card-element');
+    if (!formElement) {
+      console.error('Form element #stripe-card-element not found');
+      return;
+    }
+
+    formElement.addEventListener('submit', async e => {
       const cardElements = this.cardElementManager.getElements();
       const stripe = this.stripeService.getStripe();
       const { intentClientSecret } = this;
@@ -503,7 +509,11 @@ export class StripePayment {
       return null;
     }
 
-    const targetElement = document.getElementById('stripe-payment-request-button');
+    const targetElement = this.el.querySelector('#stripe-payment-request-button');
+    if (!targetElement) {
+      console.error('Target element #stripe-payment-request-button not found');
+      return null;
+    }
     const stripePaymentRequestElement = document.createElement('stripe-payment-request-button');
 
     targetElement.appendChild(stripePaymentRequestElement);

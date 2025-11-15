@@ -1,5 +1,6 @@
 import type { ICardElementManager, IStripeService, CardElementInstances, CardElementState } from './interfaces';
 import { i18n } from '../utils/i18n';
+import { createStore } from '@stencil/store';
 
 /**
  * Card Element Manager
@@ -8,10 +9,10 @@ import { i18n } from '../utils/i18n';
  */
 export class CardElementManager implements ICardElementManager {
   private cardElements?: CardElementInstances;
-  private state: CardElementState = {
+  private store = createStore<CardElementState>({
     errorMessage: '',
     errorSource: undefined,
-  };
+  });
 
   /**
    * Constructor with dependency injection
@@ -20,10 +21,10 @@ export class CardElementManager implements ICardElementManager {
   constructor(private stripeService: IStripeService) {}
 
   /**
-   * Get current card element state
+   * Get current card element state (reactive)
    */
   getState(): CardElementState {
-    return this.state;
+    return this.store.state;
   }
 
   /**
@@ -80,18 +81,18 @@ export class CardElementManager implements ICardElementManager {
   }
 
   /**
-   * Set error message
+   * Set error message (triggers reactivity)
    */
   setError(message: string): void {
-    this.state.errorMessage = message;
+    this.store.set('errorMessage', message);
   }
 
   /**
-   * Clear error message
+   * Clear error message (triggers reactivity)
    */
   clearError(): void {
-    this.state.errorMessage = '';
-    this.state.errorSource = undefined;
+    this.store.set('errorMessage', '');
+    this.store.set('errorSource', undefined);
   }
 
   /**
@@ -112,19 +113,20 @@ export class CardElementManager implements ICardElementManager {
   /**
    * Handle card element errors
    * Only clears error if it's from the same element type
+   * Uses store.set() to trigger reactivity
    */
   private handleCardError(elementType: 'cardNumber' | 'cardExpiry' | 'cardCvc') {
     return ({ error }) => {
       if (error) {
-        this.state.errorMessage = error.message;
-        this.state.errorSource = elementType;
+        this.store.set('errorMessage', error.message);
+        this.store.set('errorSource', elementType);
         return;
       }
 
       // Only clear error if it originated from the same element
-      if (this.state.errorSource === elementType) {
-        this.state.errorMessage = '';
-        this.state.errorSource = undefined;
+      if (this.store.state.errorSource === elementType) {
+        this.store.set('errorMessage', '');
+        this.store.set('errorSource', undefined);
       }
     };
   }

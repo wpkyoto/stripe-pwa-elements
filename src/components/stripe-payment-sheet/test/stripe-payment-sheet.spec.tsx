@@ -114,11 +114,11 @@ describe('stripe-payment', () => {
       beforeEach(() => {
         element = new StripePayment();
 
-        // Mock DOM element for form submission listener
+        // Mock element.el.querySelector for form submission listener
         const mockFormElement = {
           addEventListener: jest.fn(),
         };
-        jest.spyOn(document, 'getElementById').mockReturnValue(mockFormElement as any);
+        jest.spyOn(element.el, 'querySelector').mockReturnValue(mockFormElement as any);
 
         // Mock successful initialization
         mockStripeService.state.loadStripeStatus = 'success';
