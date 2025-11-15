@@ -128,5 +128,190 @@ describe('stripe-modal', () => {
 
       expect(page.root).toMatchSnapshot();
     });
+
+    it("should have 'open' class when open is true", async () => {
+      const page = await newSpecPage({
+        components: [StripeModal],
+        html: `<stripe-modal open="true"></stripe-modal>`,
+      });
+
+      const modalRow = page.root.shadowRoot.querySelector('.modal-row');
+      expect(modalRow.classList.contains('open')).toBe(true);
+    });
+
+    it("should not have 'open' class when open is false", async () => {
+      const page = await newSpecPage({
+        components: [StripeModal],
+        html: `<stripe-modal open="false"></stripe-modal>`,
+      });
+
+      const modalRow = page.root.shadowRoot.querySelector('.modal-row');
+      expect(modalRow.classList.contains('open')).toBe(false);
+    });
+
+    it('should render slot content', async () => {
+      const page = await newSpecPage({
+        components: [StripeModal],
+        html: `<stripe-modal><div class="test-content">Test Content</div></stripe-modal>`,
+      });
+
+      const slot = page.root.shadowRoot.querySelector('slot');
+      expect(slot).not.toBeNull();
+    });
+
+    it('should show close button by default', async () => {
+      const page = await newSpecPage({
+        components: [StripeModal],
+        html: `<stripe-modal></stripe-modal>`,
+      });
+
+      const closeButton = page.root.shadowRoot.querySelector('.modal-close-button');
+      expect(closeButton).not.toBeNull();
+    });
+  });
+
+  describe('Event emission test', () => {
+    it('should emit close event with correct data when closeModal is called', async () => {
+      const page = await newSpecPage({
+        components: [StripeModal],
+        html: `<stripe-modal open="true"></stripe-modal>`,
+      });
+
+      let eventEmitted = false;
+      page.root.addEventListener('close', () => {
+        eventEmitted = true;
+      });
+
+      await page.rootInstance.closeModal();
+      await page.waitForChanges();
+
+      expect(eventEmitted).toBe(true);
+    });
+
+    it('should emit close event when toggleModal is called from open state', async () => {
+      const page = await newSpecPage({
+        components: [StripeModal],
+        html: `<stripe-modal open="true"></stripe-modal>`,
+      });
+
+      let eventEmitted = false;
+      page.root.addEventListener('close', () => {
+        eventEmitted = true;
+      });
+
+      await page.rootInstance.toggleModal();
+      await page.waitForChanges();
+
+      expect(eventEmitted).toBe(true);
+    });
+
+    it('should not emit close event when toggleModal is called from closed state', async () => {
+      const page = await newSpecPage({
+        components: [StripeModal],
+        html: `<stripe-modal open="false"></stripe-modal>`,
+      });
+
+      let eventEmitted = false;
+      page.root.addEventListener('close', () => {
+        eventEmitted = true;
+      });
+
+      await page.rootInstance.toggleModal();
+      await page.waitForChanges();
+
+      expect(eventEmitted).toBe(false);
+    });
+  });
+
+  describe('Edge cases', () => {
+    it('should handle rapid open/close toggles', async () => {
+      const component = new StripeModal();
+      component.close = {
+        emit: jest.fn(),
+      };
+
+      component.open = false;
+      await component.toggleModal();
+      expect(component.open).toBe(true);
+
+      await component.toggleModal();
+      expect(component.open).toBe(false);
+
+      await component.toggleModal();
+      expect(component.open).toBe(true);
+
+      await component.toggleModal();
+      expect(component.open).toBe(false);
+    });
+
+    it('should handle multiple closeModal calls', async () => {
+      const component = new StripeModal();
+      const mockEmitter = jest.fn();
+      component.close = {
+        emit: mockEmitter,
+      };
+
+      component.open = true;
+      await component.closeModal();
+      await component.closeModal();
+      await component.closeModal();
+
+      expect(mockEmitter).toBeCalledTimes(3);
+      expect(component.open).toBe(false);
+    });
+
+    it('should handle multiple openModal calls', async () => {
+      const component = new StripeModal();
+
+      component.open = false;
+      await component.openModal();
+      expect(component.open).toBe(true);
+
+      await component.openModal();
+      expect(component.open).toBe(true);
+
+      await component.openModal();
+      expect(component.open).toBe(true);
+    });
+  });
+
+  describe('Props test', () => {
+    it('should have default open as false', () => {
+      const component = new StripeModal();
+      expect(component.open).toBe(false);
+    });
+
+    it('should have default showCloseButton as true', () => {
+      const component = new StripeModal();
+      expect(component.showCloseButton).toBe(true);
+    });
+
+    it('should update open prop', async () => {
+      const page = await newSpecPage({
+        components: [StripeModal],
+        html: `<stripe-modal></stripe-modal>`,
+      });
+
+      expect(page.rootInstance.open).toBe(false);
+
+      page.root.setAttribute('open', 'true');
+      await page.waitForChanges();
+
+      expect(page.rootInstance.open).toBe(true);
+    });
+
+    it('should update showCloseButton prop', async () => {
+      const page = await newSpecPage({
+        components: [StripeModal],
+        html: `<stripe-modal></stripe-modal>`,
+      });
+
+      expect(page.rootInstance.showCloseButton).toBe(true);
+
+      page.root.setAttribute('show-close-button', 'false');
+      await page.waitForChanges();
+
+      expect(page.rootInstance.showCloseButton).toBe(false);
+    });
   });
 });

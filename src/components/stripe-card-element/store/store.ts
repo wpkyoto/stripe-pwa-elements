@@ -35,7 +35,7 @@ export type StripeStoreState = {
   applicationName: string;
 
   elements?: StripeElements;
-  el?: HTMLStripePaymentElement;
+  el?: HTMLStripeCardElementElement;
 };
 const stripeStoreInitialState: StripeStoreState = {
   loadStripeStatus: '',

@@ -13,10 +13,12 @@ export namespace Components {
     interface StripeCardElement {
         /**
           * Overwrite the application name that registered For wrapper library (like Capacitor)
+          * @default 'stripe-pwa-elements'
          */
         "applicationName": string;
         /**
           * Submit button label By default we recommended to use these string - 'Pay' -> PaymentSheet - 'Add' -> PaymentFlow(Android) - 'Add card' -> PaymentFlow(iOS) - 'Add a card' -> PaymentFlow(iOS) These strings will translated automatically by this library.
+          * @default 'Pay'
          */
         "buttonLabel": string;
         /**
@@ -38,6 +40,7 @@ export namespace Components {
         "intentClientSecret"?: string;
         /**
           * Default submit handle type. If you want to use `setupIntent`, should update this attribute.
+          * @default 'payment'
          */
         "intentType": IntentType;
         /**
@@ -58,14 +61,17 @@ export namespace Components {
         "setPaymentRequestOption": (option: PaymentRequestButtonOption) => Promise<this>;
         /**
           * Payment sheet title By default we recommended to use these string - 'Add your payment information' -> PaymentSheet / PaymentFlow(Android) - 'Add a card' -> PaymentFlow(iOS) These strings will translated automatically by this library.
+          * @default 'Add your payment information'
          */
         "sheetTitle": string;
         /**
           * The component will provide a function to call the `stripe.confirmCardPayment`API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element
+          * @default true
          */
         "shouldUseDefaultFormSubmitAction": boolean;
         /**
           * Show the form label
+          * @default false
          */
         "showLabel": boolean;
         /**
@@ -90,6 +96,7 @@ export namespace Components {
         "updateProgress": (progress: ProgressStatus) => Promise<this>;
         /**
           * If true, show zip code field
+          * @default true
          */
         "zip": boolean;
     }
@@ -123,10 +130,12 @@ export namespace Components {
         /**
           * Default submit handle type. If you want to use `setupIntent`, should update this attribute.
           * @example ``` <stripe-payment-sheet intent-type="setup" /> ```
+          * @default 'payment'
          */
         "intentType": IntentType;
         /**
           * Modal state. If true, the modal will open
+          * @default false
          */
         "open": boolean;
         /**
@@ -147,14 +156,17 @@ export namespace Components {
         "sheetTitle": string;
         /**
           * The component will provide a function to call the `stripe.confirmCardPayment`API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element
+          * @default true
          */
         "shouldUseDefaultFormSubmitAction": boolean;
         /**
           * If true, the modal display close button
+          * @default true
          */
         "showCloseButton": boolean;
         /**
           * Show the form label
+          * @default false
          */
         "showLabel": boolean;
         /**
@@ -172,6 +184,7 @@ export namespace Components {
         "updateProgress": (progress: ProgressStatus) => Promise<HTMLStripeCardElementElement>;
         /**
           * If true, show zip code field
+          * @default true
          */
         "zip": boolean;
     }
@@ -182,6 +195,7 @@ export namespace Components {
         "closeModal": () => Promise<void>;
         /**
           * Modal state. If true, the modal will open
+          * @default false
          */
         "open": boolean;
         /**
@@ -190,6 +204,7 @@ export namespace Components {
         "openModal": () => Promise<void>;
         /**
           * If true, the modal display close button
+          * @default true
          */
         "showCloseButton": boolean;
         /**
@@ -200,6 +215,7 @@ export namespace Components {
     interface StripePaymentRequestButton {
         /**
           * Overwrite the application name that registered For wrapper library (like Capacitor)
+          * @default 'stripe-pwa-elements'
          */
         "applicationName": string;
         /**
@@ -357,10 +373,12 @@ declare namespace LocalJSX {
     interface StripeCardElement {
         /**
           * Overwrite the application name that registered For wrapper library (like Capacitor)
+          * @default 'stripe-pwa-elements'
          */
         "applicationName"?: string;
         /**
           * Submit button label By default we recommended to use these string - 'Pay' -> PaymentSheet - 'Add' -> PaymentFlow(Android) - 'Add card' -> PaymentFlow(iOS) - 'Add a card' -> PaymentFlow(iOS) These strings will translated automatically by this library.
+          * @default 'Pay'
          */
         "buttonLabel"?: string;
         /**
@@ -375,6 +393,7 @@ declare namespace LocalJSX {
         "intentClientSecret"?: string;
         /**
           * Default submit handle type. If you want to use `setupIntent`, should update this attribute.
+          * @default 'payment'
          */
         "intentType"?: IntentType;
         /**
@@ -398,14 +417,17 @@ declare namespace LocalJSX {
         "publishableKey"?: string;
         /**
           * Payment sheet title By default we recommended to use these string - 'Add your payment information' -> PaymentSheet / PaymentFlow(Android) - 'Add a card' -> PaymentFlow(iOS) These strings will translated automatically by this library.
+          * @default 'Add your payment information'
          */
         "sheetTitle"?: string;
         /**
           * The component will provide a function to call the `stripe.confirmCardPayment`API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element
+          * @default true
          */
         "shouldUseDefaultFormSubmitAction"?: boolean;
         /**
           * Show the form label
+          * @default false
          */
         "showLabel"?: boolean;
         /**
@@ -423,6 +445,7 @@ declare namespace LocalJSX {
         "stripeDidLoaded"?: StripeDidLoadedHandler;
         /**
           * If true, show zip code field
+          * @default true
          */
         "zip"?: boolean;
     }
@@ -448,11 +471,13 @@ declare namespace LocalJSX {
         /**
           * Default submit handle type. If you want to use `setupIntent`, should update this attribute.
           * @example ``` <stripe-payment-sheet intent-type="setup" /> ```
+          * @default 'payment'
          */
         "intentType"?: IntentType;
         "onClosed"?: (event: StripeCardElementModalCustomEvent<any>) => void;
         /**
           * Modal state. If true, the modal will open
+          * @default false
          */
         "open"?: boolean;
         /**
@@ -465,14 +490,17 @@ declare namespace LocalJSX {
         "sheetTitle"?: string;
         /**
           * The component will provide a function to call the `stripe.confirmCardPayment`API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element
+          * @default true
          */
         "shouldUseDefaultFormSubmitAction"?: boolean;
         /**
           * If true, the modal display close button
+          * @default true
          */
         "showCloseButton"?: boolean;
         /**
           * Show the form label
+          * @default false
          */
         "showLabel"?: boolean;
         /**
@@ -486,6 +514,7 @@ declare namespace LocalJSX {
         "stripeDidLoaded"?: StripeDidLoadedHandler;
         /**
           * If true, show zip code field
+          * @default true
          */
         "zip"?: boolean;
     }
@@ -493,16 +522,19 @@ declare namespace LocalJSX {
         "onClose"?: (event: StripeModalCustomEvent<any>) => void;
         /**
           * Modal state. If true, the modal will open
+          * @default false
          */
         "open"?: boolean;
         /**
           * If true, the modal display close button
+          * @default true
          */
         "showCloseButton"?: boolean;
     }
     interface StripePaymentRequestButton {
         /**
           * Overwrite the application name that registered For wrapper library (like Capacitor)
+          * @default 'stripe-pwa-elements'
          */
         "applicationName"?: string;
         /**
