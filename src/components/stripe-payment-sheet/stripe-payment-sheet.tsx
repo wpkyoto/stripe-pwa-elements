@@ -435,7 +435,7 @@ export class StripePayment {
     const formElement = document.getElementById('stripe-card-element');
 
     // Remove previous listener if it exists to prevent memory leaks
-    if (this.formSubmitHandler) {
+    if (formElement && this.formSubmitHandler) {
       formElement.removeEventListener('submit', this.formSubmitHandler);
     }
 
