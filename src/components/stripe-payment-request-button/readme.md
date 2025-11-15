@@ -128,12 +128,12 @@ Type: `Promise<void>`
 
 ### Used by
 
- - [stripe-payment](../stripe-payment-sheet)
+ - [stripe-card-element](../stripe-card-element)
 
 ### Graph
 ```mermaid
 graph TD;
-  stripe-payment --> stripe-payment-request-button
+  stripe-card-element --> stripe-payment-request-button
   style stripe-payment-request-button fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

@@ -42,13 +42,13 @@ Type: `Promise<void>`
 
 
 
-### `getStripePaymentSheetElement() => Promise<HTMLStripePaymentElement>`
+### `getStripeCardElementElement() => Promise<HTMLStripeCardElementElement>`
 
 Get the inner component
 
 #### Returns
 
-Type: `Promise<HTMLStripePaymentElement>`
+Type: `Promise<HTMLStripeCardElementElement>`
 
 
 
@@ -79,7 +79,7 @@ Type: `Promise<void>`
 
 
 
-### `updateProgress(progress: ProgressStatus) => Promise<HTMLStripePaymentElement>`
+### `updateProgress(progress: ProgressStatus) => Promise<HTMLStripeCardElementElement>`
 
 Update Stripe client loading process
 
@@ -91,7 +91,7 @@ Update Stripe client loading process
 
 #### Returns
 
-Type: `Promise<HTMLStripePaymentElement>`
+Type: `Promise<HTMLStripeCardElementElement>`
 
 
 
@@ -100,17 +100,17 @@ Type: `Promise<HTMLStripePaymentElement>`
 
 ### Depends on
 
-- [stripe-sheet](../stripe-element-modal)
-- [stripe-payment](../stripe-payment-sheet)
+- [stripe-modal](../stripe-modal)
+- [stripe-card-element](../stripe-card-element)
 
 ### Graph
 ```mermaid
 graph TD;
-  stripe-payment-sheet --> stripe-sheet
-  stripe-payment-sheet --> stripe-payment
-  stripe-sheet --> ion-icon
-  stripe-payment --> stripe-payment-request-button
-  style stripe-payment-sheet fill:#f9f,stroke:#333,stroke-width:4px
+  stripe-card-element-modal --> stripe-modal
+  stripe-card-element-modal --> stripe-card-element
+  stripe-modal --> ion-icon
+  stripe-card-element --> stripe-payment-request-button
+  style stripe-card-element-modal fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------

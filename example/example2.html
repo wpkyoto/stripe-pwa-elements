@@ -18,19 +18,19 @@
       </nav>
       <div id="result"></div>
 
-      <stripe-sheet open="true">
-          <stripe-payment-sheet
+      <stripe-modal open="true">
+          <stripe-card-element
             publishable-key="pk_test_xxxxx"
             show-label="false"
             intent-client-secret="pi-xxxxxx"
             should-use-default-form-submit-action="false"
-          ></stripe-payment-sheet>
-      </stripe-sheet>
-    
+          ></stripe-card-element>
+      </stripe-modal>
+
     <script>
-        customElements.whenDefined('stripe-payment-sheet')
+        customElements.whenDefined('stripe-card-element')
             .then(() => {
-                const elements = document.getElementsByTagName('stripe-payment-sheet')
+                const elements = document.getElementsByTagName('stripe-card-element')
                 if (elements.length < 1) return;
                 const element = elements[0]
                 element.addEventListener('formSubmit', async props => {

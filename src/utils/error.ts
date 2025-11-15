@@ -14,7 +14,7 @@ export class StripeAPIError extends Error {
       this.docUrl = error.doc_url;
       this.message = error.message;
       this.param = error.param;
-      //this.requestLogUrl = error.request_log_url;
+      this.requestLogUrl = error.request_log_url;
       this.type = error.type;
     }
 }

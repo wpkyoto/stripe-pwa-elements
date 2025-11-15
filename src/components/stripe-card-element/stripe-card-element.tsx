@@ -17,12 +17,12 @@ import type { IStripeService, ICardElementManager } from '../../services/interfa
 import { StripeAPIError } from '../../utils/error';
 
 @Component({
-  tag: 'stripe-payment',
-  styleUrl: 'stripe-payment-sheet.scss',
+  tag: 'stripe-card-element',
+  styleUrl: 'stripe-card-element.scss',
   shadow: false,
 })
-export class StripePayment {
-  @Element() el: HTMLStripePaymentElement;
+export class StripeCardElement {
+  @Element() el: HTMLStripeCardElementElement;
 
   // Injected dependencies
   private stripeService: IStripeService;

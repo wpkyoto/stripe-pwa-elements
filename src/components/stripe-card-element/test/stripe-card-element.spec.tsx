@@ -1,5 +1,5 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { StripePayment } from '../stripe-payment-sheet';
+import { StripeCardElement } from '../stripe-card-element';
 import type { IStripeService, ICardElementManager } from '../../../services/interfaces';
 import * as factoryModule from '../../../services/factory';
 
@@ -22,7 +22,7 @@ jest.mock('../../../utils/i18n', () => ({
 let mockStripeService: jest.Mocked<IStripeService>;
 let mockCardElementManager: jest.Mocked<ICardElementManager>;
 
-describe('stripe-payment', () => {
+describe('stripe-card-element', () => {
   // Set up mocks before each test
   beforeEach(() => {
     // Create fresh mock implementations
@@ -69,11 +69,11 @@ describe('stripe-payment', () => {
   });
 
   describe('method test', () => {
-    let element: StripePayment = new StripePayment();
+    let element: StripeCardElement = new StripeCardElement();
 
     describe('#componentWillUpdate', () => {
       beforeEach(() => {
-        element = new StripePayment();
+        element = new StripeCardElement();
         element.initStripe = jest.fn();
       });
       it.each([['' as const], ['failure' as const]])('If the publishableKey is not provided, should not call initStripe method(status: %s)', async loadingStatus => {
@@ -101,7 +101,7 @@ describe('stripe-payment', () => {
     });
     describe('#setErrorMessage', () => {
       beforeEach(() => {
-        element = new StripePayment();
+        element = new StripeCardElement();
       });
       it('should set the certain error message', async () => {
         const message = 'Error message is here';
@@ -112,7 +112,7 @@ describe('stripe-payment', () => {
     });
     describe('#initStripe', () => {
       beforeEach(() => {
-        element = new StripePayment();
+        element = new StripeCardElement();
 
         // Mock element.el.querySelector for form submission listener
         const mockFormElement = {
@@ -152,7 +152,7 @@ describe('stripe-payment', () => {
     });
     describe('#updateStripeAccountId', () => {
       beforeEach(() => {
-        element = new StripePayment();
+        element = new StripeCardElement();
         element.initStripe = jest.fn();
         mockStripeService.state.publishableKey = 'pk_test_xxxx';
       });
@@ -170,7 +170,7 @@ describe('stripe-payment', () => {
 
     describe('#updatePublishableKey', () => {
       beforeEach(() => {
-        element = new StripePayment();
+        element = new StripeCardElement();
         element.initStripe = jest.fn();
       });
       it('When call this, should call the #initStripe method only one time', async () => {
@@ -193,8 +193,8 @@ describe('stripe-payment', () => {
   describe('rendering test', () => {
     it('with the api key', async () => {
       const page = await newSpecPage({
-        components: [StripePayment],
-        html: `<stripe-payment publishable-key='pk_test_xxx'></stripe-payment>`,
+        components: [StripeCardElement],
+        html: `<stripe-card-element publishable-key='pk_test_xxx'></stripe-card-element>`,
       });
 
       expect(page.root).toMatchSnapshot();
@@ -202,16 +202,16 @@ describe('stripe-payment', () => {
 
     it('api key and zip code props', async () => {
       const page = await newSpecPage({
-        components: [StripePayment],
-        html: `<stripe-payment zip="false"  publishable-key='pk_test_xxx'></stripe-payment>`,
+        components: [StripeCardElement],
+        html: `<stripe-card-element zip="false"  publishable-key='pk_test_xxx'></stripe-card-element>`,
       });
 
       expect(page.root).toMatchSnapshot();
     });
     it('should load stripe after setting the publishable-key', async () => {
       const page = await newSpecPage({
-        components: [StripePayment],
-        html: `<stripe-payment></stripe-payment>`,
+        components: [StripeCardElement],
+        html: `<stripe-card-element></stripe-card-element>`,
       });
 
       // Without publishable-key, the form should still render (no failure state)
@@ -222,8 +222,8 @@ describe('stripe-payment', () => {
     });
     it('should load stripe after setting the publishable-key (snapshot)', async () => {
       const page = await newSpecPage({
-        components: [StripePayment],
-        html: `<stripe-payment zip="false"'></stripe-payment>`,
+        components: [StripeCardElement],
+        html: `<stripe-card-element zip="false"'></stripe-card-element>`,
       });
 
       page.root.setAttribute('publishable-key', 'yyyy');
