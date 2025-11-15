@@ -66,29 +66,33 @@ describe('stripe-payment', () => {
       beforeEach(() => {
         StripeService.dispose();
         element = new StripePayment();
-        element.initElement = jest.fn();
-        element.stripeLoadedEventHandler = jest.fn();
-      });
-      it('should call StripeService.initialize with correct parameters', async () => {
-        const initializeSpy = jest.spyOn(StripeService, 'initialize');
-        // Don't await - just trigger the call
-        element.initStripe('pk_test_xxx');
 
-        // Wait for next tick
-        await Promise.resolve();
+        // Mock StripeService dependencies to avoid actual Stripe initialization
+        jest.spyOn(StripeService, 'initialize').mockResolvedValue();
+        jest.spyOn(StripeService, 'initializeCardElements').mockResolvedValue({
+          cardNumber: {} as any,
+          cardExpiry: {} as any,
+          cardCVC: {} as any,
+        });
+      });
+
+      it('should call StripeService.initialize with correct parameters', async () => {
+        const initializeSpy = jest.spyOn(StripeService, 'initialize').mockResolvedValue();
+
+        await element.initStripe('pk_test_xxx');
 
         expect(initializeSpy).toHaveBeenCalledWith('pk_test_xxx', {
           stripeAccount: undefined,
           applicationName: 'stripe-pwa-elements',
         });
       });
+
       it('should call StripeService.initialize with account id', async () => {
-        const initializeSpy = jest.spyOn(StripeService, 'initialize');
-        element.initStripe('pk_test_xxx', {
+        const initializeSpy = jest.spyOn(StripeService, 'initialize').mockResolvedValue();
+
+        await element.initStripe('pk_test_xxx', {
           stripeAccount: 'acct_xxx',
         });
-
-        await Promise.resolve();
 
         expect(initializeSpy).toHaveBeenCalledWith('pk_test_xxx', {
           stripeAccount: 'acct_xxx',
