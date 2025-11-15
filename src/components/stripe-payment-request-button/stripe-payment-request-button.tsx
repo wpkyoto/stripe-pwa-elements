@@ -1,5 +1,5 @@
 import { Component, Prop, h, State, Method, EventEmitter, Event, Host, Element } from '@stencil/core';
-import { loadStripe, Stripe, PaymentRequestOptions } from '@stripe/stripe-js';
+import { loadStripe, Stripe, PaymentRequestOptions, StripePaymentRequestButtonElement } from '@stripe/stripe-js';
 import {
   StripeDidLoadedHandler,
   StripeLoadedEvent,
@@ -25,7 +25,7 @@ export class StripePaymentRequestButton {
   /**
    * Store references for cleanup
    */
-  private paymentRequestElement?: any;
+  private paymentRequestElement?: StripePaymentRequestButtonElement;
 
   /**
    * Check isAvailable ApplePay or GooglePay.
