@@ -103,7 +103,7 @@ Type: `Promise<this>`
 
 ### Used by
 
- - [stripe-payment-sheet](../stripe-payment-sheet-modal)
+ - [stripe-card-element-modal](../stripe-card-element-modal)
 
 ### Depends on
 
@@ -112,9 +112,9 @@ Type: `Promise<this>`
 ### Graph
 ```mermaid
 graph TD;
-  stripe-payment --> stripe-payment-request-button
-  stripe-payment-sheet --> stripe-payment
-  style stripe-payment fill:#f9f,stroke:#333,stroke-width:4px
+  stripe-card-element --> stripe-payment-request-button
+  stripe-card-element-modal --> stripe-card-element
+  style stripe-card-element fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------

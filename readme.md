@@ -16,21 +16,27 @@
 
 ## Components
 
-### `<stripe-payment-sheet>`
+### `<stripe-card-element>`
 
-Provide a Stripe Card form like a iOS/Android payment sheet.
+Provide a Stripe Card form using Stripe Card Elements.
 
-https://github.com/stripe-elements/stripe-elements/blob/main/src/components/stripe-payment-sheet/readme.md
+https://github.com/stripe-elements/stripe-elements/blob/main/src/components/stripe-card-element/readme.md
 
-### `<stripe-element-modal>`
+### `<stripe-modal>`
 
-Simple modal for `<stripe-payment-sheet>`
+Simple modal wrapper for payment components.
 
-https://github.com/stripe-elements/stripe-elements/blob/main/src/components/stripe-element-modal/readme.md
+https://github.com/stripe-elements/stripe-elements/blob/main/src/components/stripe-modal/readme.md
 
-### `stripe-payment-request-button`
+### `<stripe-card-element-modal>`
 
-(Beta) Payment Request button component
+Combined component: Card Element with Modal wrapper.
+
+https://github.com/stripe-elements/stripe-elements/blob/main/src/components/stripe-card-element-modal/readme.md
+
+### `<stripe-payment-request-button>`
+
+(Beta) Payment Request API button component (Apple Pay / Google Pay).
 
 https://github.com/stripe-elements/stripe-elements/blob/main/src/components/stripe-payment-request-button/readme.md
 
@@ -41,19 +47,19 @@ https://github.com/stripe-elements/stripe-elements/blob/main/src/components/stri
 ```html
       <div id="result"></div>
 
-      <stripe-element-modal open="true">
-          <stripe-payment-sheet
+      <stripe-modal open="true">
+          <stripe-card-element
             publishable-key="pk_test_xxxxx"
             show-label="false"
             intent-client-secret="pi-xxxxxx"
             should-use-default-form-submit-action="false"
-          ></stripe-payment-sheet>
-      </stripe-element-modal>
-    
+          ></stripe-card-element>
+      </stripe-modal>
+
     <script>
-        customElements.whenDefined('stripe-payment-sheet')
+        customElements.whenDefined('stripe-card-element')
             .then(() => {
-                const elements = document.getElementsByTagName('stripe-payment-sheet')
+                const elements = document.getElementsByTagName('stripe-card-element')
                 if (elements.length < 1) return;
                 const element = elements[0]
                 element.addEventListener('formSubmit', async props => {
@@ -84,19 +90,19 @@ https://github.com/stripe-elements/stripe-elements/blob/main/src/components/stri
         const resultElement = document.getElementById('result')
         const errorMessage = document.getElementById('error-message')
         const targetElement = document.getElementById('stripe');
-        const modalElement = document.createElement('stripe-element-modal');
+        const modalElement = document.createElement('stripe-modal');
 
         /**
          * Remove Mounted Stripe Elements when the modal has been closed
          **/
-        customElements.whenDefined('stripe-element-modal')
+        customElements.whenDefined('stripe-modal')
             .then(() => {
                 modalElement.addEventListener('close', () => {
                     modalElement.innerHTML = ''
                 })
             })
-        
-        async function launchStripePaymentSheet (paymentIntentClientSecret) {
+
+        async function launchStripeCardElement (paymentIntentClientSecret) {
             if (!stripePublishableAPIKey) {
                 errorMessage.innerText = 'Stripe Publishable API Key is required'
                 return
@@ -109,16 +115,16 @@ https://github.com/stripe-elements/stripe-elements/blob/main/src/components/stri
             /**
              * Define and launch Web Components
              **/
-            const stripeElement = document.createElement('stripe-payment-sheet');
+            const stripeElement = document.createElement('stripe-card-element');
             modalElement.appendChild(stripeElement);
             targetElement.appendChild(modalElement);
 
             /**
              * Wait for defining these components
              **/
-            await customElements.whenDefined('stripe-element-modal')
-            await customElements.whenDefined('stripe-payment-sheet')
-            
+            await customElements.whenDefined('stripe-modal')
+            await customElements.whenDefined('stripe-card-element')
+
             /**
              * Load Stripe Client
              **/
