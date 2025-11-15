@@ -2,12 +2,12 @@ import { Component, Host, h, Prop, Method, Element, Event, EventEmitter } from '
 import { checkPlatform } from '../../utils/utils';
 
 @Component({
-  tag: 'stripe-sheet',
-  styleUrl: 'stripe-element-modal.scss',
+  tag: 'stripe-modal',
+  styleUrl: 'stripe-modal.scss',
   shadow: true,
 })
-export class StripeSheet {
-  @Element() el: HTMLStripeSheetElement;
+export class StripeModal {
+  @Element() el: HTMLStripeModalElement;
 
   /**
    * If true, the modal display close button

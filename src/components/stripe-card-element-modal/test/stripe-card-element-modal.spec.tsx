@@ -1,35 +1,35 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { StripePaymentSheet } from '../stripe-payment-sheet-modal';
+import { StripeCardElementModal } from '../stripe-card-element-modal';
 
-describe('stripe-payment-sheet', () => {
+describe('stripe-card-element-modal', () => {
   describe('rendering test', () => {
     it('renders', async () => {
       const page = await newSpecPage({
-        components: [StripePaymentSheet],
-        html: `<stripe-payment-sheet></stripe-payment-sheet>`,
+        components: [StripeCardElementModal],
+        html: `<stripe-card-element-modal></stripe-card-element-modal>`,
       });
 
-      expect(page.root).toEqualHtml(`<stripe-payment-sheet>
-      <stripe-sheet showclosebutton="">
-        <stripe-payment intenttype="payment" shouldusedefaultformsubmitaction="" zip=""></stripe-payment>
-      </stripe-sheet>
-    </stripe-payment-sheet>`);
+      expect(page.root).toEqualHtml(`<stripe-card-element-modal>
+      <stripe-modal showclosebutton="">
+        <stripe-card-element intenttype="payment" shouldusedefaultformsubmitaction="" zip=""></stripe-card-element>
+      </stripe-modal>
+    </stripe-card-element-modal>`);
     });
 
     it('should render with publishableKey prop', async () => {
       const page = await newSpecPage({
-        components: [StripePaymentSheet],
-        html: `<stripe-payment-sheet publishable-key="pk_test_xxx"></stripe-payment-sheet>`,
+        components: [StripeCardElementModal],
+        html: `<stripe-card-element-modal publishable-key="pk_test_xxx"></stripe-card-element-modal>`,
       });
 
-      const innerPayment = page.root.querySelector('stripe-payment');
+      const innerPayment = page.root.querySelector('stripe-card-element');
       expect(innerPayment.getAttribute('publishableKey')).toBe('pk_test_xxx');
     });
 
     it('should render with open modal', async () => {
       const page = await newSpecPage({
-        components: [StripePaymentSheet],
-        html: `<stripe-payment-sheet open="true"></stripe-payment-sheet>`,
+        components: [StripeCardElementModal],
+        html: `<stripe-card-element-modal open="true"></stripe-card-element-modal>`,
       });
 
       expect(page.rootInstance.open).toBe(true);
@@ -37,8 +37,8 @@ describe('stripe-payment-sheet', () => {
 
     it('should forward zip prop to inner component', async () => {
       const page = await newSpecPage({
-        components: [StripePaymentSheet],
-        html: `<stripe-payment-sheet zip="false"></stripe-payment-sheet>`,
+        components: [StripeCardElementModal],
+        html: `<stripe-card-element-modal zip="false"></stripe-card-element-modal>`,
       });
 
       expect(page.rootInstance.zip).toBe(false);
@@ -46,8 +46,8 @@ describe('stripe-payment-sheet', () => {
 
     it('should forward showLabel prop to inner component', async () => {
       const page = await newSpecPage({
-        components: [StripePaymentSheet],
-        html: `<stripe-payment-sheet show-label="true"></stripe-payment-sheet>`,
+        components: [StripeCardElementModal],
+        html: `<stripe-card-element-modal show-label="true"></stripe-card-element-modal>`,
       });
 
       expect(page.rootInstance.showLabel).toBe(true);
@@ -55,8 +55,8 @@ describe('stripe-payment-sheet', () => {
 
     it('should forward intentType prop to inner component', async () => {
       const page = await newSpecPage({
-        components: [StripePaymentSheet],
-        html: `<stripe-payment-sheet intent-type="setup"></stripe-payment-sheet>`,
+        components: [StripeCardElementModal],
+        html: `<stripe-card-element-modal intent-type="setup"></stripe-card-element-modal>`,
       });
 
       expect(page.rootInstance.intentType).toBe('setup');
@@ -64,8 +64,8 @@ describe('stripe-payment-sheet', () => {
 
     it('should forward buttonLabel prop to inner component', async () => {
       const page = await newSpecPage({
-        components: [StripePaymentSheet],
-        html: `<stripe-payment-sheet button-label="Add card"></stripe-payment-sheet>`,
+        components: [StripeCardElementModal],
+        html: `<stripe-card-element-modal button-label="Add card"></stripe-card-element-modal>`,
       });
 
       expect(page.rootInstance.buttonLabel).toBe('Add card');
@@ -73,8 +73,8 @@ describe('stripe-payment-sheet', () => {
 
     it('should forward sheetTitle prop to inner component', async () => {
       const page = await newSpecPage({
-        components: [StripePaymentSheet],
-        html: `<stripe-payment-sheet sheet-title="Custom Title"></stripe-payment-sheet>`,
+        components: [StripeCardElementModal],
+        html: `<stripe-card-element-modal sheet-title="Custom Title"></stripe-card-element-modal>`,
       });
 
       expect(page.rootInstance.sheetTitle).toBe('Custom Title');
@@ -82,8 +82,8 @@ describe('stripe-payment-sheet', () => {
 
     it('should forward showCloseButton prop to modal', async () => {
       const page = await newSpecPage({
-        components: [StripePaymentSheet],
-        html: `<stripe-payment-sheet show-close-button="false"></stripe-payment-sheet>`,
+        components: [StripeCardElementModal],
+        html: `<stripe-card-element-modal show-close-button="false"></stripe-card-element-modal>`,
       });
 
       expect(page.rootInstance.showCloseButton).toBe(false);
@@ -91,8 +91,8 @@ describe('stripe-payment-sheet', () => {
 
     it('should render with all props', async () => {
       const page = await newSpecPage({
-        components: [StripePaymentSheet],
-        html: `<stripe-payment-sheet
+        components: [StripeCardElementModal],
+        html: `<stripe-card-element-modal
           publishable-key="pk_test_xxx"
           stripe-account="acct_xxx"
           application-name="test-app"
@@ -105,7 +105,7 @@ describe('stripe-payment-sheet', () => {
           show-close-button="false"
           zip="false"
           open="true"
-        ></stripe-payment-sheet>`,
+        ></stripe-card-element-modal>`,
       });
 
       expect(page.root).toMatchSnapshot();
@@ -114,22 +114,22 @@ describe('stripe-payment-sheet', () => {
 
   describe('method test', () => {
     describe('#getStripePaymentSheetElement', () => {
-      it('should return the inner stripe-payment element', async () => {
+      it('should return the inner stripe-card-element element', async () => {
         const page = await newSpecPage({
-          components: [StripePaymentSheet],
-          html: `<stripe-payment-sheet></stripe-payment-sheet>`,
+          components: [StripeCardElementModal],
+          html: `<stripe-card-element-modal></stripe-card-element-modal>`,
         });
 
         const element = await page.rootInstance.getStripePaymentSheetElement();
-        expect(element.tagName.toLowerCase()).toBe('stripe-payment');
+        expect(element.tagName.toLowerCase()).toBe('stripe-card-element');
       });
     });
 
     describe('#present', () => {
       it('should set open to true when called', async () => {
         const page = await newSpecPage({
-          components: [StripePaymentSheet],
-          html: `<stripe-payment-sheet></stripe-payment-sheet>`,
+          components: [StripeCardElementModal],
+          html: `<stripe-card-element-modal></stripe-card-element-modal>`,
         });
 
         expect(page.rootInstance.open).toBe(false);
@@ -150,13 +150,13 @@ describe('stripe-payment-sheet', () => {
     });
 
     describe('#updateProgress', () => {
-      it('should call updateProgress on inner stripe-payment element', async () => {
+      it('should call updateProgress on inner stripe-card-element element', async () => {
         const page = await newSpecPage({
-          components: [StripePaymentSheet],
-          html: `<stripe-payment-sheet></stripe-payment-sheet>`,
+          components: [StripeCardElementModal],
+          html: `<stripe-card-element-modal></stripe-card-element-modal>`,
         });
 
-        const innerPayment = page.root.querySelector('stripe-payment') as any;
+        const innerPayment = page.root.querySelector('stripe-card-element') as any;
         innerPayment.updateProgress = jest.fn().mockResolvedValue(undefined);
 
         await page.rootInstance.updateProgress('loading');
@@ -166,11 +166,11 @@ describe('stripe-payment-sheet', () => {
 
       it('should support all progress states', async () => {
         const page = await newSpecPage({
-          components: [StripePaymentSheet],
-          html: `<stripe-payment-sheet></stripe-payment-sheet>`,
+          components: [StripeCardElementModal],
+          html: `<stripe-card-element-modal></stripe-card-element-modal>`,
         });
 
-        const innerPayment = page.root.querySelector('stripe-payment') as any;
+        const innerPayment = page.root.querySelector('stripe-card-element') as any;
         innerPayment.updateProgress = jest.fn().mockResolvedValue(undefined);
 
         await page.rootInstance.updateProgress('loading');
@@ -185,11 +185,11 @@ describe('stripe-payment-sheet', () => {
     describe('#destroy', () => {
       it('should remove both inner payment element and itself', async () => {
         const page = await newSpecPage({
-          components: [StripePaymentSheet],
-          html: `<stripe-payment-sheet></stripe-payment-sheet>`,
+          components: [StripeCardElementModal],
+          html: `<stripe-card-element-modal></stripe-card-element-modal>`,
         });
 
-        const innerPayment = page.root.querySelector('stripe-payment') as any;
+        const innerPayment = page.root.querySelector('stripe-card-element') as any;
         innerPayment.remove = jest.fn();
         page.root.remove = jest.fn();
 
@@ -203,8 +203,8 @@ describe('stripe-payment-sheet', () => {
     describe('#setPaymentRequestButton', () => {
       it('should set payment request button on inner element', async () => {
         const page = await newSpecPage({
-          components: [StripePaymentSheet],
-          html: `<stripe-payment-sheet></stripe-payment-sheet>`,
+          components: [StripeCardElementModal],
+          html: `<stripe-card-element-modal></stripe-card-element-modal>`,
         });
 
         const options = {
@@ -216,7 +216,7 @@ describe('stripe-payment-sheet', () => {
           },
         };
 
-        const innerPayment = page.root.querySelector('stripe-payment') as any;
+        const innerPayment = page.root.querySelector('stripe-card-element') as any;
         innerPayment.setPaymentRequestOption = jest.fn();
 
         await page.rootInstance.setPaymentRequestButton(options);
@@ -227,8 +227,8 @@ describe('stripe-payment-sheet', () => {
 
       it('should set application name when provided', async () => {
         const page = await newSpecPage({
-          components: [StripePaymentSheet],
-          html: `<stripe-payment-sheet application-name="test-app"></stripe-payment-sheet>`,
+          components: [StripeCardElementModal],
+          html: `<stripe-card-element-modal application-name="test-app"></stripe-card-element-modal>`,
         });
 
         const options = {
@@ -240,7 +240,7 @@ describe('stripe-payment-sheet', () => {
           },
         };
 
-        const innerPayment = page.root.querySelector('stripe-payment') as any;
+        const innerPayment = page.root.querySelector('stripe-card-element') as any;
         innerPayment.setPaymentRequestOption = jest.fn();
 
         await page.rootInstance.setPaymentRequestButton(options);
@@ -248,14 +248,14 @@ describe('stripe-payment-sheet', () => {
         expect(innerPayment.getAttribute('application-name')).toBe('test-app');
       });
 
-      it('should handle missing stripe-payment element gracefully', async () => {
+      it('should handle missing stripe-card-element element gracefully', async () => {
         const page = await newSpecPage({
-          components: [StripePaymentSheet],
-          html: `<stripe-payment-sheet></stripe-payment-sheet>`,
+          components: [StripeCardElementModal],
+          html: `<stripe-card-element-modal></stripe-card-element-modal>`,
         });
 
         // Remove inner element
-        const innerPayment = page.root.querySelector('stripe-payment');
+        const innerPayment = page.root.querySelector('stripe-card-element');
         innerPayment.remove();
 
         const options = {
@@ -276,8 +276,8 @@ describe('stripe-payment-sheet', () => {
   describe('event test', () => {
     it('should emit closed event when modal is closed', async () => {
       const page = await newSpecPage({
-        components: [StripePaymentSheet],
-        html: `<stripe-payment-sheet></stripe-payment-sheet>`,
+        components: [StripeCardElementModal],
+        html: `<stripe-card-element-modal></stripe-card-element-modal>`,
       });
 
       let eventEmitted = false;
@@ -289,7 +289,7 @@ describe('stripe-payment-sheet', () => {
       await page.rootInstance.componentDidLoad();
 
       // Simulate close event from inner modal
-      const modal = page.root.querySelector('stripe-sheet');
+      const modal = page.root.querySelector('stripe-modal');
       const closeEvent = new Event('close');
       modal.dispatchEvent(closeEvent);
 
@@ -299,32 +299,32 @@ describe('stripe-payment-sheet', () => {
 
   describe('props test', () => {
     it('should have default showCloseButton as true', () => {
-      const component = new StripePaymentSheet();
+      const component = new StripeCardElementModal();
       expect(component.showCloseButton).toBe(true);
     });
 
     it('should have default zip as true', () => {
-      const component = new StripePaymentSheet();
+      const component = new StripeCardElementModal();
       expect(component.zip).toBe(true);
     });
 
     it('should have default open as false', () => {
-      const component = new StripePaymentSheet();
+      const component = new StripeCardElementModal();
       expect(component.open).toBe(false);
     });
 
     it('should have default shouldUseDefaultFormSubmitAction as true', () => {
-      const component = new StripePaymentSheet();
+      const component = new StripeCardElementModal();
       expect(component.shouldUseDefaultFormSubmitAction).toBe(true);
     });
 
     it('should have default intentType as payment', () => {
-      const component = new StripePaymentSheet();
+      const component = new StripeCardElementModal();
       expect(component.intentType).toBe('payment');
     });
 
     it('should have default showLabel as false', () => {
-      const component = new StripePaymentSheet();
+      const component = new StripeCardElementModal();
       expect(component.showLabel).toBe(false);
     });
   });

@@ -64,13 +64,13 @@ export const configureStripeJSClient = async () => {
   }
 };
 
+/**
+ * Init Stripe.js when stripeAccount or publishableKey changes
+ */
 stripeStore.onChange('stripeAccount', configureStripeJSClient);
-/**
- * Update Stripe application name
- */
-stripeStore.onChange('applicationName', updateStripeAppInfo);
-/**
- * Init Stripe.js
- */
 stripeStore.onChange('publishableKey', configureStripeJSClient);
+
+/**
+ * Update Stripe application name when it changes
+ */
 stripeStore.onChange('applicationName', updateStripeAppInfo);

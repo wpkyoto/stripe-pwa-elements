@@ -1,11 +1,11 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { StripeSheet } from '../stripe-element-modal';
+import { StripeModal } from '../stripe-modal';
 
-describe('stripe-sheet', () => {
+describe('stripe-modal', () => {
   describe('Component Logic test', () => {
     describe('#openModal', () => {
       it('open props should change to true when the openModal method was called', async () => {
-        const component = new StripeSheet();
+        const component = new StripeModal();
 
         component.open = false;
         await component.openModal();
@@ -14,7 +14,7 @@ describe('stripe-sheet', () => {
     });
     describe('#closeModal', () => {
       it('open props should change to false when the closeModal method was called', async () => {
-        const component = new StripeSheet();
+        const component = new StripeModal();
 
         component.close = {
           emit: jest.fn(),
@@ -23,7 +23,7 @@ describe('stripe-sheet', () => {
         expect(component.open).toEqual(false);
       });
       it('When the closeModal method called, should called close event at once', async () => {
-        const component = new StripeSheet();
+        const component = new StripeModal();
 
         component.open = true;
         const mockEmitter = jest.fn();
@@ -37,11 +37,11 @@ describe('stripe-sheet', () => {
     });
     describe('#toggleModal', () => {
       describe('Props open=true', () => {
-        let component = new StripeSheet();
+        let component = new StripeModal();
         let mockEmitter = jest.fn();
 
         beforeEach(() => {
-          component = new StripeSheet();
+          component = new StripeModal();
           mockEmitter = jest.fn();
           component.open = true;
           component.close = {
@@ -58,11 +58,11 @@ describe('stripe-sheet', () => {
         });
       });
       describe('Props open=false', () => {
-        let component = new StripeSheet();
+        let component = new StripeModal();
         let mockEmitter = jest.fn();
 
         beforeEach(() => {
-          component = new StripeSheet();
+          component = new StripeModal();
           mockEmitter = jest.fn();
           component.open = false;
           component.close = {
@@ -83,12 +83,12 @@ describe('stripe-sheet', () => {
   describe('Rendering test', () => {
     it('renders', async () => {
       const page = await newSpecPage({
-        components: [StripeSheet],
-        html: `<stripe-sheet></stripe-sheet>`,
+        components: [StripeModal],
+        html: `<stripe-modal></stripe-modal>`,
       });
 
       expect(page.root).toEqualHtml(`
-      <stripe-sheet>
+      <stripe-modal>
         <mock:shadow-root>
           <div class="modal-row">
             <div class="modal-child">
@@ -99,14 +99,14 @@ describe('stripe-sheet', () => {
             </div>
           </div>
         </mock:shadow-root>
-      </stripe-sheet>
+      </stripe-modal>
       `);
     });
 
     it("should match snapshot (open='true')", async () => {
       const page = await newSpecPage({
-        components: [StripeSheet],
-        html: `<stripe-sheet open="true"></stripe-sheet>`,
+        components: [StripeModal],
+        html: `<stripe-modal open="true"></stripe-modal>`,
       });
 
       expect(page.root).toMatchSnapshot();
@@ -114,16 +114,16 @@ describe('stripe-sheet', () => {
 
     it("should match snapshot (showCloseButton='true')", async () => {
       const page = await newSpecPage({
-        components: [StripeSheet],
-        html: `<stripe-sheet show-close-button="true"></stripe-sheet>`,
+        components: [StripeModal],
+        html: `<stripe-modal show-close-button="true"></stripe-modal>`,
       });
 
       expect(page.root).toMatchSnapshot();
     });
     it("should match snapshot (showCloseButton='false')", async () => {
       const page = await newSpecPage({
-        components: [StripeSheet],
-        html: `<stripe-sheet show-close-button="false"></stripe-sheet>`,
+        components: [StripeModal],
+        html: `<stripe-modal show-close-button="false"></stripe-modal>`,
       });
 
       expect(page.root).toMatchSnapshot();
@@ -131,8 +131,8 @@ describe('stripe-sheet', () => {
 
     it("should have 'open' class when open is true", async () => {
       const page = await newSpecPage({
-        components: [StripeSheet],
-        html: `<stripe-sheet open="true"></stripe-sheet>`,
+        components: [StripeModal],
+        html: `<stripe-modal open="true"></stripe-modal>`,
       });
 
       const modalRow = page.root.shadowRoot.querySelector('.modal-row');
@@ -141,8 +141,8 @@ describe('stripe-sheet', () => {
 
     it("should not have 'open' class when open is false", async () => {
       const page = await newSpecPage({
-        components: [StripeSheet],
-        html: `<stripe-sheet open="false"></stripe-sheet>`,
+        components: [StripeModal],
+        html: `<stripe-modal open="false"></stripe-modal>`,
       });
 
       const modalRow = page.root.shadowRoot.querySelector('.modal-row');
@@ -151,8 +151,8 @@ describe('stripe-sheet', () => {
 
     it('should render slot content', async () => {
       const page = await newSpecPage({
-        components: [StripeSheet],
-        html: `<stripe-sheet><div class="test-content">Test Content</div></stripe-sheet>`,
+        components: [StripeModal],
+        html: `<stripe-modal><div class="test-content">Test Content</div></stripe-modal>`,
       });
 
       const slot = page.root.shadowRoot.querySelector('slot');
@@ -161,8 +161,8 @@ describe('stripe-sheet', () => {
 
     it('should show close button by default', async () => {
       const page = await newSpecPage({
-        components: [StripeSheet],
-        html: `<stripe-sheet></stripe-sheet>`,
+        components: [StripeModal],
+        html: `<stripe-modal></stripe-modal>`,
       });
 
       const closeButton = page.root.shadowRoot.querySelector('.modal-close-button');
@@ -173,8 +173,8 @@ describe('stripe-sheet', () => {
   describe('Event emission test', () => {
     it('should emit close event with correct data when closeModal is called', async () => {
       const page = await newSpecPage({
-        components: [StripeSheet],
-        html: `<stripe-sheet open="true"></stripe-sheet>`,
+        components: [StripeModal],
+        html: `<stripe-modal open="true"></stripe-modal>`,
       });
 
       let eventEmitted = false;
@@ -190,8 +190,8 @@ describe('stripe-sheet', () => {
 
     it('should emit close event when toggleModal is called from open state', async () => {
       const page = await newSpecPage({
-        components: [StripeSheet],
-        html: `<stripe-sheet open="true"></stripe-sheet>`,
+        components: [StripeModal],
+        html: `<stripe-modal open="true"></stripe-modal>`,
       });
 
       let eventEmitted = false;
@@ -207,8 +207,8 @@ describe('stripe-sheet', () => {
 
     it('should not emit close event when toggleModal is called from closed state', async () => {
       const page = await newSpecPage({
-        components: [StripeSheet],
-        html: `<stripe-sheet open="false"></stripe-sheet>`,
+        components: [StripeModal],
+        html: `<stripe-modal open="false"></stripe-modal>`,
       });
 
       let eventEmitted = false;
@@ -225,7 +225,7 @@ describe('stripe-sheet', () => {
 
   describe('Edge cases', () => {
     it('should handle rapid open/close toggles', async () => {
-      const component = new StripeSheet();
+      const component = new StripeModal();
       component.close = {
         emit: jest.fn(),
       };
@@ -245,7 +245,7 @@ describe('stripe-sheet', () => {
     });
 
     it('should handle multiple closeModal calls', async () => {
-      const component = new StripeSheet();
+      const component = new StripeModal();
       const mockEmitter = jest.fn();
       component.close = {
         emit: mockEmitter,
@@ -261,7 +261,7 @@ describe('stripe-sheet', () => {
     });
 
     it('should handle multiple openModal calls', async () => {
-      const component = new StripeSheet();
+      const component = new StripeModal();
 
       component.open = false;
       await component.openModal();
@@ -277,19 +277,19 @@ describe('stripe-sheet', () => {
 
   describe('Props test', () => {
     it('should have default open as false', () => {
-      const component = new StripeSheet();
+      const component = new StripeModal();
       expect(component.open).toBe(false);
     });
 
     it('should have default showCloseButton as true', () => {
-      const component = new StripeSheet();
+      const component = new StripeModal();
       expect(component.showCloseButton).toBe(true);
     });
 
     it('should update open prop', async () => {
       const page = await newSpecPage({
-        components: [StripeSheet],
-        html: `<stripe-sheet></stripe-sheet>`,
+        components: [StripeModal],
+        html: `<stripe-modal></stripe-modal>`,
       });
 
       expect(page.rootInstance.open).toBe(false);
@@ -302,8 +302,8 @@ describe('stripe-sheet', () => {
 
     it('should update showCloseButton prop', async () => {
       const page = await newSpecPage({
-        components: [StripeSheet],
-        html: `<stripe-sheet></stripe-sheet>`,
+        components: [StripeModal],
+        html: `<stripe-modal></stripe-modal>`,
       });
 
       expect(page.rootInstance.showCloseButton).toBe(true);

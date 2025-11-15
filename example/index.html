@@ -46,12 +46,12 @@
         const resultElement = document.getElementById('result')
         const errorMessage = document.getElementById('error-message')
         const targetElement = document.getElementById('stripe');
-        const modalElement = document.createElement('stripe-sheet');
+        const modalElement = document.createElement('stripe-modal');
 
         /**
          * Remove Mounted Stripe Elements when the modal has been closed
          **/
-        customElements.whenDefined('stripe-sheet')
+        customElements.whenDefined('stripe-modal')
             .then(() => {
                 modalElement.addEventListener('close', () => {
                     modalElement.innerHTML = ''
@@ -74,7 +74,7 @@
             /**
              * Define and launch Web Components
              **/
-            const stripeElement = document.createElement('stripe-payment-sheet');
+            const stripeElement = document.createElement('stripe-card-element-modal');
             const stripePaymentRequestElement = document.createElement('stripe-payment-request-button');
             modalElement.appendChild(stripePaymentRequestElement);
             modalElement.appendChild(stripeElement);
@@ -83,9 +83,9 @@
             /**
              * Wait for defining these components
              **/
-            await customElements.whenDefined('stripe-sheet')
+            await customElements.whenDefined('stripe-modal')
             await customElements.whenDefined('stripe-payment-request-button')
-            await customElements.whenDefined('stripe-payment-sheet')
+            await customElements.whenDefined('stripe-card-element-modal')
             /**
              * Lauch Payment request button if possible to use
              **/
