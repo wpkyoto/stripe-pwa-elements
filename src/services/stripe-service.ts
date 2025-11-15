@@ -105,7 +105,7 @@ class StripeServiceClass {
     }
 
     // If Stripe.js already loaded with same config, do nothing
-    if (this.store.state.stripe && this.store.state.publishableKey === publishableKey) {
+    if (this.store.state.stripe && this.store.state.publishableKey === publishableKey && this.store.state.stripeAccount === options?.stripeAccount) {
       return;
     }
 
