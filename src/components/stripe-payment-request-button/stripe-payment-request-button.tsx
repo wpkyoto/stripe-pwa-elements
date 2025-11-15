@@ -23,13 +23,18 @@ export class StripePaymentRequestButton {
   @State() paymentRequestOption?: PaymentRequestOptions;
 
   /**
+   * Store references for cleanup
+   */
+  private paymentRequestElement?: any;
+
+  /**
    * Check isAvailable ApplePay or GooglePay.
    * If you run this method, you should run before initStripe.
    */
   @Method()
   public async isAvailable(type: 'applePay' | 'googlePay') {
     if (this.publishableKey === undefined) {
-      throw 'You should run this method run, after set publishableKey.';
+      throw new Error('You should set publishableKey before calling this method.');
     }
 
     const stripe = await loadStripe(this.publishableKey, {
@@ -47,7 +52,7 @@ export class StripePaymentRequestButton {
     const paymentRequestSupport = await paymentRequest.canMakePayment();
 
     if (!paymentRequestSupport || (type === 'applePay' && !paymentRequestSupport[type]) || (type === 'googlePay' && !paymentRequestSupport[type])) {
-      throw 'This device can not use.';
+      throw new Error(`This device cannot use ${type}.`);
     }
   }
 
@@ -268,7 +273,7 @@ export class StripePaymentRequestButton {
     const paymentRequestSupport = await paymentRequest.canMakePayment();
 
     if (!paymentRequestSupport) {
-      throw 'paymentRequest is not support.';
+      throw new Error('paymentRequest is not support.');
     }
 
     if (this.paymentMethodEventHandler) {
@@ -290,11 +295,20 @@ export class StripePaymentRequestButton {
     }
 
     if (showButton) {
+      // Cleanup previous element if exists
+      if (this.paymentRequestElement) {
+        this.paymentRequestElement.unmount();
+      }
+
       // Display the Pay button by mounting the Element in the DOM.
       const elements = this.stripe.elements();
       const paymentRequestButton = elements.create('paymentRequestButton', {
         paymentRequest,
       });
+
+      // Store reference for cleanup
+      this.paymentRequestElement = paymentRequestButton;
+
       const paymentRequestButtonElement: HTMLElement = this.el.querySelector('#payment-request-button');
 
       paymentRequestButton.mount(paymentRequestButtonElement);
@@ -307,6 +321,17 @@ export class StripePaymentRequestButton {
        */
       paymentRequest.show();
     }
+  }
+
+  disconnectedCallback() {
+    // Cleanup payment request element
+    if (this.paymentRequestElement) {
+      this.paymentRequestElement.unmount();
+      this.paymentRequestElement = undefined;
+    }
+
+    // Clear stripe reference
+    this.stripe = undefined;
   }
 
   render() {

@@ -24,6 +24,13 @@ export class StripePayment {
   @Element() el: HTMLStripePaymentElement;
 
   /**
+   * Cleanup functions for memory management
+   */
+  private unsubscribeLoadStatus?: () => void;
+  private formSubmitHandler?: (e: Event) => Promise<void>;
+  private dynamicPaymentRequestButton?: HTMLStripePaymentRequestButtonElement;
+
+  /**
    * Default submit handle type.
    * If you want to use `setupIntent`, should update this attribute.
    */
@@ -76,7 +83,14 @@ export class StripePayment {
     stripeStore.set('stripeAccount', stripeAccount);
     stripeStore.set('applicationName', this.applicationName);
     stripeStore.set('publishableKey', publishableKey);
-    stripeStore.onChange('loadStripeStatus', async newState => {
+
+    // Unsubscribe from previous listener if it exists
+    if (this.unsubscribeLoadStatus) {
+      this.unsubscribeLoadStatus();
+    }
+
+    // Store the unsubscribe function for cleanup
+    this.unsubscribeLoadStatus = stripeStore.onChange('loadStripeStatus', async newState => {
       if (newState !== 'success') {
         return;
       }
@@ -418,7 +432,15 @@ export class StripePayment {
    * Initialize Component using Stripe Element
    */
   private async initElement() {
-    document.getElementById('stripe-card-element').addEventListener('submit', async e => {
+    const formElement = document.getElementById('stripe-card-element');
+
+    // Remove previous listener if it exists to prevent memory leaks
+    if (this.formSubmitHandler) {
+      formElement.removeEventListener('submit', this.formSubmitHandler);
+    }
+
+    // Create and store the handler for cleanup
+    this.formSubmitHandler = async (e: Event) => {
       const elements = getAndLoadCardElement();
       const { cardCVC, cardExpiry, cardNumber } = elements;
       const stripe = stripeStore.get('stripe');
@@ -451,14 +473,38 @@ export class StripePayment {
         stripeStore.set('errorMessage', e.message);
         this.progress = 'failure';
       }
-    });
+    };
+
+    formElement.addEventListener('submit', this.formSubmitHandler);
   }
   componentDidLoad() {
     this.el.classList.add(checkPlatform());
   }
 
   disconnectedCallback() {
+    // Cleanup Stripe card elements
     getAndLoadCardElement().unmount();
+
+    // Cleanup form submit event listener
+    if (this.formSubmitHandler) {
+      const formElement = document.getElementById('stripe-card-element');
+      if (formElement) {
+        formElement.removeEventListener('submit', this.formSubmitHandler);
+      }
+      this.formSubmitHandler = undefined;
+    }
+
+    // Cleanup store listener
+    if (this.unsubscribeLoadStatus) {
+      this.unsubscribeLoadStatus();
+      this.unsubscribeLoadStatus = undefined;
+    }
+
+    // Cleanup dynamically created payment request button
+    if (this.dynamicPaymentRequestButton && this.dynamicPaymentRequestButton.parentNode) {
+      this.dynamicPaymentRequestButton.parentNode.removeChild(this.dynamicPaymentRequestButton);
+      this.dynamicPaymentRequestButton = undefined;
+    }
   }
 
   /**
@@ -477,7 +523,16 @@ export class StripePayment {
     }
 
     const targetElement = document.getElementById('stripe-payment-request-button');
-    const stripePaymentRequestElement = document.createElement('stripe-payment-request-button');
+
+    // Cleanup existing button if it exists
+    if (this.dynamicPaymentRequestButton && this.dynamicPaymentRequestButton.parentNode) {
+      this.dynamicPaymentRequestButton.parentNode.removeChild(this.dynamicPaymentRequestButton);
+    }
+
+    const stripePaymentRequestElement = document.createElement('stripe-payment-request-button') as HTMLStripePaymentRequestButtonElement;
+
+    // Store reference for cleanup
+    this.dynamicPaymentRequestButton = stripePaymentRequestElement;
 
     targetElement.appendChild(stripePaymentRequestElement);
 
