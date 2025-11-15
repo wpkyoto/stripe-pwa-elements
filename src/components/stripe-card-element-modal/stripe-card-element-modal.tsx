@@ -84,7 +84,7 @@ export class StripeCardElementModal {
    * If you want to use `setupIntent`, should update this attribute.
    * @example
    * ```
-   * <stripe-payment-sheet intent-type="setup" />
+   * <stripe-card-element intent-type="setup" />
    * ```
    */
   @Prop() intentType: IntentType = 'payment';

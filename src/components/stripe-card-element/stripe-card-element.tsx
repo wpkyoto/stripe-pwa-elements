@@ -12,7 +12,8 @@ import {
   InitStripeOptions,
 } from '../../interfaces';
 import { i18n } from '../../utils/i18n';
-import { stripeStore, getAndLoadCardElement } from './store';
+import { serviceFactory } from '../../services/factory';
+import type { IStripeService, ICardElementManager } from '../../services/interfaces';
 import { StripeAPIError } from '../../utils/error';
 
 @Component({
@@ -23,12 +24,9 @@ import { StripeAPIError } from '../../utils/error';
 export class StripeCardElement {
   @Element() el: HTMLStripeCardElementElement;
 
-  /**
-   * Cleanup functions for memory management
-   */
-  private unsubscribeLoadStatus?: () => void;
-  private formSubmitHandler?: (e: Event) => Promise<void>;
-  private dynamicPaymentRequestButton?: HTMLStripePaymentRequestButtonElement;
+  // Injected dependencies
+  private stripeService: IStripeService;
+  private cardElementManager: ICardElementManager;
 
   /**
    * Default submit handle type.
@@ -77,27 +75,27 @@ export class StripeCardElement {
    */
   @Method()
   public async initStripe(publishableKey: string, options?: InitStripeOptions) {
-    const stripeAccount = options?.stripeAccount;
+    await this.stripeService.initialize(publishableKey, {
+      stripeAccount: options?.stripeAccount,
+      applicationName: this.applicationName,
+    });
 
-    stripeStore.set('el', this.el);
-    stripeStore.set('stripeAccount', stripeAccount);
-    stripeStore.set('applicationName', this.applicationName);
-    stripeStore.set('publishableKey', publishableKey);
-
-    // Unsubscribe from previous listener if it exists
-    if (this.unsubscribeLoadStatus) {
-      this.unsubscribeLoadStatus();
-    }
-
-    // Store the unsubscribe function for cleanup
-    this.unsubscribeLoadStatus = stripeStore.onChange('loadStripeStatus', async newState => {
-      if (newState !== 'success') {
-        return;
-      }
-
+    // If already successfully loaded, initialize elements immediately
+    if (this.stripeService.state.loadStripeStatus === 'success') {
       await this.initElement();
       this.stripeLoadedEventHandler();
-    });
+    } else {
+      // Otherwise, wait for successful load
+      const unsubscribe = this.stripeService.onChange('loadStripeStatus', async newState => {
+        if (newState !== 'success') {
+          return;
+        }
+
+        await this.initElement();
+        this.stripeLoadedEventHandler();
+        unsubscribe(); // Clean up listener after first success
+      });
+    }
   }
 
   /**
@@ -165,7 +163,7 @@ export class StripeCardElement {
    */
   @Method()
   public async setErrorMessage(errorMessage: string) {
-    stripeStore.set('errorMessage', errorMessage);
+    this.cardElementManager.setError(errorMessage);
     return this;
   }
 
@@ -177,7 +175,7 @@ export class StripeCardElement {
   updatePublishableKey(publishableKey: string) {
     const options: InitStripeOptions = {};
 
-    options.stripeAccount = stripeStore.get('stripeAccount');
+    options.stripeAccount = this.stripeService.state.stripeAccount;
     const hasOptionValue = Object.values(options).filter(Boolean).length > 0;
 
     this.initStripe(publishableKey, hasOptionValue ? options : undefined);
@@ -190,7 +188,7 @@ export class StripeCardElement {
   @Prop() stripeAccount: string;
   @Watch('stripeAccount')
   updateStripeAccountId(stripeAccount: string) {
-    this.initStripe(stripeStore.get('publishableKey'), {
+    this.initStripe(this.stripeService.state.publishableKey, {
       stripeAccount: stripeAccount,
     });
   }
@@ -299,7 +297,7 @@ export class StripeCardElement {
   @Event() stripeLoaded: EventEmitter<StripeLoadedEvent>;
   private stripeLoadedEventHandler() {
     const event: StripeLoadedEvent = {
-      stripe: stripeStore.get('stripe'),
+      stripe: this.stripeService.getStripe(),
     };
 
     if (this.stripeDidLoaded) {
@@ -332,13 +330,18 @@ export class StripeCardElement {
    */
   @Event() formSubmit: EventEmitter<FormSubmitEvent>;
   private async formSubmitEventHandler() {
-    const { cardCVC, cardExpiry, cardNumber } = getAndLoadCardElement();
-    const stripe = stripeStore.get('stripe');
+    const cardElements = this.cardElementManager.getElements();
+    const stripe = this.stripeService.getStripe();
+
+    if (!cardElements) {
+      console.error('Card elements not initialized');
+      return;
+    }
 
     this.formSubmit.emit({
-      cardCVCElement: cardCVC,
-      cardExpiryElement: cardExpiry,
-      cardNumberElement: cardNumber,
+      cardCVCElement: cardElements.cardCVC,
+      cardExpiryElement: cardElements.cardExpiry,
+      cardNumberElement: cardElements.cardNumber,
       stripe,
     });
   }
@@ -366,16 +369,16 @@ export class StripeCardElement {
   }
 
   componentWillUpdate() {
-    if (!stripeStore.get('publishableKey')) {
+    if (!this.stripeService.state.publishableKey) {
       return;
     }
 
-    if (['success', 'loading'].includes(stripeStore.get('loadStripeStatus'))) {
+    if (['success', 'loading'].includes(this.stripeService.state.loadStripeStatus)) {
       return;
     }
 
-    this.initStripe(stripeStore.get('publishableKey'), {
-      stripeAccount: stripeStore.get('stripeAccount'),
+    this.initStripe(this.stripeService.state.publishableKey, {
+      stripeAccount: this.stripeService.state.stripeAccount,
     });
     this.createPaymentRequestButton();
   }
@@ -419,12 +422,14 @@ export class StripeCardElement {
   }
 
   constructor() {
+    // Dependency Injection via factory
+    this.stripeService = serviceFactory.createStripeService();
+    this.cardElementManager = serviceFactory.createCardElementManager(this.stripeService);
+
     if (this.publishableKey) {
       this.initStripe(this.publishableKey, {
         stripeAccount: this.stripeAccount,
       });
-    } else {
-      stripeStore.set('loadStripeStatus', 'failure');
     }
   }
 
@@ -432,24 +437,30 @@ export class StripeCardElement {
    * Initialize Component using Stripe Element
    */
   private async initElement() {
-    const formElement = document.getElementById('stripe-card-element');
+    // Initialize card elements
+    await this.cardElementManager.initialize(this.el);
 
-    // Remove previous listener if it exists to prevent memory leaks
-    if (formElement && this.formSubmitHandler) {
-      formElement.removeEventListener('submit', this.formSubmitHandler);
+    // Add form submit listener scoped to this component instance
+    const formElement = this.el.querySelector('#stripe-card-element');
+    if (!formElement) {
+      console.error('Form element #stripe-card-element not found');
+      return;
     }
 
-    // Create and store the handler for cleanup
-    this.formSubmitHandler = async (e: Event) => {
-      const elements = getAndLoadCardElement();
-      const { cardCVC, cardExpiry, cardNumber } = elements;
-      const stripe = stripeStore.get('stripe');
+    formElement.addEventListener('submit', async e => {
+      const cardElements = this.cardElementManager.getElements();
+      const stripe = this.stripeService.getStripe();
       const { intentClientSecret } = this;
 
+      if (!cardElements || !stripe) {
+        console.error('Stripe not properly initialized');
+        return;
+      }
+
       const submitEventProps: FormSubmitEvent = {
-        cardCVCElement: cardCVC,
-        cardExpiryElement: cardExpiry,
-        cardNumberElement: cardNumber,
+        cardCVCElement: cardElements.cardCVC,
+        cardExpiryElement: cardElements.cardExpiry,
+        cardNumberElement: cardElements.cardNumber,
         stripe,
         intentClientSecret,
         zipCode: this.zipCode,
@@ -470,41 +481,17 @@ export class StripeCardElement {
           this.progress = 'success';
         }
       } catch (e) {
-        stripeStore.set('errorMessage', e.message);
+        this.cardElementManager.setError(e.message);
         this.progress = 'failure';
       }
-    };
-
-    formElement.addEventListener('submit', this.formSubmitHandler);
+    });
   }
   componentDidLoad() {
     this.el.classList.add(checkPlatform());
   }
 
   disconnectedCallback() {
-    // Cleanup Stripe card elements
-    getAndLoadCardElement().unmount();
-
-    // Cleanup form submit event listener
-    if (this.formSubmitHandler) {
-      const formElement = document.getElementById('stripe-card-element');
-      if (formElement) {
-        formElement.removeEventListener('submit', this.formSubmitHandler);
-      }
-      this.formSubmitHandler = undefined;
-    }
-
-    // Cleanup store listener
-    if (this.unsubscribeLoadStatus) {
-      this.unsubscribeLoadStatus();
-      this.unsubscribeLoadStatus = undefined;
-    }
-
-    // Cleanup dynamically created payment request button
-    if (this.dynamicPaymentRequestButton && this.dynamicPaymentRequestButton.parentNode) {
-      this.dynamicPaymentRequestButton.parentNode.removeChild(this.dynamicPaymentRequestButton);
-      this.dynamicPaymentRequestButton = undefined;
-    }
+    this.cardElementManager.unmount();
   }
 
   /**
@@ -522,17 +509,12 @@ export class StripeCardElement {
       return null;
     }
 
-    const targetElement = document.getElementById('stripe-payment-request-button');
-
-    // Cleanup existing button if it exists
-    if (this.dynamicPaymentRequestButton && this.dynamicPaymentRequestButton.parentNode) {
-      this.dynamicPaymentRequestButton.parentNode.removeChild(this.dynamicPaymentRequestButton);
+    const targetElement = this.el.querySelector('#stripe-payment-request-button');
+    if (!targetElement) {
+      console.error('Target element #stripe-payment-request-button not found');
+      return null;
     }
-
-    const stripePaymentRequestElement = document.createElement('stripe-payment-request-button') as HTMLStripePaymentRequestButtonElement;
-
-    // Store reference for cleanup
-    this.dynamicPaymentRequestButton = stripePaymentRequestElement;
+    const stripePaymentRequestElement = document.createElement('stripe-payment-request-button');
 
     targetElement.appendChild(stripePaymentRequestElement);
 
@@ -558,9 +540,10 @@ export class StripeCardElement {
   }
 
   render() {
-    const errorMessage = stripeStore.get('errorMessage');
+    const { loadStripeStatus } = this.stripeService.state;
+    const { errorMessage } = this.cardElementManager.getState();
 
-    if (stripeStore.get('loadStripeStatus') === 'failure') {
+    if (loadStripeStatus === 'failure') {
       return <p>{i18n.t('Failed to load Stripe')}</p>;
     }
 
