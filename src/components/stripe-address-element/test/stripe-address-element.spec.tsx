@@ -72,6 +72,19 @@ describe('stripe-address-element', () => {
     describe('#componentWillUpdate', () => {
       beforeEach(() => {
         element = new StripeAddressElement();
+
+        // Mock element.el (host element) using defineProperty
+        Object.defineProperty(element, 'el', {
+          value: {
+            querySelector: jest.fn(),
+            classList: {
+              add: jest.fn(),
+            },
+          },
+          writable: true,
+          configurable: true,
+        });
+
         element.initStripe = jest.fn();
       });
       it.each([['' as const], ['failure' as const]])('If the publishableKey is not provided, should not call initStripe method(status: %s)', async loadingStatus => {
@@ -101,6 +114,18 @@ describe('stripe-address-element', () => {
     describe('#setErrorMessage', () => {
       beforeEach(() => {
         element = new StripeAddressElement();
+
+        // Mock element.el (host element) using defineProperty
+        Object.defineProperty(element, 'el', {
+          value: {
+            querySelector: jest.fn(),
+            classList: {
+              add: jest.fn(),
+            },
+          },
+          writable: true,
+          configurable: true,
+        });
       });
       it('should set the certain error message', async () => {
         const message = 'Error message is here';
@@ -114,11 +139,21 @@ describe('stripe-address-element', () => {
       beforeEach(() => {
         element = new StripeAddressElement();
 
-        // Mock element.el.querySelector for form submission listener
+        // Mock element.el (host element) using defineProperty
         const mockFormElement = {
           addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
         };
-        jest.spyOn(element.el, 'querySelector').mockReturnValue(mockFormElement as any);
+        Object.defineProperty(element, 'el', {
+          value: {
+            querySelector: jest.fn().mockReturnValue(mockFormElement),
+            classList: {
+              add: jest.fn(),
+            },
+          },
+          writable: true,
+          configurable: true,
+        });
 
         // Mock successful initialization
         mockStripeService.state.loadStripeStatus = 'success';
@@ -150,14 +185,36 @@ describe('stripe-address-element', () => {
     describe('#updateStripeAccountId', () => {
       beforeEach(() => {
         element = new StripeAddressElement();
+
+        // Mock element.el (host element) using defineProperty
+        Object.defineProperty(element, 'el', {
+          value: {
+            querySelector: jest.fn(),
+            classList: {
+              add: jest.fn(),
+            },
+          },
+          writable: true,
+          configurable: true,
+        });
+
         element.initStripe = jest.fn();
-        mockStripeService.state.publishableKey = 'pk_test_xxxx';
       });
+
+      it('Should not call initStripe when publishableKey is not set', async () => {
+        mockStripeService.state.publishableKey = undefined;
+        await element.updateStripeAccountId('acct_xxx');
+        expect(element.initStripe).toHaveBeenCalledTimes(0);
+      });
+
       it('When call this, should call the #initStripe method only one time', async () => {
+        mockStripeService.state.publishableKey = 'pk_test_xxxx';
         await element.updateStripeAccountId('acct_xxx');
         expect(element.initStripe).toHaveBeenCalledTimes(1);
       });
+
       it('When call this, should call the #initStripe method with expected props', async () => {
+        mockStripeService.state.publishableKey = 'pk_test_xxxx';
         await element.updateStripeAccountId('acct_xxx');
         expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxxx', {
           stripeAccount: 'acct_xxx',
@@ -168,6 +225,19 @@ describe('stripe-address-element', () => {
     describe('#updatePublishableKey', () => {
       beforeEach(() => {
         element = new StripeAddressElement();
+
+        // Mock element.el (host element) using defineProperty
+        Object.defineProperty(element, 'el', {
+          value: {
+            querySelector: jest.fn(),
+            classList: {
+              add: jest.fn(),
+            },
+          },
+          writable: true,
+          configurable: true,
+        });
+
         element.initStripe = jest.fn();
       });
       it('When call this, should call the #initStripe method only one time', async () => {

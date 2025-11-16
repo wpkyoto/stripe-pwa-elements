@@ -29,6 +29,9 @@ export class StripeAddressElement {
   private stripeService: IStripeService;
   private addressElementManager: IAddressElementManager;
 
+  // Form submit listener reference for cleanup
+  private formSubmitListener?: (event: Event) => void;
+
   /**
    * Address mode: 'shipping' or 'billing'
    * @default 'billing'
@@ -158,7 +161,7 @@ export class StripeAddressElement {
    * ```
    */
   @Method()
-  public async getValue(): Promise<{ value: import('@stripe/stripe-js').AddressDetails; complete: boolean; }> {
+  public async getValue(): Promise<{ value: import('@stripe/stripe-js').AddressDetails; complete: boolean }> {
     const addressElement = this.addressElementManager.getElement();
     if (!addressElement) {
       throw new Error('Address element not initialized');
@@ -191,6 +194,10 @@ export class StripeAddressElement {
 
   @Watch('stripeAccount')
   updateStripeAccountId(stripeAccount: string) {
+    if (!this.stripeService.state.publishableKey) {
+      return;
+    }
+
     this.initStripe(this.stripeService.state.publishableKey, {
       stripeAccount: stripeAccount,
     });
@@ -345,7 +352,13 @@ export class StripeAddressElement {
       return;
     }
 
-    formElement.addEventListener('submit', async e => {
+    // Remove previous listener if it exists to prevent duplicate submissions
+    if (this.formSubmitListener) {
+      formElement.removeEventListener('submit', this.formSubmitListener);
+    }
+
+    // Create and store the listener
+    this.formSubmitListener = async (e: Event) => {
       e.preventDefault();
 
       const addressElement = this.addressElementManager.getElement();
@@ -373,7 +386,9 @@ export class StripeAddressElement {
         this.addressElementManager.setError(error.message);
         this.progress = 'failure';
       }
-    });
+    };
+
+    formElement.addEventListener('submit', this.formSubmitListener);
   }
 
   componentDidLoad() {
@@ -381,6 +396,15 @@ export class StripeAddressElement {
   }
 
   disconnectedCallback() {
+    // Remove form submit listener
+    if (this.formSubmitListener) {
+      const formElement = this.el.querySelector('#stripe-address-element-form');
+      if (formElement) {
+        formElement.removeEventListener('submit', this.formSubmitListener);
+      }
+      this.formSubmitListener = undefined;
+    }
+
     this.addressElementManager.unmount();
   }
 

@@ -20,20 +20,20 @@
 
 ## Events
 
-| Event          | Description                | Type                               |
-| -------------- | -------------------------- | ---------------------------------- |
-| `formSubmit`   | Form submit event          | `CustomEvent<{ address: any; }>`   |
-| `stripeLoaded` | Stripe Client loaded event | `CustomEvent<{ stripe: Stripe; }>` |
+| Event          | Description                | Type                                                            |
+| -------------- | -------------------------- | --------------------------------------------------------------- |
+| `formSubmit`   | Form submit event          | `CustomEvent<{ address: { value: any; complete: boolean; }; }>` |
+| `stripeLoaded` | Stripe Client loaded event | `CustomEvent<{ stripe: Stripe; }>`                              |
 
 ## Methods
 
-### `getValue() => Promise<any>`
+### `getValue() => Promise<{ value: import("@stripe/stripe-js").AddressDetails; complete: boolean; }>`
 
 Get the current address value
 
 #### Returns
 
-Type: `Promise<any>`
+Type: `Promise<{ value: any; complete: boolean; }>`
 
 Promise resolving to the address value
 

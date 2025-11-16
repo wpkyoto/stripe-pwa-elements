@@ -62,7 +62,7 @@ export namespace Components {
      * @returns Promise resolving to the address value
      * @example ``` const stripeElement = document.querySelector('stripe-address-element'); const addressValue = await stripeElement.getValue(); console.log('Address:', addressValue); ```
      */
-    getValue: () => Promise<any>;
+    getValue: () => Promise<{ value: import('@stripe/stripe-js').AddressDetails; complete: boolean }>;
     /**
      * Form submit event handler
      */
