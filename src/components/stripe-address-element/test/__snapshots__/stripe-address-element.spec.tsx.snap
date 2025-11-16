@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`stripe-address-element rendering test api key and mode props 1`] = `
+<stripe-address-element class="undefined" mode="shipping" publishable-key="pk_test_xxx">
+  <div class="stripe-payment-sheet-wrap">
+    <form id="stripe-address-element-form">
+      <div class="stripe-heading">
+        Billing address
+      </div>
+      <div class="address payment-info visible">
+        <div id="address-element"></div>
+      </div>
+      <div class="stripe-element-errors" id="address-errors"></div>
+      <div style="margin-top: 32px;">
+        <button type="submit">
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+</stripe-address-element>
+`;
+
+exports[`stripe-address-element rendering test should load stripe after setting the publishable-key (snapshot) 1`] = `
+<stripe-address-element class="undefined" publishable-key="yyyy">
+  <div class="stripe-payment-sheet-wrap">
+    <form id="stripe-address-element-form">
+      <div class="stripe-heading">
+        Billing address
+      </div>
+      <div class="address payment-info visible">
+        <div id="address-element"></div>
+      </div>
+      <div class="stripe-element-errors" id="address-errors"></div>
+      <div style="margin-top: 32px;">
+        <button type="submit">
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+</stripe-address-element>
+`;
+
+exports[`stripe-address-element rendering test with the api key 1`] = `
+<stripe-address-element class="undefined" publishable-key="pk_test_xxx">
+  <div class="stripe-payment-sheet-wrap">
+    <form id="stripe-address-element-form">
+      <div class="stripe-heading">
+        Billing address
+      </div>
+      <div class="address payment-info visible">
+        <div id="address-element"></div>
+      </div>
+      <div class="stripe-element-errors" id="address-errors"></div>
+      <div style="margin-top: 32px;">
+        <button type="submit">
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+</stripe-address-element>
+`;

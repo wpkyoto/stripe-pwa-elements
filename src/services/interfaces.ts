@@ -1,4 +1,4 @@
-import { Stripe, StripeElements, StripeCardNumberElement, StripeCardExpiryElement, StripeCardCvcElement } from '@stripe/stripe-js';
+import { Stripe, StripeElements, StripeCardNumberElement, StripeCardExpiryElement, StripeCardCvcElement, StripeAddressElement } from '@stripe/stripe-js';
 import { ProgressStatus } from '../interfaces';
 
 /**
@@ -103,6 +103,50 @@ export interface ICardElementManager {
 
   /**
    * Unmount all card elements
+   */
+  unmount(): void;
+}
+
+/**
+ * Address element state
+ */
+export type AddressElementState = {
+  errorMessage: string;
+  isComplete: boolean;
+};
+
+/**
+ * Address Element manager interface
+ * Manages Stripe Address Element
+ */
+export interface IAddressElementManager {
+  /**
+   * Get address element state
+   */
+  getState(): AddressElementState;
+
+  /**
+   * Initialize and mount address element
+   */
+  initialize(containerElement: HTMLElement, options?: any): Promise<StripeAddressElement>;
+
+  /**
+   * Get mounted address element
+   */
+  getElement(): StripeAddressElement | undefined;
+
+  /**
+   * Set error message
+   */
+  setError(message: string): void;
+
+  /**
+   * Clear error message
+   */
+  clearError(): void;
+
+  /**
+   * Unmount address element
    */
   unmount(): void;
 }

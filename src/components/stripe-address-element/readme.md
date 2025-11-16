@@ -1,0 +1,85 @@
+# stripe-address-element
+
+<!-- Auto Generated Below -->
+
+## Properties
+
+| Property           | Attribute          | Description                                                                                                                                                                                       | Type                                                         | Default                 |
+| ------------------ | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ | ----------------------- |
+| `allowedCountries` | --                 | Allowed countries (array of country codes)                                                                                                                                                        | `string[]`                                                   | `undefined`             |
+| `applicationName`  | `application-name` | Overwrite the application name that registered For wrapper library (like Capacitor)                                                                                                               | `string`                                                     | `'stripe-pwa-elements'` |
+| `buttonLabel`      | `button-label`     | Submit button label By default we recommended to use these string - 'Save' or 'Continue' These strings will translated automatically by this library.                                             | `string`                                                     | `'Save'`                |
+| `defaultCountry`   | `default-country`  | Default country code (e.g., 'US', 'JP', 'GB')                                                                                                                                                     | `string`                                                     | `undefined`             |
+| `handleSubmit`     | --                 | Form submit event handler                                                                                                                                                                         | `(event: Event, props: AddressSubmitEvent) => Promise<void>` | `undefined`             |
+| `mode`             | `mode`             | Address mode: 'shipping' or 'billing'                                                                                                                                                             | `"billing" \| "shipping"`                                    | `'billing'`             |
+| `publishableKey`   | `publishable-key`  | Your Stripe publishable API key.                                                                                                                                                                  | `string`                                                     | `undefined`             |
+| `sheetTitle`       | `sheet-title`      | Form title By default we recommended to use these string - 'Shipping address' for shipping mode - 'Billing address' for billing mode These strings will translated automatically by this library. | `string`                                                     | `'Billing address'`     |
+| `showLabel`        | `show-label`       | Show the form label                                                                                                                                                                               | `boolean`                                                    | `false`                 |
+| `stripeAccount`    | `stripe-account`   | Optional. Making API calls for connected accounts                                                                                                                                                 | `string`                                                     | `undefined`             |
+| `stripeDidLoaded`  | --                 | Stripe.js class loaded handler                                                                                                                                                                    | `(event: StripeLoadedEvent) => Promise<void>`                | `undefined`             |
+
+## Events
+
+| Event          | Description                | Type                               |
+| -------------- | -------------------------- | ---------------------------------- |
+| `formSubmit`   | Form submit event          | `CustomEvent<{ address: any; }>`   |
+| `stripeLoaded` | Stripe Client loaded event | `CustomEvent<{ stripe: Stripe; }>` |
+
+## Methods
+
+### `getValue() => Promise<any>`
+
+Get the current address value
+
+#### Returns
+
+Type: `Promise<any>`
+
+Promise resolving to the address value
+
+### `initStripe(publishableKey: string, options?: InitStripeOptions) => Promise<void>`
+
+Get Stripe.js, and initialize elements
+
+#### Parameters
+
+| Name             | Type                          | Description |
+| ---------------- | ----------------------------- | ----------- |
+| `publishableKey` | `string`                      |             |
+| `options`        | `{ stripeAccount?: string; }` |             |
+
+#### Returns
+
+Type: `Promise<void>`
+
+### `setErrorMessage(errorMessage: string) => Promise<this>`
+
+Set error message
+
+#### Parameters
+
+| Name           | Type     | Description |
+| -------------- | -------- | ----------- |
+| `errorMessage` | `string` | string      |
+
+#### Returns
+
+Type: `Promise<this>`
+
+### `updateProgress(progress: ProgressStatus) => Promise<this>`
+
+Update the form submit progress
+
+#### Parameters
+
+| Name       | Type                                        | Description |
+| ---------- | ------------------------------------------- | ----------- |
+| `progress` | `"" \| "loading" \| "success" \| "failure"` |             |
+
+#### Returns
+
+Type: `Promise<this>`
+
+---
+
+_Built with [StencilJS](https://stenciljs.com/)_

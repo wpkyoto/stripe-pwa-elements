@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
+    <title>Stripe Address Element Example</title>
+    <script type="module" src="/stripe-elements/stripe-elements.esm.js"></script>
+    <script nomodule src="/stripe-elements/stripe-elements.js"></script>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f6f9fc;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      nav {
+        background: #635bff;
+        padding: 15px;
+        margin: -20px -20px 20px;
+      }
+      nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        gap: 20px;
+      }
+      nav a {
+        color: white;
+        text-decoration: none;
+      }
+      nav a:hover {
+        text-decoration: underline;
+      }
+      h1 {
+        color: #32325d;
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+      .demo-section {
+        margin-bottom: 40px;
+      }
+      fieldset {
+        border: 1px solid #e6e6e6;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 10px;
+      }
+      legend, lenged {
+        font-weight: 600;
+        color: #32325d;
+        margin-bottom: 8px;
+        display: block;
+      }
+      input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #e6e6e6;
+        border-radius: 4px;
+        font-size: 16px;
+      }
+      small {
+        color: #8898aa;
+        font-size: 14px;
+      }
+      button {
+        background: #635bff;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        width: 100%;
+      }
+      button:hover {
+        background: #5145e5;
+      }
+      #result {
+        margin-top: 20px;
+        padding: 15px;
+        background: #f6f9fc;
+        border-radius: 4px;
+        display: none;
+      }
+      #result.show {
+        display: block;
+      }
+      pre {
+        background: #32325d;
+        color: #f6f9fc;
+        padding: 15px;
+        border-radius: 4px;
+        overflow-x: auto;
+      }
+      code {
+        font-family: 'Courier New', monospace;
+      }
+      #error-message {
+        color: #df1b41;
+        margin-bottom: 15px;
+      }
+      .mode-selector {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+      .mode-selector button {
+        flex: 1;
+        padding: 10px;
+      }
+      .mode-selector button.active {
+        background: #32325d;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li><a href="/">Example1: Dynamic Control</a></li>
+        <li><a href="/example2.html">Example2: Static HTML</a></li>
+        <li><a href="/address-example.html">Example3: Address Element</a></li>
+      </ul>
+    </nav>
+
+    <div class="container">
+      <div class="demo-section">
+        <h1>Example3: Stripe Address Element</h1>
+
+        <!-- Mode selector -->
+        <div class="mode-selector">
+          <button type="button" id="billing-mode-btn" class="active">Billing Address</button>
+          <button type="button" id="shipping-mode-btn">Shipping Address</button>
+        </div>
+
+        <!-- Configuration form -->
+        <form id="address-form">
+          <div id="error-message"></div>
+          <fieldset>
+            <label>
+              <lenged>Stripe Publishable API Key</lenged>
+              <input name="stripe-publishable-api-key" type="text" placeholder="pk_test_..." />
+              <small>Use a key starting with "pk_test_" for test environment</small>
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <label>
+              <lenged>Default Country (optional)</lenged>
+              <input name="default-country" type="text" placeholder="US" maxlength="2" />
+              <small>Two-letter country code (e.g., US, JP, GB)</small>
+            </label>
+          </fieldset>
+
+          <button type="submit">Initialize Address Element</button>
+        </form>
+
+        <div id="stripe"></div>
+        <div id="result"></div>
+      </div>
+
+      <div class="docs-section">
+        <h2>Documentation</h2>
+        <p>
+          <strong>Features of this example:</strong>
+        </p>
+        <ul>
+          <li>Demonstrates the Stripe Address Element component</li>
+          <li>Supports both billing and shipping address modes</li>
+          <li>Collects complete address information with built-in validation</li>
+          <li>Automatically adapts to different countries and address formats</li>
+          <li>Provides autocomplete functionality for addresses</li>
+        </ul>
+        <p>
+          <strong>Usage:</strong>
+        </p>
+        <ol>
+          <li>Enter your Stripe test publishable key (starts with pk_test_)</li>
+          <li>Optionally set a default country</li>
+          <li>Choose billing or shipping mode</li>
+          <li>Click "Initialize Address Element" to load the component</li>
+          <li>Fill in the address form and submit to see the collected data</li>
+        </ol>
+        <p>
+          <strong>Implementation Pattern:</strong>
+        </p>
+        <pre><code>// 1. Create address element component
+const addressElement = document.createElement('stripe-address-element');
+
+// 2. Set attributes
+addressElement.setAttribute('publishable-key', publishableKey);
+addressElement.setAttribute('mode', 'billing'); // or 'shipping'
+addressElement.setAttribute('default-country', 'US');
+
+// 3. Wait for custom element to be defined
+await customElements.whenDefined('stripe-address-element');
+
+// 4. Add event listener for form submission
+addressElement.addEventListener('formSubmit', async (event) => {
+  const { detail: { address } } = event;
+  console.log('Address submitted:', address);
+
+  // Handle the address data
+  // address.value contains the complete address information
+});
+
+// 5. Append to DOM
+document.body.appendChild(addressElement);</code></pre>
+      </div>
+    </div>
+
+    <script>
+      let currentMode = 'billing';
+
+      // Mode selector handlers
+      document.getElementById('billing-mode-btn').addEventListener('click', () => {
+        currentMode = 'billing';
+        document.getElementById('billing-mode-btn').classList.add('active');
+        document.getElementById('shipping-mode-btn').classList.remove('active');
+      });
+
+      document.getElementById('shipping-mode-btn').addEventListener('click', () => {
+        currentMode = 'shipping';
+        document.getElementById('shipping-mode-btn').classList.add('active');
+        document.getElementById('billing-mode-btn').classList.remove('active');
+      });
+
+      // Form submission handler
+      document.getElementById('address-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const publishableKey = formData.get('stripe-publishable-api-key');
+        const defaultCountry = formData.get('default-country');
+        const errorMessageDiv = document.getElementById('error-message');
+        const stripeDiv = document.getElementById('stripe');
+        const resultDiv = document.getElementById('result');
+
+        // Clear previous errors and results
+        errorMessageDiv.textContent = '';
+        resultDiv.classList.remove('show');
+
+        // Validate inputs
+        if (!publishableKey) {
+          errorMessageDiv.textContent = 'Please enter a Stripe publishable key';
+          return;
+        }
+
+        // Clear previous Stripe element
+        stripeDiv.innerHTML = '';
+
+        // Create address element
+        const addressElement = document.createElement('stripe-address-element');
+
+        // Set attributes
+        addressElement.setAttribute('publishable-key', publishableKey);
+        addressElement.setAttribute('mode', currentMode);
+        addressElement.setAttribute('sheet-title', currentMode === 'billing' ? 'Billing address' : 'Shipping address');
+
+        if (defaultCountry) {
+          addressElement.setAttribute('default-country', defaultCountry.toUpperCase());
+        }
+
+        // Wait for custom element to be defined
+        await customElements.whenDefined('stripe-address-element');
+
+        // Add event listener for form submission
+        addressElement.addEventListener('formSubmit', async (event) => {
+          const { detail: { address } } = event;
+
+          // Display the result
+          resultDiv.innerHTML = `
+            <h3>Address Submitted Successfully!</h3>
+            <p><strong>Mode:</strong> ${currentMode}</p>
+            <pre>${JSON.stringify(address, null, 2)}</pre>
+          `;
+          resultDiv.classList.add('show');
+
+          // Update progress to success
+          await addressElement.updateProgress('success');
+
+          // Reset after 2 seconds
+          setTimeout(() => {
+            addressElement.updateProgress('');
+          }, 2000);
+        });
+
+        // Add Stripe loaded event listener
+        addressElement.addEventListener('stripeLoaded', (event) => {
+          console.log('Stripe loaded:', event.detail.stripe);
+        });
+
+        // Append to DOM
+        stripeDiv.appendChild(addressElement);
+      });
+    </script>
+  </body>
+</html>
