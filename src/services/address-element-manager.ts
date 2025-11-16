@@ -33,7 +33,7 @@ export class AddressElementManager implements IAddressElementManager {
    * @param options - Address element options
    * @returns Promise resolving to address element instance
    */
-  async initialize(containerElement: HTMLElement, options?: any): Promise<StripeAddressElement> {
+  async initialize(containerElement: HTMLElement, options?: import('@stripe/stripe-js').StripeAddressElementOptions): Promise<StripeAddressElement> {
     const elements = this.stripeService.getElements();
 
     if (!elements) {
