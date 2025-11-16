@@ -9,7 +9,7 @@ import type { IStripeService, IAddressElementManager } from '../../services/inte
  * Address form submit event data
  */
 export type AddressSubmitEvent = {
-  address: any;
+  address: { value: import('@stripe/stripe-js').AddressDetails; complete: boolean };
 };
 
 /**
