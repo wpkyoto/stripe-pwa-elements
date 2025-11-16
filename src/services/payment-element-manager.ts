@@ -57,14 +57,8 @@ export class PaymentElementManager implements IPaymentElementManager {
     const paymentElementContainer = await this.findElement(containerElement, '#payment-element');
     this.paymentElement.mount(paymentElementContainer);
 
-    // Handle errors
-    this.paymentElement.on('change', ({ error }) => {
-      if (error) {
-        this.store.set('errorMessage', error.message);
-      } else {
-        this.store.set('errorMessage', '');
-      }
-    });
+    // Note: Payment Element errors are handled during submission
+    // Use setError() method to manually set errors if needed
 
     return this.paymentElement;
   }

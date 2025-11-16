@@ -341,7 +341,7 @@ export class StripePaymentElement {
    * @param event
    * @param param1
    */
-  private async defaultFormSubmitAction(event: Event, { stripe, elements, intentClientSecret }: PaymentElementSubmitEvent) {
+  private async defaultFormSubmitAction(event: Event, { stripe, elements }: PaymentElementSubmitEvent) {
     event.preventDefault();
     try {
       const { intentType } = this;
