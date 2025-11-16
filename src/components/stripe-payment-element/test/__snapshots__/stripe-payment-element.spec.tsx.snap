@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`stripe-payment-element rendering test should load stripe after setting the publishable-key (snapshot) 1`] = `
+<stripe-payment-element class="undefined" publishable-key="pk_test_yyyy">
+  <div class="stripe-payment-sheet-wrap">
+    <form id="stripe-payment-element">
+      <div class="stripe-heading">
+        Add your payment information
+      </div>
+      <div>
+        <div class="stripe-section-title">
+          Payment information
+        </div>
+      </div>
+      <div class="payment-info visible">
+        <div id="payment-element"></div>
+      </div>
+      <div class="stripe-element-errors" id="payment-errors"></div>
+      <div style="margin-top: 32px;">
+        <button disabled="" type="submit">
+          Pay
+        </button>
+      </div>
+    </form>
+  </div>
+</stripe-payment-element>
+`;
+
+exports[`stripe-payment-element rendering test with only api key (button should be disabled) 1`] = `
+<stripe-payment-element class="undefined" publishable-key="pk_test_xxx">
+  <div class="stripe-payment-sheet-wrap">
+    <form id="stripe-payment-element">
+      <div class="stripe-heading">
+        Add your payment information
+      </div>
+      <div>
+        <div class="stripe-section-title">
+          Payment information
+        </div>
+      </div>
+      <div class="payment-info visible">
+        <div id="payment-element"></div>
+      </div>
+      <div class="stripe-element-errors" id="payment-errors"></div>
+      <div style="margin-top: 32px;">
+        <button disabled="" type="submit">
+          Pay
+        </button>
+      </div>
+    </form>
+  </div>
+</stripe-payment-element>
+`;
+
+exports[`stripe-payment-element rendering test with the api key and client secret 1`] = `
+<stripe-payment-element class="undefined" intent-client-secret="pi_xxx_secret_xxx" publishable-key="pk_test_xxx">
+  <div class="stripe-payment-sheet-wrap">
+    <form id="stripe-payment-element">
+      <div class="stripe-heading">
+        Add your payment information
+      </div>
+      <div>
+        <div class="stripe-section-title">
+          Payment information
+        </div>
+      </div>
+      <div class="payment-info visible">
+        <div id="payment-element"></div>
+      </div>
+      <div class="stripe-element-errors" id="payment-errors"></div>
+      <div style="margin-top: 32px;">
+        <button type="submit">
+          Pay
+        </button>
+      </div>
+    </form>
+  </div>
+</stripe-payment-element>
+`;

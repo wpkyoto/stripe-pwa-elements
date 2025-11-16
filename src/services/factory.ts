@@ -1,6 +1,7 @@
-import type { IStripeService, ICardElementManager } from './interfaces';
+import type { IStripeService, ICardElementManager, IPaymentElementManager } from './interfaces';
 import { StripeServiceClass } from './stripe-service';
 import { CardElementManager } from './card-element-manager';
+import { PaymentElementManager } from './payment-element-manager';
 
 /**
  * Service Factory
@@ -21,6 +22,14 @@ export class ServiceFactory {
    */
   createCardElementManager(stripeService: IStripeService): ICardElementManager {
     return new CardElementManager(stripeService);
+  }
+
+  /**
+   * Create a new PaymentElementManager instance
+   * @param stripeService - Injected StripeService dependency
+   */
+  createPaymentElementManager(stripeService: IStripeService): IPaymentElementManager {
+    return new PaymentElementManager(stripeService);
   }
 }
 
