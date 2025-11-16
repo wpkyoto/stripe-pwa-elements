@@ -158,7 +158,7 @@ export class StripeAddressElement {
    * ```
    */
   @Method()
-  public async getValue(): Promise<any> {
+  public async getValue(): Promise<{ value: import('@stripe/stripe-js').AddressDetails; complete: boolean; }> {
     const addressElement = this.addressElementManager.getElement();
     if (!addressElement) {
       throw new Error('Address element not initialized');
