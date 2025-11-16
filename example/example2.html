@@ -8,16 +8,144 @@
     <script nomodule src="/stripe-elements/stripe-elements.js"></script>
   </head>
   <body>
-      <h1>Example2: Simple HTML element</h1>
-      <p>Use component as HTML tag</p>
+      <h1>Example2: Simple HTML Element Usage</h1>
+      <p>
+        <strong>Features of this example:</strong>
+      </p>
+      <ul>
+        <li>Write components directly in HTML (declarative approach)</li>
+        <li>Minimal JavaScript, only setting up event listeners</li>
+        <li>Static attribute configuration, simple and easy to understand</li>
+        <li>Ideal for prototypes and simple demos</li>
+        <li>Easy to use with server-side rendering (SSR) or static sites</li>
+      </ul>
+      <p>
+        <strong>Difference from Example1:</strong>
+        Example1 is a flexible implementation that dynamically creates and controls components with JavaScript,
+        while Example2 is a simple implementation written directly in HTML.
+        In real applications, choose the approach that fits your requirements.
+      </p>
+      <p>
+        <strong>Implementation Pattern:</strong>
+      </p>
+      <pre><code>&lt;!-- Declare components directly in HTML --&gt;
+&lt;stripe-modal open="true"&gt;
+  &lt;stripe-card-element
+    publishable-key="pk_test_xxxxx"
+    intent-client-secret="pi_xxxxxx"
+    should-use-default-form-submit-action="false"
+  &gt;&lt;/stripe-card-element&gt;
+&lt;/stripe-modal&gt;
+
+&lt;script&gt;
+  // Wait for component to be defined, then set up event listener
+  customElements.whenDefined('stripe-card-element')
+    .then(() => {
+      const element = document.querySelector('stripe-card-element');
+      element.addEventListener('formSubmit', async (props) => {
+        const { detail: { stripe, cardNumberElement } } = props;
+        const result = await stripe.createPaymentMethod({
+          type: 'card',
+          card: cardNumberElement,
+        });
+        // Handle result...
+      });
+    });
+&lt;/script&gt;</code></pre>
       <nav>
         <ul>
-          <li><a href="/">Example1</a></li>
-          <li><a href="/example2.html">Example2</a></li>
+          <li><a href="/">Example1: Dynamic Control</a></li>
+          <li><a href="/example2.html">Example2: Static HTML</a></li>
         </ul>
       </nav>
       <div id="result"></div>
 
+      <p>
+        <strong>HTML Structure:</strong>
+      </p>
+      <pre><code>&lt;!-- Modal component - open="true" automatically displays the modal on page load --&gt;
+&lt;stripe-modal open="true"&gt;
+  &lt;stripe-card-element
+    publishable-key="pk_test_xxxxx"
+    show-label="false"
+    intent-client-secret="pi_xxxxxx"
+    should-use-default-form-submit-action="false"
+  &gt;&lt;/stripe-card-element&gt;
+&lt;/stripe-modal&gt;</code></pre>
+      <p>
+        <strong>Attribute explanation:</strong>
+      </p>
+      <ul>
+        <li><code>publishable-key</code>: Stripe publishable key (starts with "pk_test_" for test environment)</li>
+        <li><code>show-label</code>: Whether to show label (false to hide)</li>
+        <li><code>intent-client-secret</code>: Payment Intent client secret (created on server-side)</li>
+        <li><code>should-use-default-form-submit-action</code>: Whether to use default submit handling (false for custom handling)</li>
+      </ul>
+      <p>
+        <small>Note: This example uses hardcoded values. In real applications, you should dynamically set values from the server-side.</small>
+      </p>
+      <p>
+        <strong>Example with server-side rendering:</strong>
+      </p>
+      <pre><code>&lt;!-- Server-side template example (e.g., PHP, Node.js with EJS) --&gt;
+&lt;stripe-card-element
+  publishable-key="&lt;%= stripePublishableKey %&gt;"
+  intent-client-secret="&lt;%= paymentIntentClientSecret %&gt;"
+  should-use-default-form-submit-action="false"
+&gt;&lt;/stripe-card-element&gt;</code></pre>
+      <p>
+        <strong>Example with server-side Payment Intent confirmation:</strong>
+      </p>
+      <pre><code>element.addEventListener('formSubmit', async props => {
+  const { detail: { stripe, cardNumberElement } } = props;
+  
+  // Create Payment Method
+  const { paymentMethod } = await stripe.createPaymentMethod({
+    type: 'card',
+    card: cardNumberElement,
+  });
+  
+  // Send to server to confirm Payment Intent
+  const response = await fetch('/confirm-payment', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      paymentMethodId: paymentMethod.id,
+      paymentIntentId: element.getAttribute('intent-client-secret').split('_secret_')[0],
+    }),
+  });
+  
+  const result = await response.json();
+  if (result.success) {
+    element.updateProgress('success');
+    // Close modal or redirect...
+  }
+});</code></pre>
+      <p>
+        <strong>Server-side code example (Node.js):</strong>
+      </p>
+      <pre><code>// Server-side code (Node.js example)
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+app.post('/confirm-payment', async (req, res) => {
+  const { paymentMethodId, paymentIntentId } = req.body;
+  
+  try {
+    const paymentIntent = await stripe.paymentIntents.confirm(
+      paymentIntentId,
+      { payment_method: paymentMethodId }
+    );
+    
+    res.json({ success: true, paymentIntent });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});</code></pre>
+
+      <!-- 
+        Modal component
+        open="true" automatically displays the modal on page load
+      -->
       <stripe-modal open="true">
           <stripe-card-element
             publishable-key="pk_test_xxxxx"
@@ -28,24 +156,51 @@
       </stripe-modal>
 
     <script>
+        /**
+         * Wait for custom element to be defined, then set up event listener
+         * 
+         * This example adds custom form submit handling to components
+         * written directly in HTML.
+         **/
         customElements.whenDefined('stripe-card-element')
             .then(() => {
+                // Get all stripe-card-element elements in the page
                 const elements = document.getElementsByTagName('stripe-card-element')
                 if (elements.length < 1) return;
+                
+                // Get the first element (only one in this example)
                 const element = elements[0]
+                
+                /**
+                 * Form submit event handler
+                 * 
+                 * This example creates a Payment Method and displays the result, but
+                 * in real applications you should:
+                 * 1. Create Payment Method
+                 * 2. Send to server to confirm Payment Intent
+                 * 3. Close modal on success
+                 * 
+                 * Note: This example does not confirm the Payment Intent.
+                 * In real implementations, Payment Intent should be confirmed on the server-side.
+                 **/
                 element.addEventListener('formSubmit', async props => {
-                const {
-                    detail: { stripe, cardNumber, event },
-                } = props;
-                const result = await stripe.createPaymentMethod({
-                    type: 'card',
-                    card: cardNumber,
-                });
-                element.updateProgress('success');
+                    const {
+                        detail: { stripe, cardNumberElement, event },
+                    } = props;
+                    
+                    // Create Payment Method (pre-step before actual payment processing)
+                    const result = await stripe.createPaymentMethod({
+                        type: 'card',
+                        card: cardNumberElement,
+                    });
+                    
+                    // Update progress state to success
+                    element.updateProgress('success');
 
-                const resultElement = document.getElementById('result')
-                resultElement.innerHTML = `<pre><code>${JSON.stringify(result,null,2)}</code></pre>`
-            });
+                    // Display result
+                    const resultElement = document.getElementById('result')
+                    resultElement.innerHTML = `<pre><code>${JSON.stringify(result,null,2)}</code></pre>`
+                });
 
         })
         

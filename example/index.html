@@ -8,48 +8,105 @@
     <script nomodule src="/stripe-elements/stripe-elements.js"></script>
   </head>
   <body>
-      <h1>Example1: Launch form as a Modal window</h1>
-      <p>Use modal component and controle these component from JavaScript.</p>
+      <h1>Example1: Launch Form as a Modal Window</h1>
+      <p>
+        <strong>Features of this example:</strong>
+      </p>
+      <ul>
+        <li>Dynamically create and control components using JavaScript</li>
+        <li>Accept user input (Stripe API Key, Payment Intent Client Secret)</li>
+        <li>Display card input form inside a modal window</li>
+        <li>Can also use Payment Request Button (Apple Pay, Google Pay, etc.) simultaneously</li>
+        <li>A more flexible implementation pattern closer to real-world applications</li>
+      </ul>
+      <p>
+        <strong>Difference from Example2:</strong>
+        Example2 is a simple example using static HTML tags, while Example1 dynamically generates components
+        and can change settings based on user input, making it a more practical example.
+      </p>
+      <p>
+        <strong>Implementation Pattern:</strong>
+      </p>
+      <pre><code>// 1. Create modal and card element components dynamically
+const modalElement = document.createElement('stripe-modal');
+const stripeElement = document.createElement('stripe-card-element-modal');
+const stripePaymentRequestElement = document.createElement('stripe-payment-request-button');
+
+// 2. Append components to modal (order matters: Payment Request Button first)
+modalElement.appendChild(stripePaymentRequestElement);
+modalElement.appendChild(stripeElement);
+
+// 3. Wait for custom elements to be defined
+await customElements.whenDefined('stripe-modal');
+await customElements.whenDefined('stripe-card-element-modal');
+
+// 4. Initialize Stripe and configure components
+await stripePaymentRequestElement.initStripe(publishableKey);
+stripeElement.setAttribute('publishable-key', publishableKey);
+stripeElement.setAttribute('intent-client-secret', clientSecret);
+
+// 5. Set up custom form submit handler
+stripeElement.addEventListener('formSubmit', async (props) => {
+  const { detail: { stripe, cardNumberElement } } = props;
+  const result = await stripe.createPaymentMethod({
+    type: 'card',
+    card: cardNumberElement,
+  });
+  // Handle result...
+});
+
+// 6. Open modal
+modalElement.setAttribute('open', true);</code></pre>
       <nav>
         <ul>
-          <li><a href="/">Example1</a></li>
-          <li><a href="/example2.html">Example2</a></li>
+          <li><a href="/">Example1: Dynamic Control</a></li>
+          <li><a href="/example2.html">Example2: Static HTML</a></li>
         </ul>
       </nav>
+        <!-- 
+          Get Stripe credentials and Payment Intent from form.
+          In real applications, these values should be obtained from the server-side.
+        -->
         <form id="open-modal-form" name="open-modal-form">
             <div id="error-message"></div>
             <fieldset>
                 <label>
                     <lenged>Stripe Publishable API Key</lenged>
-                    <input name="stripe-publishable-api-key" type="text" />
+                    <input name="stripe-publishable-api-key" type="text" placeholder="pk_test_..." />
+                    <small>Use a key starting with "pk_test_" for test environment</small>
                 </label>
             </fieldset>
             <fieldset>
                 <label>
                     <lenged>Payment Intent Client Secret</lenged>
                     <p>
-                        <small>You can get this attributes by running the Stripe CLI command.</small>
+                        <small>You can get this value using Stripe CLI command:</small>
                         <br/>
                         <code>stripe payment_intents create --amount=100 --currency=jpy | jq .client_secret -r</code>
                     </p>
-                    <input name="intent-client-secret" type="text" />
+                    <input name="intent-client-secret" type="text" placeholder="pi_..." />
                 </label>
             </fieldset>
-            <button type="submit">Launch</button>
+            <button type="submit">Launch Modal</button>
         </form>
       <div id="stripe"></div>
       <div id="result"></div>
 
 
     <script>
+        // Get DOM element references
         const form = document.getElementById('open-modal-form')
         const resultElement = document.getElementById('result')
         const errorMessage = document.getElementById('error-message')
         const targetElement = document.getElementById('stripe');
+        
+        // Create modal component dynamically
+        // This approach allows creating multiple modal instances as needed
         const modalElement = document.createElement('stripe-modal');
 
         /**
-         * Remove Mounted Stripe Elements when the modal has been closed
+         * Remove mounted Stripe Elements when modal is closed
+         * This ensures a clean state when opening the modal next time
          **/
         customElements.whenDefined('stripe-modal')
             .then(() => {
@@ -58,8 +115,11 @@
                 })
             })
 
+        // Handle form submission
         form.addEventListener('submit', async (event) => {
             event.preventDefault()
+            
+            // Validate input values
             const stripePublishableAPIKey = document['open-modal-form']['stripe-publishable-api-key'].value
             if (!stripePublishableAPIKey) {
                 errorMessage.innerText = 'Stripe Publishable API Key is required'
@@ -72,22 +132,43 @@
             }
 
             /**
-             * Define and launch Web Components
+             * Dynamically create Web Components
+             * 
+             * stripe-card-element-modal: Card input component for use inside modal
+             * stripe-payment-request-button: Payment Request API button (Apple Pay, Google Pay, etc.)
+             * 
+             * Note: These components must be placed inside the modal
              **/
             const stripeElement = document.createElement('stripe-card-element-modal');
             const stripePaymentRequestElement = document.createElement('stripe-payment-request-button');
+            
+            // Append components to modal (order matters: Payment Request Button first)
             modalElement.appendChild(stripePaymentRequestElement);
             modalElement.appendChild(stripeElement);
+            
+            // Append modal to DOM
             targetElement.appendChild(modalElement);
 
             /**
-             * Wait for defining these components
+             * Wait for custom elements to be defined
+             * Web Components load asynchronously, so they must be defined before use
              **/
             await customElements.whenDefined('stripe-modal')
             await customElements.whenDefined('stripe-payment-request-button')
             await customElements.whenDefined('stripe-card-element-modal')
+            
             /**
-             * Lauch Payment request button if possible to use
+             * Configure Payment Request Button
+             * 
+             * Settings for displaying native payment buttons (Apple Pay, Google Pay, etc.)
+             * Only displayed when browser and device support it.
+             * 
+             * Parameter explanation:
+             * - country: Country code (e.g., 'JP')
+             * - currency: Currency code (e.g., 'jpy')
+             * - total: Payment total amount and label
+             * - requestShipping: Whether to request shipping information
+             * - requestPayerEmail: Whether to request email address
              **/
             await stripePaymentRequestElement.setPaymentRequestOption({
                 country: 'JP',
@@ -101,41 +182,87 @@
             });
 
             /**
-             * Load Stripe Client
+             * Initialize Stripe client
+             * 
+             * When initializing Stripe via Payment Request Button,
+             * the same instance is shared with the card input component.
              **/
             await stripePaymentRequestElement.initStripe(stripePublishableAPIKey)
+            
+            // Set Publishable Key to card input component
             stripeElement.setAttribute('publishable-key', stripePublishableAPIKey);
-            stripeElement.setAttribute('open', true);
-
-            /**
-             * Set the payment intent client secret
-             **/
+            
+            // Set Payment Intent Client Secret
+            // This is the identifier for the Payment Intent created on the server-side
             stripeElement.setAttribute('intent-client-secret', paymentIntentClientSecret)
+            
+            // Enable integration with Payment Request Button
             stripeElement.setAttribute('payment-request-button', true)
 
             /**
-             * Disable default form submit event
+             * Disable default form submit handling
+             * 
+             * This allows custom logic to control card information submission.
+             * In real applications, Payment Intent should be confirmed/completed on the server-side.
              **/
             stripeElement.setAttribute('should-use-default-form-submit-action', false);
 
             /**
-             * Set custom form submit event manually
+             * Custom form submit event handler
+             * 
+             * This example creates a Payment Method and displays the result, but
+             * in real applications you should:
+             * 1. Create Payment Method
+             * 2. Send to server to confirm Payment Intent
+             * 3. Close modal on success
+             * 
+             * Note: This example does not confirm the Payment Intent.
+             * In real implementations, Payment Intent should be confirmed on the server-side.
+             * 
+             * Example server-side confirmation (Node.js):
+             * <pre><code>// Server-side code (Node.js example)
+             * const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+             * 
+             * app.post('/confirm-payment', async (req, res) => {
+             *   const { paymentMethodId, paymentIntentId } = req.body;
+             *   
+             *   try {
+             *     const paymentIntent = await stripe.paymentIntents.confirm(
+             *       paymentIntentId,
+             *       { payment_method: paymentMethodId }
+             *     );
+             *     
+             *     res.json({ success: true, paymentIntent });
+             *   } catch (error) {
+             *     res.status(400).json({ error: error.message });
+             *   }
+             * });</code></pre>
              **/
             stripeElement.addEventListener('formSubmit', async props => {
               const {
                 detail: { stripe, cardNumberElement, event },
               } = props;
+              
+              // Create Payment Method (pre-step before actual payment processing)
               const result = await stripe.createPaymentMethod({
                 type: 'card',
                 card: cardNumberElement,
               });
+              
+              // Display result
               resultElement.innerHTML = `<pre><code>${JSON.stringify(result,null,2)}</code></pre>`
+              
+              // Update progress state to success
               stripeElement.updateProgress('success');
+              
+              // Close modal
               await modalElement.closeModal()
             });
 
             /**
              * Open modal
+             * 
+             * Setting the 'open' attribute to true displays the modal.
              **/
             modalElement.setAttribute('open', true)
         })
