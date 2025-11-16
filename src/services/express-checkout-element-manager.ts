@@ -1,0 +1,174 @@
+import type { IExpressCheckoutElementManager, IStripeService, ExpressCheckoutElementOptions, ExpressCheckoutElementState, ExpressCheckoutElementEventHandlers } from './interfaces';
+import { StripeExpressCheckoutElement } from '@stripe/stripe-js';
+import { createStore } from '@stencil/store';
+
+/**
+ * Express Checkout Element Manager
+ * Manages Stripe Express Checkout Element
+ * with dependency injection of StripeService
+ */
+export class ExpressCheckoutElementManager implements IExpressCheckoutElementManager {
+  private expressCheckoutElement?: StripeExpressCheckoutElement;
+  private store = createStore<ExpressCheckoutElementState>({
+    errorMessage: '',
+    isReady: false,
+  });
+
+  /**
+   * Constructor with dependency injection
+   * @param stripeService - Injected Stripe service instance
+   */
+  constructor(private stripeService: IStripeService) {}
+
+  /**
+   * Get current express checkout element state (reactive)
+   */
+  getState(): ExpressCheckoutElementState {
+    return this.store.state;
+  }
+
+  /**
+   * Initialize and mount express checkout element to DOM
+   * @param containerElement - Parent element containing mount point
+   * @param options - Express Checkout Element configuration options
+   * @param eventHandlers - Event handlers for element events
+   * @returns Promise resolving to express checkout element instance
+   */
+  async initialize(
+    containerElement: HTMLElement,
+    options: ExpressCheckoutElementOptions,
+    eventHandlers?: ExpressCheckoutElementEventHandlers,
+  ): Promise<StripeExpressCheckoutElement> {
+    const elements = this.stripeService.getElements();
+
+    if (!elements) {
+      throw new Error('StripeService not initialized. Call StripeService.initialize() first.');
+    }
+
+    // Unmount if already initialized
+    if (this.expressCheckoutElement) {
+      this.unmount();
+    }
+
+    // Create express checkout element
+    const expressCheckout = elements.create('expressCheckout', options);
+
+    // Find the mount point
+    const mountPoint = await this.findElement(containerElement, '#express-checkout-element');
+
+    // Set up event handlers before mounting
+    if (eventHandlers?.onConfirm) {
+      expressCheckout.on('confirm', eventHandlers.onConfirm);
+    }
+
+    if (eventHandlers?.onClick) {
+      expressCheckout.on('click', eventHandlers.onClick);
+    }
+
+    if (eventHandlers?.onCancel) {
+      expressCheckout.on('cancel', eventHandlers.onCancel);
+    }
+
+    if (eventHandlers?.onShippingAddressChange) {
+      expressCheckout.on('shippingaddresschange', eventHandlers.onShippingAddressChange);
+    }
+
+    if (eventHandlers?.onShippingRateChange) {
+      expressCheckout.on('shippingratechange', eventHandlers.onShippingRateChange);
+    }
+
+    // Add ready event handler
+    expressCheckout.on('ready', () => {
+      this.store.set('isReady', true);
+    });
+
+    // Mount the element
+    expressCheckout.mount(mountPoint);
+
+    this.expressCheckoutElement = expressCheckout;
+
+    return this.expressCheckoutElement;
+  }
+
+  /**
+   * Get mounted express checkout element instance
+   */
+  getElement(): StripeExpressCheckoutElement | undefined {
+    return this.expressCheckoutElement;
+  }
+
+  /**
+   * Update element options dynamically
+   * @param options - Partial options to update
+   */
+  update(options: Partial<ExpressCheckoutElementOptions>): void {
+    if (!this.expressCheckoutElement) {
+      console.warn('Express Checkout Element not initialized. Cannot update options.');
+      return;
+    }
+
+    this.expressCheckoutElement.update(options);
+  }
+
+  /**
+   * Set error message (triggers reactivity)
+   */
+  setError(message: string): void {
+    this.store.set('errorMessage', message);
+  }
+
+  /**
+   * Clear error message (triggers reactivity)
+   */
+  clearError(): void {
+    this.store.set('errorMessage', '');
+  }
+
+  /**
+   * Unmount express checkout element
+   */
+  unmount(): void {
+    if (!this.expressCheckoutElement) {
+      return;
+    }
+
+    this.expressCheckoutElement.unmount();
+    this.expressCheckoutElement = undefined;
+    this.store.set('isReady', false);
+  }
+
+  /**
+   * Wait for an element to appear in the DOM
+   * @param containerElement - Parent element to search in
+   * @param selector - CSS selector
+   * @param timeout - Timeout in milliseconds (default: 5000ms)
+   * @returns Promise that resolves to the found element or rejects on timeout
+   */
+  private findElement(containerElement: HTMLElement, selector: string, timeout = 5000): Promise<HTMLElement> {
+    return new Promise((resolve, reject) => {
+      const elem = containerElement.querySelector(selector);
+      if (elem) {
+        return resolve(elem as HTMLElement);
+      }
+
+      const timeoutId = setTimeout(() => {
+        observer.disconnect();
+        reject(new Error(`Element "${selector}" not found within ${timeout}ms`));
+      }, timeout);
+
+      const observer = new MutationObserver(() => {
+        const elem = containerElement.querySelector(selector);
+        if (elem) {
+          clearTimeout(timeoutId);
+          observer.disconnect();
+          resolve(elem as HTMLElement);
+        }
+      });
+
+      observer.observe(containerElement, {
+        childList: true,
+        subtree: true,
+      });
+    });
+  }
+}

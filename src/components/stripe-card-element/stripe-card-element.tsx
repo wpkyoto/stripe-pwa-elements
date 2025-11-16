@@ -415,7 +415,7 @@ export class StripeCardElement {
 
       this.defaultFormSubmitResultHandler(result);
     } catch (e) {
-      console.error(e)
+      console.error(e);
       this.defaultFormSubmitResultHandler(e);
       throw e;
     }

@@ -5,10 +5,10 @@ i18next.use(I18nextBrowserLanguageDetector).init({
   fallbackLng: 'en',
   debug: false,
   resources: {
-    en: {
+    'en': {
       translation: {},
     },
-    ja: {
+    'ja': {
       translation: {
         'Pay': '支払う',
         'Failed to load Stripe': 'ライブラリの読み込みに失敗しました。',
@@ -38,7 +38,7 @@ i18next.use(I18nextBrowserLanguageDetector).init({
         'CVC': 'Número de Segurança(CVC)',
         'Country or region': 'País ou região',
         'Postal Code': 'Cep',
-      },      
+      },
     },
   },
 });

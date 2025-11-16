@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
+    <title>Express Checkout Element Example - Stripe PWA Elements</title>
+    <script type="module" src="/stripe-elements/stripe-elements.esm.js"></script>
+    <script nomodule src="/stripe-elements/stripe-elements.js"></script>
+  </head>
+  <body>
+      <nav>
+        <ul>
+          <li><a href="/">Example1: Dynamic Control</a></li>
+          <li><a href="/example2.html">Example2: Static HTML</a></li>
+          <li><a href="/example-express-checkout.html">Example3: Express Checkout</a></li>
+        </ul>
+      </nav>
+
+      <div class="container">
+        <div class="demo-section">
+          <h1>Example3: Express Checkout Element</h1>
+          <p>
+            One-click payment with Apple Pay, Google Pay, Link, and other express payment methods.
+          </p>
+
+          <!--
+            Get Stripe credentials and Payment Intent from form.
+            In real applications, these values should be obtained from the server-side.
+          -->
+          <form id="setup-form" name="setup-form">
+              <div id="error-message"></div>
+              <fieldset>
+                  <label>
+                      <lenged>Stripe Publishable API Key</lenged>
+                      <input name="stripe-publishable-api-key" type="text" placeholder="pk_test_..." />
+                      <small>Use a key starting with "pk_test_" for test environment</small>
+                  </label>
+              </fieldset>
+              <fieldset>
+                  <label>
+                      <lenged>Payment Intent Client Secret</lenged>
+                      <p>
+                          <small>You can get this value using Stripe CLI command:</small>
+                          <br/>
+                          <code>stripe payment_intents create --amount=1099 --currency=usd | jq .client_secret -r</code>
+                      </p>
+                      <input name="client-secret" type="text" placeholder="pi_..." />
+                  </label>
+              </fieldset>
+              <fieldset>
+                  <label>
+                      <lenged>Amount (in cents)</lenged>
+                      <input name="amount" type="number" value="1099" />
+                      <small>e.g., 1099 for $10.99</small>
+                  </label>
+              </fieldset>
+              <fieldset>
+                  <label>
+                      <lenged>Currency</lenged>
+                      <input name="currency" type="text" value="usd" />
+                      <small>Three-letter ISO currency code (e.g., 'usd', 'eur', 'jpy')</small>
+                  </label>
+              </fieldset>
+              <button type="submit">Initialize Express Checkout</button>
+          </form>
+
+          <div id="stripe-container"></div>
+          <div id="result"></div>
+        </div>
+
+        <div class="docs-section">
+          <h2>Documentation</h2>
+          <p>
+            <strong>Features of this example:</strong>
+          </p>
+          <ul>
+            <li>One-click payment with express payment methods (Apple Pay, Google Pay, Link, etc.)</li>
+            <li>Automatic detection of available payment methods based on browser and device</li>
+            <li>Simple integration with minimal code</li>
+            <li>Responsive design that works on all devices</li>
+            <li>Automatic payment confirmation with default handler</li>
+          </ul>
+
+          <p>
+            <strong>Supported Payment Methods:</strong>
+          </p>
+          <ul>
+            <li><strong>Apple Pay</strong> - Available on Safari and iOS devices</li>
+            <li><strong>Google Pay</strong> - Available on Chrome and Android devices</li>
+            <li><strong>Link</strong> - Stripe's one-click checkout solution</li>
+            <li><strong>PayPal</strong> - Available when enabled in Stripe Dashboard</li>
+            <li><strong>Amazon Pay</strong> - Available when enabled in Stripe Dashboard</li>
+          </ul>
+
+          <p>
+            <strong>Implementation Pattern:</strong>
+          </p>
+          <pre><code>// 1. Create express checkout element
+const element = document.createElement('stripe-express-checkout-element');
+
+// 2. Set required attributes
+element.setAttribute('publishable-key', publishableKey);
+element.setAttribute('client-secret', clientSecret);
+element.setAttribute('amount', '1099');
+element.setAttribute('currency', 'usd');
+
+// 3. Append to DOM
+document.getElementById('container').appendChild(element);
+
+// 4. Wait for custom element to be defined
+await customElements.whenDefined('stripe-express-checkout-element');
+
+// 5. Listen for events (optional - default handler confirms payment)
+element.addEventListener('confirm', (event) => {
+  console.log('Payment confirmed', event.detail);
+});
+
+element.addEventListener('cancel', () => {
+  console.log('Payment cancelled');
+});
+
+// 6. Initialize Stripe
+await element.initStripe(publishableKey);</code></pre>
+
+          <p>
+            <strong>Custom Event Handling:</strong>
+          </p>
+          <p>
+            By default, the component automatically confirms the payment. If you need custom logic:
+          </p>
+          <pre><code>// Disable default confirmation
+element.setAttribute('should-use-default-confirm-action', 'false');
+
+// Handle confirmation manually
+element.addEventListener('confirm', async (event) => {
+  const { detail } = event;
+
+  // Your custom logic here
+  // e.g., send to your backend, update UI, etc.
+
+  // Complete the payment
+  event.detail.complete('success');
+  // or on failure:
+  // event.detail.complete('fail');
+});</code></pre>
+
+          <p>
+            <strong>Dynamic Updates:</strong>
+          </p>
+          <pre><code>// Update amount dynamically
+await element.updateElementOptions({
+  amount: 2000,
+  currency: 'eur'
+});</code></pre>
+        </div>
+      </div>
+
+    <script>
+        // Get DOM element references
+        const form = document.getElementById('setup-form');
+        const resultElement = document.getElementById('result');
+        const errorMessageElement = document.getElementById('error-message');
+        const containerElement = document.getElementById('stripe-container');
+
+        // Handle form submission
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            // Clear previous results and errors
+            errorMessageElement.innerText = '';
+            resultElement.innerHTML = '';
+            containerElement.innerHTML = '';
+
+            // Validate input values
+            const publishableKey = document['setup-form']['stripe-publishable-api-key'].value;
+            if (!publishableKey) {
+                errorMessageElement.innerText = 'Stripe Publishable API Key is required';
+                return;
+            }
+
+            const clientSecret = document['setup-form']['client-secret'].value;
+            if (!clientSecret) {
+                errorMessageElement.innerText = 'Payment Intent Client Secret is required';
+                return;
+            }
+
+            const amount = parseInt(document['setup-form']['amount'].value);
+            if (!amount || amount < 1) {
+                errorMessageElement.innerText = 'Amount must be greater than 0';
+                return;
+            }
+
+            const currency = document['setup-form']['currency'].value;
+            if (!currency) {
+                errorMessageElement.innerText = 'Currency is required';
+                return;
+            }
+
+            try {
+                /**
+                 * Create Express Checkout Element
+                 *
+                 * The Express Checkout Element provides one-click payment options
+                 * like Apple Pay, Google Pay, Link, etc.
+                 **/
+                const expressCheckoutElement = document.createElement('stripe-express-checkout-element');
+
+                // Set component attributes
+                expressCheckoutElement.setAttribute('publishable-key', publishableKey);
+                expressCheckoutElement.setAttribute('client-secret', clientSecret);
+                expressCheckoutElement.setAttribute('amount', amount.toString());
+                expressCheckoutElement.setAttribute('currency', currency);
+                expressCheckoutElement.setAttribute('button-height', '48px');
+
+                // Append to DOM
+                containerElement.appendChild(expressCheckoutElement);
+
+                /**
+                 * Wait for custom element to be defined
+                 * Web Components load asynchronously, so they must be defined before use
+                 **/
+                await customElements.whenDefined('stripe-express-checkout-element');
+
+                /**
+                 * Listen for Stripe loaded event
+                 * This event fires when Stripe.js is successfully loaded
+                 **/
+                expressCheckoutElement.addEventListener('stripeLoaded', ({ detail: { stripe } }) => {
+                    console.log('Stripe loaded:', stripe);
+                });
+
+                /**
+                 * Listen for expressCheckoutClick event
+                 * Fired when user clicks on an express checkout button
+                 **/
+                expressCheckoutElement.addEventListener('expressCheckoutClick', ({ detail }) => {
+                    console.log('Express checkout button clicked:', detail);
+                    resultElement.innerHTML = '<p>Processing payment...</p>';
+                });
+
+                /**
+                 * Listen for confirm event
+                 * Fired when payment is being confirmed
+                 *
+                 * Note: By default, the component handles payment confirmation automatically.
+                 * This event is for monitoring/logging purposes.
+                 **/
+                expressCheckoutElement.addEventListener('confirm', ({ detail }) => {
+                    console.log('Payment confirmation in progress:', detail);
+                });
+
+                /**
+                 * Listen for cancel event
+                 * Fired when user cancels the payment flow
+                 **/
+                expressCheckoutElement.addEventListener('cancel', () => {
+                    console.log('Payment cancelled by user');
+                    resultElement.innerHTML = '<p style="color: #666;">Payment cancelled</p>';
+                });
+
+                /**
+                 * Listen for default confirm result
+                 * This event provides the result of the automatic payment confirmation
+                 **/
+                expressCheckoutElement.addEventListener('defaultConfirmResult', ({ detail }) => {
+                    if (detail instanceof Error) {
+                        console.error('Payment failed:', detail);
+                        resultElement.innerHTML = `
+                            <div style="color: #d32f2f; padding: 1rem; background-color: #ffebee; border-radius: 4px;">
+                                <strong>Payment Failed:</strong><br/>
+                                ${detail.message}
+                            </div>
+                        `;
+                    } else {
+                        console.log('Payment successful:', detail);
+                        resultElement.innerHTML = `
+                            <div style="color: #2e7d32; padding: 1rem; background-color: #e8f5e9; border-radius: 4px;">
+                                <strong>Payment Successful!</strong><br/>
+                                <pre><code>${JSON.stringify(detail, null, 2)}</code></pre>
+                            </div>
+                        `;
+                    }
+                });
+
+                /**
+                 * Initialize Stripe
+                 * This loads Stripe.js and initializes the Express Checkout Element
+                 **/
+                await expressCheckoutElement.initStripe(publishableKey);
+
+                console.log('Express Checkout Element initialized successfully');
+
+            } catch (error) {
+                console.error('Error initializing Express Checkout Element:', error);
+                errorMessageElement.innerText = `Error: ${error.message}`;
+            }
+        });
+    </script>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        background-color: #f5f5f5;
+        line-height: 1.6;
+      }
+      nav {
+        background-color: #fff;
+        padding: 1rem;
+        border-bottom: 1px solid #e0e0e0;
+      }
+      nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      nav a {
+        color: #0066cc;
+        text-decoration: none;
+      }
+      nav a:hover {
+        text-decoration: underline;
+      }
+      .container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+      .demo-section,
+      .docs-section {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .demo-section h1,
+      .docs-section h2 {
+        margin-top: 0;
+        color: #333;
+      }
+      .demo-section h1 {
+        font-size: 1.5rem;
+      }
+      .docs-section h2 {
+        font-size: 1.25rem;
+        border-bottom: 2px solid #e0e0e0;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+      }
+      form {
+        margin: 1.5rem 0;
+      }
+      fieldset {
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+      input[type="text"],
+      input[type="number"] {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 1rem;
+      }
+      button[type="submit"] {
+        background-color: #0066cc;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        width: 100%;
+      }
+      button[type="submit"]:hover {
+        background-color: #0052a3;
+      }
+      #error-message {
+        color: #d32f2f;
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+        background-color: #ffebee;
+        border-radius: 4px;
+        min-height: 20px;
+      }
+      #stripe-container {
+        margin-top: 2rem;
+        padding: 1rem;
+        background-color: #f9f9f9;
+        border-radius: 4px;
+        min-height: 100px;
+      }
+      #result {
+        margin-top: 1.5rem;
+      }
+      pre {
+        background-color: #f5f5f5;
+        padding: 1rem;
+        border-radius: 4px;
+        overflow-x: auto;
+        border: 1px solid #e0e0e0;
+      }
+      code {
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        font-size: 0.875rem;
+      }
+      pre code {
+        display: block;
+      }
+      @media (max-width: 768px) {
+        .container {
+          grid-template-columns: 1fr;
+          padding: 1rem;
+        }
+        nav ul {
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+        .demo-section {
+          order: 1;
+        }
+        .docs-section {
+          order: 2;
+        }
+      }
+    </style>
+  </body>
+</html>

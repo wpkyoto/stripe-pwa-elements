@@ -5,10 +5,12 @@ import * as factoryModule from '../../../services/factory';
 
 // Mock loadStripe to avoid actual network calls
 jest.mock('@stripe/stripe-js', () => ({
-  loadStripe: jest.fn(() => Promise.resolve({
-    registerAppInfo: jest.fn(),
-    elements: jest.fn(() => ({})),
-  })),
+  loadStripe: jest.fn(() =>
+    Promise.resolve({
+      registerAppInfo: jest.fn(),
+      elements: jest.fn(() => ({})),
+    }),
+  ),
 }));
 
 // Mock i18n
