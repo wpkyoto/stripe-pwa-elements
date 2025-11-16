@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
+    <title>Stripe Payment Element Example</title>
+    <script type="module" src="/stripe-elements/stripe-elements.esm.js"></script>
+    <script nomodule src="/stripe-elements/stripe-elements.js"></script>
+  </head>
+  <body>
+      <nav>
+        <ul>
+          <li><a href="/">Example1: Dynamic Control</a></li>
+          <li><a href="/example2.html">Example2: Static HTML</a></li>
+          <li><a href="/example3.html">Example3: Payment Element</a></li>
+        </ul>
+      </nav>
+
+      <div class="container">
+        <div class="demo-section">
+          <h1>Example3: Payment Element Usage</h1>
+          <div id="result"></div>
+          <!--
+            Modal component with Payment Element
+            Payment Element is a unified payment form that supports cards, wallets, and other payment methods
+          -->
+          <stripe-modal open="true">
+              <stripe-payment-element
+                publishable-key="pk_test_xxxxx"
+                intent-client-secret="pi_xxxxx_secret_xxxxx"
+                should-use-default-form-submit-action="false"
+              ></stripe-payment-element>
+          </stripe-modal>
+        </div>
+
+        <div class="docs-section">
+          <h2>Documentation</h2>
+          <p>
+            <strong>What is Payment Element?</strong>
+          </p>
+          <p>
+            Payment Element is Stripe's unified payment form component that automatically displays
+            relevant payment methods for your customers. It supports:
+          </p>
+          <ul>
+            <li>Credit and debit cards</li>
+            <li>Digital wallets (Apple Pay, Google Pay)</li>
+            <li>Local payment methods (based on customer location)</li>
+            <li>Buy now, pay later options</li>
+          </ul>
+          <p>
+            <strong>Advantages over Card Element:</strong>
+          </p>
+          <ul>
+            <li>Single component for all payment methods (simpler integration)</li>
+            <li>Automatically adapts to customer location and currency</li>
+            <li>Built-in support for dynamic payment methods</li>
+            <li>Improved conversion rates with optimized UX</li>
+            <li>Easier to maintain and update</li>
+          </ul>
+          <p>
+            <strong>Features of this example:</strong>
+          </p>
+          <ul>
+            <li>Declarative HTML approach with minimal JavaScript</li>
+            <li>Uses Payment Element for unified payment experience</li>
+            <li>Supports PaymentIntent and SetupIntent</li>
+            <li>Custom event handling for form submission</li>
+            <li>Works with server-side rendering (SSR) and static sites</li>
+          </ul>
+          <p>
+            <strong>Implementation Pattern:</strong>
+          </p>
+          <pre><code>&lt;!-- Declare Payment Element in HTML --&gt;
+&lt;stripe-modal open="true"&gt;
+  &lt;stripe-payment-element
+    publishable-key="pk_test_xxxxx"
+    intent-client-secret="pi_xxxxx_secret_xxxxx"
+    should-use-default-form-submit-action="false"
+  &gt;&lt;/stripe-payment-element&gt;
+&lt;/stripe-modal&gt;
+
+&lt;script&gt;
+  // Wait for component to be defined, then set up event listener
+  customElements.whenDefined('stripe-payment-element')
+    .then(() => {
+      const element = document.querySelector('stripe-payment-element');
+      element.addEventListener('defaultFormSubmitResult', async (props) => {
+        const { detail } = props;
+        if (detail instanceof Error) {
+          console.error('Payment failed:', detail);
+          element.updateProgress('failure');
+        } else {
+          console.log('Payment succeeded:', detail);
+          element.updateProgress('success');
+        }
+      });
+    });
+&lt;/script&gt;</code></pre>
+          <p>
+            <strong>HTML Structure:</strong>
+          </p>
+          <pre><code>&lt;stripe-modal open="true"&gt;
+  &lt;stripe-payment-element
+    publishable-key="pk_test_xxxxx"
+    intent-client-secret="pi_xxxxx_secret_xxxxx"
+    should-use-default-form-submit-action="false"
+  &gt;&lt;/stripe-payment-element&gt;
+&lt;/stripe-modal&gt;</code></pre>
+          <p>
+            <strong>Attribute explanation:</strong>
+          </p>
+          <ul>
+            <li><code>publishable-key</code>: Stripe publishable key (starts with "pk_test_" for test environment)</li>
+            <li><code>intent-client-secret</code>: PaymentIntent or SetupIntent client secret (created on server-side)</li>
+            <li><code>should-use-default-form-submit-action</code>: Whether to use default submit handling (true by default)</li>
+            <li><code>intent-type</code>: "payment" (default) or "setup" for saving payment methods</li>
+          </ul>
+          <p>
+            <small>Note: This example uses hardcoded values. In real applications, you should dynamically set values from the server-side.</small>
+          </p>
+          <p>
+            <strong>Server-side setup (Node.js example):</strong>
+          </p>
+          <pre><code>// Server-side code to create PaymentIntent
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+app.post('/create-payment-intent', async (req, res) => {
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: 1099, // Amount in cents
+      currency: 'usd',
+      automatic_payment_methods: {
+        enabled: true, // Enable all available payment methods
+      },
+    });
+
+    res.json({
+      clientSecret: paymentIntent.client_secret,
+    });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});</code></pre>
+          <p>
+            <strong>Using default submit action:</strong>
+          </p>
+          <p>
+            If you set <code>should-use-default-form-submit-action="true"</code> (or omit it, as it's the default),
+            the component will automatically call <code>stripe.confirmPayment()</code> when the form is submitted.
+          </p>
+          <pre><code>&lt;stripe-payment-element
+  publishable-key="pk_test_xxxxx"
+  intent-client-secret="pi_xxxxx_secret_xxxxx"
+  should-use-default-form-submit-action="true"
+&gt;&lt;/stripe-payment-element&gt;
+
+&lt;script&gt;
+  customElements.whenDefined('stripe-payment-element')
+    .then(() => {
+      const element = document.querySelector('stripe-payment-element');
+
+      // Listen for the result of the default submission
+      element.addEventListener('defaultFormSubmitResult', async (props) => {
+        const { detail } = props;
+        if (detail instanceof Error) {
+          // Handle error
+          console.error('Payment failed:', detail.message);
+        } else {
+          // Handle success
+          console.log('Payment succeeded:', detail);
+          // Redirect to success page, close modal, etc.
+        }
+      });
+    });
+&lt;/script&gt;</code></pre>
+          <p>
+            <strong>Custom submit handling:</strong>
+          </p>
+          <pre><code>element.addEventListener('formSubmit', async (props) => {
+  const { detail: { stripe, elements } } = props;
+
+  // Custom payment confirmation with redirect
+  const { error } = await stripe.confirmPayment({
+    elements,
+    confirmParams: {
+      return_url: 'https://example.com/order/confirmation',
+    },
+  });
+
+  if (error) {
+    element.setErrorMessage(error.message);
+    element.updateProgress('failure');
+  } else {
+    // Customer will be redirected to return_url
+    element.updateProgress('success');
+  }
+});</code></pre>
+          <p>
+            <strong>SetupIntent example (saving payment method):</strong>
+          </p>
+          <pre><code>&lt;stripe-payment-element
+  publishable-key="pk_test_xxxxx"
+  intent-client-secret="seti_xxxxx_secret_xxxxx"
+  intent-type="setup"
+  button-label="Save card"
+  sheet-title="Add a card"
+&gt;&lt;/stripe-payment-element&gt;</code></pre>
+        </div>
+      </div>
+
+    <script>
+        /**
+         * Wait for custom element to be defined, then set up event listener
+         *
+         * This example demonstrates using the Payment Element with
+         * default submit handling.
+         **/
+        customElements.whenDefined('stripe-payment-element')
+            .then(() => {
+                // Get all stripe-payment-element elements in the page
+                const elements = document.getElementsByTagName('stripe-payment-element')
+                if (elements.length < 1) return;
+
+                // Get the first element (only one in this example)
+                const element = elements[0]
+
+                /**
+                 * Form submit event handler
+                 *
+                 * This example uses custom handling to demonstrate the API.
+                 * In production, you might use the default submit action instead
+                 * by setting should-use-default-form-submit-action="true"
+                 **/
+                element.addEventListener('formSubmit', async props => {
+                    const {
+                        detail: { stripe, elements },
+                    } = props;
+
+                    // Confirm payment with redirect disabled for demo purposes
+                    const result = await stripe.confirmPayment({
+                      elements,
+                      confirmParams: {
+                        return_url: window.location.href,
+                      },
+                      redirect: 'if_required',
+                    });
+
+                    if (result.error) {
+                      element.setErrorMessage(result.error.message);
+                      element.updateProgress('failure');
+
+                      // Display error
+                      const resultElement = document.getElementById('result')
+                      resultElement.innerHTML = `<div style="color: red;"><strong>Error:</strong> ${result.error.message}</div>`;
+                    } else {
+                      element.updateProgress('success');
+
+                      // Display result
+                      const resultElement = document.getElementById('result')
+                      resultElement.innerHTML = `<div style="color: green;"><strong>Success!</strong></div><pre><code>${JSON.stringify(result, null, 2)}</code></pre>`;
+                    }
+                });
+
+        })
+
+    </script>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        background-color: #f5f5f5;
+        line-height: 1.6;
+      }
+      nav {
+        background-color: #fff;
+        padding: 1rem;
+        border-bottom: 1px solid #e0e0e0;
+      }
+      nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        gap: 1rem;
+      }
+      nav a {
+        color: #0066cc;
+        text-decoration: none;
+      }
+      nav a:hover {
+        text-decoration: underline;
+      }
+      .container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+      .demo-section,
+      .docs-section {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .demo-section h1,
+      .docs-section h2 {
+        margin-top: 0;
+        color: #333;
+      }
+      .demo-section h1 {
+        font-size: 1.5rem;
+      }
+      .docs-section h2 {
+        font-size: 1.25rem;
+        border-bottom: 2px solid #e0e0e0;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+      }
+      #result {
+        margin-top: 1.5rem;
+      }
+      pre {
+        background-color: #f5f5f5;
+        padding: 1rem;
+        border-radius: 4px;
+        overflow-x: auto;
+        border: 1px solid #e0e0e0;
+      }
+      code {
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        font-size: 0.875rem;
+      }
+      pre code {
+        display: block;
+      }
+      @media (max-width: 768px) {
+        .container {
+          grid-template-columns: 1fr;
+          padding: 1rem;
+        }
+        .demo-section {
+          order: 1;
+        }
+        .docs-section {
+          order: 2;
+        }
+      }
+    </style>
+  </body>
+</html>
