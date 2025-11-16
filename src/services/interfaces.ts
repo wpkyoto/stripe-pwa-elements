@@ -128,7 +128,7 @@ export interface IAddressElementManager {
   /**
    * Initialize and mount address element
    */
-  initialize(containerElement: HTMLElement, options?: any): Promise<StripeAddressElement>;
+  initialize(containerElement: HTMLElement, options?: import('@stripe/stripe-js').StripeAddressElementOptions): Promise<StripeAddressElement>;
 
   /**
    * Get mounted address element
