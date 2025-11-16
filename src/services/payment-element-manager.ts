@@ -1,6 +1,6 @@
 import type { IPaymentElementManager, IStripeService, PaymentElementState } from './interfaces';
 import { createStore } from '@stencil/store';
-import type { StripePaymentElement } from '@stripe/stripe-js';
+import type { StripePaymentElement, StripePaymentElementOptions } from '@stripe/stripe-js';
 
 /**
  * Payment Element Manager
@@ -29,10 +29,9 @@ export class PaymentElementManager implements IPaymentElementManager {
   /**
    * Initialize and mount payment element to DOM
    * @param containerElement - Parent element containing mount point
-   * @param options - Payment element options (clientSecret, etc.)
    * @returns Promise resolving to payment element instance
    */
-  async initialize(containerElement: HTMLElement, options?: { clientSecret?: string }): Promise<StripePaymentElement> {
+  async initialize(containerElement: HTMLElement): Promise<StripePaymentElement> {
     const elements = this.stripeService.getElements();
 
     if (!elements) {
@@ -45,10 +44,8 @@ export class PaymentElementManager implements IPaymentElementManager {
     }
 
     // Create payment element with options
-    const elementOptions: any = {};
-    if (options?.clientSecret) {
-      elementOptions.clientSecret = options.clientSecret;
-    }
+    // Note: Payment Element options are typed for better type safety
+    const elementOptions: StripePaymentElementOptions = {};
 
     // Create the payment element
     this.paymentElement = elements.create('payment', elementOptions);

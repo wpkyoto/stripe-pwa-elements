@@ -127,7 +127,7 @@ export interface IPaymentElementManager {
   /**
    * Initialize and mount payment element
    */
-  initialize(containerElement: HTMLElement, options?: { clientSecret?: string }): Promise<StripePaymentElement>;
+  initialize(containerElement: HTMLElement): Promise<StripePaymentElement>;
 
   /**
    * Get mounted payment element

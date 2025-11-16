@@ -39,6 +39,9 @@ export class StripePaymentElement {
   private stripeService: IStripeService;
   private paymentElementManager: IPaymentElementManager;
 
+  // Form submit handler (bound to this instance)
+  private _submitHandler: (e: Event) => Promise<void>;
+
   /**
    * Default submit handle type.
    * If you want to use `setupIntent`, should update this attribute.
@@ -321,7 +324,7 @@ export class StripePaymentElement {
     this.defaultFormSubmitResult.emit(result);
   }
 
-  componentWillUpdate() {
+  componentWillRender() {
     if (!this.stripeService.state.publishableKey) {
       return;
     }
@@ -398,9 +401,7 @@ export class StripePaymentElement {
    */
   private async initElement() {
     // Initialize payment element
-    await this.paymentElementManager.initialize(this.el, {
-      clientSecret: this.intentClientSecret,
-    });
+    await this.paymentElementManager.initialize(this.el);
 
     // Add form submit listener scoped to this component instance
     const formElement = this.el.querySelector('#stripe-payment-element');
@@ -409,7 +410,13 @@ export class StripePaymentElement {
       return;
     }
 
-    formElement.addEventListener('submit', async e => {
+    // Remove existing listener if present to prevent duplicates
+    if (this._submitHandler) {
+      formElement.removeEventListener('submit', this._submitHandler);
+    }
+
+    // Create and store the submit handler
+    this._submitHandler = async (e: Event) => {
       const elements = this.stripeService.getElements();
       const stripe = this.stripeService.getStripe();
       const { intentClientSecret } = this;
@@ -443,7 +450,9 @@ export class StripePaymentElement {
         this.paymentElementManager.setError(e.message);
         this.progress = 'failure';
       }
-    });
+    };
+
+    formElement.addEventListener('submit', this._submitHandler);
   }
 
   componentDidLoad() {
@@ -452,6 +461,14 @@ export class StripePaymentElement {
 
   disconnectedCallback() {
     this.paymentElementManager.unmount();
+
+    // Remove event listener to prevent memory leaks
+    if (this._submitHandler) {
+      const formElement = this.el.querySelector('#stripe-payment-element');
+      if (formElement) {
+        formElement.removeEventListener('submit', this._submitHandler);
+      }
+    }
   }
 
   render() {

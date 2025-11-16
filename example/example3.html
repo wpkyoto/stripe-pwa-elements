@@ -250,15 +250,39 @@ app.post('/create-payment-intent', async (req, res) => {
                       element.setErrorMessage(result.error.message);
                       element.updateProgress('failure');
 
-                      // Display error
-                      const resultElement = document.getElementById('result')
-                      resultElement.innerHTML = `<div style="color: red;"><strong>Error:</strong> ${result.error.message}</div>`;
+                      // Display error (using DOM manipulation to prevent XSS)
+                      const resultElement = document.getElementById('result');
+                      resultElement.innerHTML = ''; // Clear previous content
+
+                      const errorDiv = document.createElement('div');
+                      errorDiv.style.color = 'red';
+
+                      const strongTag = document.createElement('strong');
+                      strongTag.textContent = 'Error: ';
+                      errorDiv.appendChild(strongTag);
+
+                      errorDiv.appendChild(document.createTextNode(result.error.message));
+                      resultElement.appendChild(errorDiv);
                     } else {
                       element.updateProgress('success');
 
-                      // Display result
-                      const resultElement = document.getElementById('result')
-                      resultElement.innerHTML = `<div style="color: green;"><strong>Success!</strong></div><pre><code>${JSON.stringify(result, null, 2)}</code></pre>`;
+                      // Display result (using DOM manipulation to prevent XSS)
+                      const resultElement = document.getElementById('result');
+                      resultElement.innerHTML = ''; // Clear previous content
+
+                      const successDiv = document.createElement('div');
+                      successDiv.style.color = 'green';
+
+                      const strongTag = document.createElement('strong');
+                      strongTag.textContent = 'Success!';
+                      successDiv.appendChild(strongTag);
+                      resultElement.appendChild(successDiv);
+
+                      const pre = document.createElement('pre');
+                      const code = document.createElement('code');
+                      code.textContent = JSON.stringify(result, null, 2);
+                      pre.appendChild(code);
+                      resultElement.appendChild(pre);
                     }
                 });
 
