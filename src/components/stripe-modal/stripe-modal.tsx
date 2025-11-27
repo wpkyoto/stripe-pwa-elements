@@ -54,7 +54,7 @@ export class StripeModal {
   @Event() close: EventEmitter;
 
   componentDidLoad() {
-    const platformName = checkPlatform()
+    const platformName = checkPlatform();
     if (platformName) this.el.classList.add(platformName);
   }
 

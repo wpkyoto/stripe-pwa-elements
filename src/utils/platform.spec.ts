@@ -286,7 +286,6 @@ describe('platform utilities', () => {
   });
 
   describe('isPlatform', () => {
-
     it('should return true for matching platform (window and string arguments)', () => {
       const win = {
         navigator: {
