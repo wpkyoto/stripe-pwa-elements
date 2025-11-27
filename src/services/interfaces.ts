@@ -1,4 +1,15 @@
-import { Stripe, StripeElements, StripeCardNumberElement, StripeCardExpiryElement, StripeCardCvcElement } from '@stripe/stripe-js';
+import {
+  Stripe,
+  StripeElements,
+  StripeCardNumberElement,
+  StripeCardExpiryElement,
+  StripeCardCvcElement,
+  StripeExpressCheckoutElement,
+  StripeExpressCheckoutElementConfirmEvent,
+  StripeExpressCheckoutElementClickEvent,
+  StripeExpressCheckoutElementShippingAddressChangeEvent,
+  StripeExpressCheckoutElementShippingRateChangeEvent,
+} from '@stripe/stripe-js';
 import { ProgressStatus } from '../interfaces';
 
 /**
@@ -103,6 +114,96 @@ export interface ICardElementManager {
 
   /**
    * Unmount all card elements
+   */
+  unmount(): void;
+}
+
+/**
+ * Express Checkout Element options
+ */
+export type ExpressCheckoutElementOptions = {
+  mode?: 'payment' | 'setup' | 'subscription';
+  amount?: number;
+  currency?: string;
+  paymentMethods?: {
+    applePay?: 'never' | 'always' | 'auto';
+    googlePay?: 'never' | 'always' | 'auto';
+    link?: 'never' | 'always' | 'auto';
+    paypal?: 'never' | 'always' | 'auto';
+    amazonPay?: 'never' | 'always' | 'auto';
+  };
+  buttonType?: {
+    applePay?: 'buy' | 'donate' | 'plain' | 'book' | 'check-out' | 'subscribe';
+    googlePay?: 'buy' | 'donate' | 'plain' | 'book' | 'checkout' | 'order' | 'pay' | 'subscribe';
+  };
+  buttonTheme?: {
+    applePay?: 'black' | 'white' | 'white-outline';
+    googlePay?: 'black' | 'white';
+  };
+  buttonHeight?: string;
+  layout?: {
+    maxColumns?: number;
+    maxRows?: number;
+    overflow?: 'auto' | 'never';
+  };
+};
+
+/**
+ * Express Checkout Element state
+ */
+export type ExpressCheckoutElementState = {
+  errorMessage: string;
+  isReady: boolean;
+};
+
+/**
+ * Express Checkout Element event handlers
+ */
+export type ExpressCheckoutElementEventHandlers = {
+  onConfirm?: (event: StripeExpressCheckoutElementConfirmEvent) => void | Promise<void>;
+  onClick?: (event: StripeExpressCheckoutElementClickEvent) => void | Promise<void>;
+  onCancel?: () => void | Promise<void>;
+  onShippingAddressChange?: (event: StripeExpressCheckoutElementShippingAddressChangeEvent) => void | Promise<void>;
+  onShippingRateChange?: (event: StripeExpressCheckoutElementShippingRateChangeEvent) => void | Promise<void>;
+};
+
+/**
+ * Express Checkout Element manager interface
+ * Manages Stripe Express Checkout Element
+ */
+export interface IExpressCheckoutElementManager {
+  /**
+   * Get express checkout element state
+   */
+  getState(): ExpressCheckoutElementState;
+
+  /**
+   * Initialize and mount express checkout element
+   */
+  initialize(containerElement: HTMLElement, options: ExpressCheckoutElementOptions, eventHandlers?: ExpressCheckoutElementEventHandlers): Promise<StripeExpressCheckoutElement>;
+
+  /**
+   * Get mounted express checkout element
+   */
+  getElement(): StripeExpressCheckoutElement | undefined;
+
+  /**
+   * Update element options
+   */
+  update(options: Partial<ExpressCheckoutElementOptions>): void;
+
+  /**
+   * Set error message
+   */
+  setError(message: string): void;
+
+  /**
+   * Clear error message
+   */
+  clearError(): void;
+
+  /**
+   * Unmount express checkout element
    */
   unmount(): void;
 }

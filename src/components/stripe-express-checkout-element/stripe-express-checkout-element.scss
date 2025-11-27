@@ -1,0 +1,29 @@
+@import '../../style/theme.scss';
+
+.stripe-express-checkout-wrap {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 1rem 0;
+
+  #express-checkout-element {
+    margin-bottom: 1rem;
+  }
+
+  .stripe-element-errors {
+    color: var(--stripe-error-color, #fa755a);
+    font-size: 14px;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background-color: var(--stripe-error-bg, #fff5f5);
+    border: 1px solid var(--stripe-error-border, #fdd);
+    border-radius: 4px;
+  }
+
+  .stripe-express-checkout-loading {
+    text-align: center;
+    padding: 1rem;
+    color: var(--stripe-loading-color, #6772e5);
+    font-size: 14px;
+  }
+}
