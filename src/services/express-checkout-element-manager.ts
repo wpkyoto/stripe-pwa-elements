@@ -1,6 +1,7 @@
 import type { IExpressCheckoutElementManager, IStripeService, ExpressCheckoutElementOptions, ExpressCheckoutElementState, ExpressCheckoutElementEventHandlers } from './interfaces';
 import { StripeExpressCheckoutElement } from '@stripe/stripe-js';
 import { createStore } from '@stencil/store';
+import { ElementNotFoundError } from '../utils/error';
 
 /**
  * Express Checkout Element Manager
@@ -153,7 +154,7 @@ export class ExpressCheckoutElementManager implements IExpressCheckoutElementMan
 
       const timeoutId = setTimeout(() => {
         observer.disconnect();
-        reject(new Error(`Element "${selector}" not found within ${timeout}ms`));
+        reject(new ElementNotFoundError(selector, timeout));
       }, timeout);
 
       const observer = new MutationObserver(() => {

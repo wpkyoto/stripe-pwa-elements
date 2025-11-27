@@ -361,7 +361,7 @@ export class StripeExpressCheckoutElement {
             elements: this.stripeService.getElements(),
             clientSecret,
             confirmParams: {
-              return_url: window.location.href,
+              return_url: `${window.location.origin}${window.location.pathname}`,
             },
             redirect: 'if_required',
           });
@@ -371,7 +371,7 @@ export class StripeExpressCheckoutElement {
           elements: this.stripeService.getElements(),
           clientSecret,
           confirmParams: {
-            return_url: window.location.href,
+            return_url: `${window.location.origin}${window.location.pathname}`,
           },
           redirect: 'if_required',
         });

@@ -1,6 +1,7 @@
 import type { ICardElementManager, IStripeService, CardElementInstances, CardElementState } from './interfaces';
 import { i18n } from '../utils/i18n';
 import { createStore } from '@stencil/store';
+import { ElementNotFoundError } from '../utils/error';
 
 /**
  * Card Element Manager
@@ -147,7 +148,7 @@ export class CardElementManager implements ICardElementManager {
 
       const timeoutId = setTimeout(() => {
         observer.disconnect();
-        reject(new Error(`Element "${selector}" not found within ${timeout}ms`));
+        reject(new ElementNotFoundError(selector, timeout));
       }, timeout);
 
       const observer = new MutationObserver(() => {

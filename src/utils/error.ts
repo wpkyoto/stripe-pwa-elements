@@ -18,3 +18,18 @@ export class StripeAPIError extends Error {
     this.type = error.type;
   }
 }
+
+/**
+ * Error thrown when an element is not found in the DOM within the timeout period
+ */
+export class ElementNotFoundError extends Error {
+  selector: string;
+  timeout: number;
+
+  constructor(selector: string, timeout: number) {
+    super(`Element "${selector}" not found within ${timeout}ms`);
+    this.name = 'ElementNotFoundError';
+    this.selector = selector;
+    this.timeout = timeout;
+  }
+}
