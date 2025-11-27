@@ -326,7 +326,7 @@ export class StripeAddressElement {
    */
   private async initElement() {
     // Prepare address element options
-    const addressOptions: any = {
+    const addressOptions: import('@stripe/stripe-js').StripeAddressElementOptions = {
       mode: this.mode,
     };
 
