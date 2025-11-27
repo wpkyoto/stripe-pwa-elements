@@ -292,9 +292,10 @@ document.body.appendChild(addressElement);</code></pre>
           await addressElement.updateProgress('success');
 
           // Reset after 2 seconds
+          const RESET_TIMEOUT = 2000;
           setTimeout(() => {
             addressElement.updateProgress('');
-          }, 2000);
+          }, RESET_TIMEOUT);
         });
 
         // Add Stripe loaded event listener
