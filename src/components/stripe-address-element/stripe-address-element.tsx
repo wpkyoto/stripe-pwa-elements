@@ -428,7 +428,7 @@ export class StripeAddressElement {
           <div id="address-errors" class="stripe-element-errors">
             {errorMessage}
           </div>
-          <div style={{ marginTop: '32px' }}>
+          <div class="submit-button-wrapper">
             <button type="submit" disabled={disabled}>
               {this.progress === 'loading' ? i18n.t('Loading') : i18n.t(this.buttonLabel)}
             </button>
