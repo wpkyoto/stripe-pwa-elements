@@ -12,30 +12,33 @@
 
     <script>
       const targetElement = document.getElementById('stripe');
-      const paymentSheetModal = document.createElement('stripe-payment-sheet');
-      targetElement.appendChild(paymentSheetModal);
+      const paymentSheetElement = document.createElement('stripe-card-element');
+      targetElement.appendChild(paymentSheetElement);
       customElements
-        .whenDefined('stripe-payment-sheet')
+        .whenDefined('stripe-card-element')
         .then(() => {
-          paymentSheetModal.setAttribute('publishable-key', 'pk_test_51EMxG7KVC4SfzSeak35hZaAe91cpzKZE9eOQcVWpa7owYJeS30avCAF0lT1QUMKTbzepTIYgAgjly4AmgZuxxkcS00kQ40cBLe');
-          paymentSheetModal.setAttribute('open', true);
-          paymentSheetModal.setAttribute('zip', true);
-          paymentSheetModal.setAttribute('intent-client-secret', 'pi_3P03tlKzMYim9cy30Mrnv2xs_secret_xAOM1PdqEDq4mFfg1ff8pOjOm')
-          //paymentSheetModal.setAttribute('sheet-title', 'Custom')
-          //paymentSheetModal.setAttribute('button-label', 'Custom')
-          paymentSheetModal.setPaymentRequestButton({
-            country: 'JP',
-            currency: 'jpy',
-            total: {
-              label: 'Total',
-              amount: 100,
-            },
-            requestShipping: false,
-            requestPayerEmail: true,
+          paymentSheetElement.setAttribute('publishable-key', 'pk_test_51EMxG7KVC4SfzSeak35hZaAe91cpzKZE9eOQcVWpa7owYJeS30avCAF0lT1QUMKTbzepTIYgAgjly4AmgZuxxkcS00kQ40cBLe');
+          paymentSheetElement.setAttribute('zip', 'true');
+          paymentSheetElement.setAttribute('intent-client-secret', 'pi_3P03tlKzMYim9cy30Mrnv2xs_secret_xAOM1PdqEDq4mFfg1ff8pOjOm');
+          paymentSheetElement.setAttribute('show-payment-request-button', 'true');
+          //paymentSheetElement.setAttribute('sheet-title', 'Custom')
+          //paymentSheetElement.setAttribute('button-label', 'Custom')
+          // Wait for Stripe to load before setting payment request options
+          paymentSheetElement.addEventListener('stripeLoaded', () => {
+            paymentSheetElement.setPaymentRequestOption({
+              country: 'JP',
+              currency: 'jpy',
+              total: {
+                label: 'Total',
+                amount: 100,
+              },
+              requestShipping: false,
+              requestPayerEmail: true,
+            });
           });
         })
         .catch(e => {
-          console.log(e);
+          console.error('Error initializing stripe-card-element:', e);
         });
 
       /*
