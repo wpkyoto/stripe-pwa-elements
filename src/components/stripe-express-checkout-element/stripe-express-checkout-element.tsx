@@ -418,6 +418,7 @@ export class StripeExpressCheckoutElement {
       // Convert string like "48px" to number for Stripe API
       if (typeof this.buttonHeight === 'string') {
         const height = parseInt(this.buttonHeight.replace('px', ''), 10);
+
         if (!isNaN(height)) {
           elementOptions.buttonHeight = height;
         }

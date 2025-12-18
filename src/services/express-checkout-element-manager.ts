@@ -53,8 +53,10 @@ export class ExpressCheckoutElementManager implements IExpressCheckoutElementMan
 
     // Convert buttonHeight from string to number if present
     const createOptions: any = { ...options };
+
     if (createOptions.buttonHeight && typeof createOptions.buttonHeight === 'string') {
       const height = parseInt(createOptions.buttonHeight.replace('px', ''), 10);
+
       if (!isNaN(height)) {
         createOptions.buttonHeight = height;
       }
@@ -121,8 +123,10 @@ export class ExpressCheckoutElementManager implements IExpressCheckoutElementMan
 
     // Convert buttonHeight from string to number if present
     const updateOptions: any = { ...options };
+
     if (updateOptions.buttonHeight && typeof updateOptions.buttonHeight === 'string') {
       const height = parseInt(updateOptions.buttonHeight.replace('px', ''), 10);
+
       if (!isNaN(height)) {
         updateOptions.buttonHeight = height;
       }
