@@ -51,8 +51,19 @@ export class ExpressCheckoutElementManager implements IExpressCheckoutElementMan
       this.unmount();
     }
 
+    // Convert buttonHeight from string to number if present
+    const createOptions: any = { ...options };
+    if (createOptions.buttonHeight && typeof createOptions.buttonHeight === 'string') {
+      const height = parseInt(createOptions.buttonHeight.replace('px', ''), 10);
+      if (!isNaN(height)) {
+        createOptions.buttonHeight = height;
+      }
+    }
+
     // Create express checkout element
-    const expressCheckout = elements.create('expressCheckout', options);
+    // Note: 'expressCheckout' is not yet in the official Stripe type definitions
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const expressCheckout = elements.create('expressCheckout' as any, createOptions as any) as unknown as StripeExpressCheckoutElement;
 
     // Find the mount point
     const mountPoint = await findElement(containerElement, '#express-checkout-element');
@@ -108,7 +119,17 @@ export class ExpressCheckoutElementManager implements IExpressCheckoutElementMan
       return;
     }
 
-    this.expressCheckoutElement.update(options);
+    // Convert buttonHeight from string to number if present
+    const updateOptions: any = { ...options };
+    if (updateOptions.buttonHeight && typeof updateOptions.buttonHeight === 'string') {
+      const height = parseInt(updateOptions.buttonHeight.replace('px', ''), 10);
+      if (!isNaN(height)) {
+        updateOptions.buttonHeight = height;
+      }
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.expressCheckoutElement.update(updateOptions as any);
   }
 
   /**

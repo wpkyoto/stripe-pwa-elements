@@ -382,13 +382,16 @@ export class StripeExpressCheckoutElement {
       }
 
       // Complete the payment in the Express Checkout Element
-      event.complete('success');
+      // Note: complete() method exists at runtime but is not in type definitions yet
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (event as any).complete('success');
 
       this.progress = 'success';
       this.defaultConfirmResultHandler(result);
     } catch (e) {
       console.error(e);
-      event.complete('fail');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (event as any).complete('fail');
       this.expressCheckoutManager.setError(e.message);
       this.progress = 'failure';
       this.defaultConfirmResultHandler(e);
@@ -412,7 +415,15 @@ export class StripeExpressCheckoutElement {
     }
 
     if (this.buttonHeight) {
-      elementOptions.buttonHeight = this.buttonHeight;
+      // Convert string like "48px" to number for Stripe API
+      if (typeof this.buttonHeight === 'string') {
+        const height = parseInt(this.buttonHeight.replace('px', ''), 10);
+        if (!isNaN(height)) {
+          elementOptions.buttonHeight = height;
+        }
+      } else {
+        elementOptions.buttonHeight = this.buttonHeight;
+      }
     }
 
     // Initialize express checkout element with event handlers

@@ -2,6 +2,7 @@
 
 <!-- Auto Generated Below -->
 
+
 ## Overview
 
 Express Checkout Element Component
@@ -22,6 +23,7 @@ Provides one-click payment methods (Apple Pay, Google Pay, Link, PayPal, etc.)
 | `stripeAccount`                 | `stripe-account`                    | Optional. Making API calls for connected accounts                                                                                                                          | `string`                                      | `undefined`             |
 | `stripeDidLoaded`               | --                                  | Stripe.js class loaded handler                                                                                                                                             | `(event: StripeLoadedEvent) => Promise<void>` | `undefined`             |
 
+
 ## Events
 
 | Event                  | Description                                                                        | Type                                                                                                                                                                                                                                       |
@@ -31,6 +33,7 @@ Provides one-click payment methods (Apple Pay, Google Pay, Link, PayPal, etc.)
 | `defaultConfirmResult` | Receive the result of default confirm action                                       | `CustomEvent<Error \| { paymentIntent: PaymentIntent; error?: undefined; } \| { paymentIntent?: undefined; error: StripeError; } \| { setupIntent: SetupIntent; error?: undefined; } \| { setupIntent?: undefined; error: StripeError; }>` |
 | `expressCheckoutClick` | Express Checkout click event Fired when user clicks on an express checkout button  | `CustomEvent<StripeExpressCheckoutElementClickEvent>`                                                                                                                                                                                      |
 | `stripeLoaded`         | Stripe Client loaded event                                                         | `CustomEvent<{ stripe: Stripe; }>`                                                                                                                                                                                                         |
+
 
 ## Methods
 
@@ -49,6 +52,8 @@ Get Stripe.js, and initialize elements
 
 Type: `Promise<void>`
 
+
+
 ### `setErrorMessage(errorMessage: string) => Promise<this>`
 
 Set error message
@@ -63,19 +68,23 @@ Set error message
 
 Type: `Promise<this>`
 
+
+
 ### `updateElementOptions(options: Partial<ExpressCheckoutElementOptions>) => Promise<this>`
 
 Update element options dynamically
 
 #### Parameters
 
-| Name      | Type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Description                 |
-| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
-| `options` | `{ mode?: "payment" \| "subscription" \| "setup"; amount?: number; currency?: string; paymentMethods?: { applePay?: "auto" \| "always" \| "never"; googlePay?: "auto" \| "always" \| "never"; link?: "auto" \| "always" \| "never"; paypal?: "auto" \| "always" \| "never"; amazonPay?: "auto" \| "always" \| "never"; }; buttonType?: { applePay?: "book" \| "buy" \| "check-out" \| "donate" \| "plain" \| "subscribe"; googlePay?: "order" \| "book" \| "buy" \| "donate" \| "plain" \| "subscribe" \| "checkout" \| "pay"; }; buttonTheme?: { applePay?: "black" \| "white" \| "white-outline"; googlePay?: "black" \| "white"; }; buttonHeight?: string; layout?: { maxColumns?: number; maxRows?: number; overflow?: "auto" \| "never"; }; }` | - Partial options to update |
+| Name      | Type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Description                 |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| `options` | `{ mode?: "payment" \| "subscription" \| "setup"; amount?: number; currency?: string; paymentMethods?: { applePay?: "auto" \| "always" \| "never"; googlePay?: "auto" \| "always" \| "never"; link?: "auto" \| "always" \| "never"; paypal?: "auto" \| "always" \| "never"; amazonPay?: "auto" \| "always" \| "never"; }; buttonType?: { applePay?: "book" \| "buy" \| "check-out" \| "donate" \| "plain" \| "subscribe"; googlePay?: "order" \| "book" \| "buy" \| "donate" \| "plain" \| "subscribe" \| "checkout" \| "pay"; }; buttonTheme?: { applePay?: "black" \| "white" \| "white-outline"; googlePay?: "black" \| "white"; }; buttonHeight?: string \| number; layout?: { maxColumns?: number; maxRows?: number; overflow?: "auto" \| "never"; }; }` | - Partial options to update |
 
 #### Returns
 
 Type: `Promise<this>`
+
+
 
 ### `updateProgress(progress: ProgressStatus) => Promise<this>`
 
@@ -91,6 +100,9 @@ Update the progress status
 
 Type: `Promise<this>`
 
----
 
-_Built with [StencilJS](https://stenciljs.com/)_
+
+
+----------------------------------------------
+
+*Built with [StencilJS](https://stenciljs.com/)*

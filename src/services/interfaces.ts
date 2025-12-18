@@ -229,7 +229,7 @@ export type ExpressCheckoutElementOptions = {
     applePay?: 'black' | 'white' | 'white-outline';
     googlePay?: 'black' | 'white';
   };
-  buttonHeight?: string;
+  buttonHeight?: string | number;
   layout?: {
     maxColumns?: number;
     maxRows?: number;
