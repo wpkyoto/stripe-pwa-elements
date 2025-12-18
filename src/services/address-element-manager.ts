@@ -49,6 +49,7 @@ export class AddressElementManager implements IAddressElementManager {
     this.addressElement = elements.create('address', options || { mode: 'billing' });
 
     const addressElementContainer = await this.findElement(containerElement, '#address-element');
+
     this.addressElement.mount(addressElementContainer);
 
     // Listen for changes
@@ -105,6 +106,7 @@ export class AddressElementManager implements IAddressElementManager {
   private findElement(containerElement: HTMLElement, selector: string, timeout = 5000): Promise<HTMLElement> {
     return new Promise((resolve, reject) => {
       const elem = containerElement.querySelector(selector);
+
       if (elem) {
         return resolve(elem as HTMLElement);
       }
@@ -116,6 +118,7 @@ export class AddressElementManager implements IAddressElementManager {
 
       const observer = new MutationObserver(() => {
         const elem = containerElement.querySelector(selector);
+
         if (elem) {
           clearTimeout(timeoutId);
           observer.disconnect();
