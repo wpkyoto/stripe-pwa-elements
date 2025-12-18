@@ -169,11 +169,13 @@ export class StripeAddressElement {
     complete: boolean;
   }> {
     const addressElement = this.addressElementManager.getElement();
+
     if (!addressElement) {
       throw new Error('Address element not initialized');
     }
 
     const result = await addressElement.getValue();
+
     return result;
   }
 
@@ -202,6 +204,7 @@ export class StripeAddressElement {
   @Watch('stripeAccount')
   updateStripeAccountId(stripeAccount: string) {
     const publishableKey = this.stripeService.state.publishableKey || this.publishableKey;
+
     if (!publishableKey) {
       return;
     }
@@ -355,6 +358,7 @@ export class StripeAddressElement {
 
     // Add form submit listener scoped to this component instance
     const formElement = this.el.querySelector('#stripe-address-element-form');
+
     if (!formElement) {
       console.error('Form element #stripe-address-element-form not found');
       return;
@@ -392,6 +396,7 @@ export class StripeAddressElement {
         }
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
+
         this.addressElementManager.setError(errorMessage);
         this.progress = 'failure';
       }
@@ -408,9 +413,11 @@ export class StripeAddressElement {
     // Remove form submit listener
     if (this.formSubmitListener) {
       const formElement = this.el.querySelector('#stripe-address-element-form');
+
       if (formElement) {
         formElement.removeEventListener('submit', this.formSubmitListener);
       }
+
       this.formSubmitListener = undefined;
     }
 

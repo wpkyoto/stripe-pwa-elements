@@ -50,6 +50,7 @@ export class AddressElementManager implements IAddressElementManager {
     this.addressElement = elements.create('address', options || { mode: 'billing' });
 
     const addressElementContainer = await findElement(containerElement, '#address-element');
+
     this.addressElement.mount(addressElementContainer);
 
     // Listen for changes

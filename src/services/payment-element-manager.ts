@@ -53,6 +53,7 @@ export class PaymentElementManager implements IPaymentElementManager {
 
     // Find mount point and mount
     const paymentElementContainer = await findElement(containerElement, '#payment-element');
+
     this.paymentElement.mount(paymentElementContainer);
 
     // Note: Payment Element errors are handled during submission

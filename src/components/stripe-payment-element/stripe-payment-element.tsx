@@ -407,6 +407,7 @@ export class StripePaymentElement {
 
     // Add form submit listener scoped to this component instance
     const formElement = this.el.querySelector('#stripe-payment-element');
+
     if (!formElement) {
       console.error('Form element #stripe-payment-element not found');
       return;
@@ -450,6 +451,7 @@ export class StripePaymentElement {
         }
       } catch (e) {
         const errorMessage = e instanceof Error ? e.message : String(e);
+
         this.paymentElementManager.setError(errorMessage);
         this.progress = 'failure';
       }
@@ -468,6 +470,7 @@ export class StripePaymentElement {
     // Remove event listener to prevent memory leaks
     if (this._submitHandler) {
       const formElement = this.el.querySelector('#stripe-payment-element');
+
       if (formElement) {
         formElement.removeEventListener('submit', this._submitHandler);
       }

@@ -50,18 +50,21 @@ export class CardElementManager implements ICardElementManager {
       placeholder: i18n.t('Card Number'),
     });
     const cardNumberElement = await findElement(containerElement, '#card-number');
+
     cardNumber.mount(cardNumberElement);
     cardNumber.on('change', this.handleCardError('cardNumber'));
 
     // Create and mount card expiry element
     const cardExpiry = elements.create('cardExpiry');
     const cardExpiryElement = await findElement(containerElement, '#card-expiry');
+
     cardExpiry.mount(cardExpiryElement);
     cardExpiry.on('change', this.handleCardError('cardExpiry'));
 
     // Create and mount card CVC element
     const cardCVC = elements.create('cardCvc');
     const cardCVCElement = await findElement(containerElement, '#card-cvc');
+
     cardCVC.mount(cardCVCElement);
     cardCVC.on('change', this.handleCardError('cardCvc'));
 
