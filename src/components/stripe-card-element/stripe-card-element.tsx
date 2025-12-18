@@ -190,6 +190,7 @@ export class StripeCardElement {
   @Watch('stripeAccount')
   updateStripeAccountId(stripeAccount: string) {
     const publishableKey = this.stripeService.state.publishableKey || this.publishableKey;
+
     if (!publishableKey) {
       return;
     }
@@ -448,6 +449,7 @@ export class StripeCardElement {
 
     // Add form submit listener scoped to this component instance
     const formElement = this.el.querySelector('#stripe-card-element');
+
     if (!formElement) {
       console.error('Form element #stripe-card-element not found');
       return;
@@ -516,10 +518,12 @@ export class StripeCardElement {
     }
 
     const targetElement = this.el.querySelector('#stripe-payment-request-button');
+
     if (!targetElement) {
       console.error('Target element #stripe-payment-request-button not found');
       return null;
     }
+
     const stripePaymentRequestElement = document.createElement('stripe-payment-request-button');
 
     targetElement.appendChild(stripePaymentRequestElement);
