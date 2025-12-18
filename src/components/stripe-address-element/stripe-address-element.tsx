@@ -9,7 +9,10 @@ import type { IStripeService, IAddressElementManager } from '../../services/inte
  * Address form submit event data
  */
 export type AddressSubmitEvent = {
-  address: { value: import('@stripe/stripe-js').AddressDetails; complete: boolean };
+  address: {
+    value: import('@stripe/stripe-js').StripeAddressElementChangeEvent['value'];
+    complete: boolean;
+  };
 };
 
 /**
@@ -161,7 +164,10 @@ export class StripeAddressElement {
    * ```
    */
   @Method()
-  public async getValue(): Promise<{ value: import('@stripe/stripe-js').AddressDetails; complete: boolean }> {
+  public async getValue(): Promise<{
+    value: import('@stripe/stripe-js').StripeAddressElementChangeEvent['value'];
+    complete: boolean;
+  }> {
     const addressElement = this.addressElementManager.getElement();
     if (!addressElement) {
       throw new Error('Address element not initialized');

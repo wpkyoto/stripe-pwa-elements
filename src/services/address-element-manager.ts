@@ -53,8 +53,12 @@ export class AddressElementManager implements IAddressElementManager {
 
     // Listen for changes
     this.addressElement.on('change', event => {
-      if (event.error) {
-        this.store.set('errorMessage', event.error.message);
+      // StripeAddressElementChangeEvent doesn't have an error property
+      // Errors are handled through the complete property and validation
+      if (!event.complete && !event.empty) {
+        // Address is incomplete but has some input
+        // You can set a custom error message here if needed
+        this.store.set('errorMessage', '');
       } else {
         this.store.set('errorMessage', '');
       }
