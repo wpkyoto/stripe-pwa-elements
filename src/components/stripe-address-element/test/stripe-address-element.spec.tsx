@@ -1,6 +1,6 @@
 import { newSpecPage } from '@stencil/core/testing';
-import { StripeCardElement } from '../stripe-card-element';
-import type { IStripeService, ICardElementManager } from '../../../services/interfaces';
+import { StripeAddressElement } from '../stripe-address-element';
+import type { IStripeService, IAddressElementManager } from '../../../services/interfaces';
 import * as factoryModule from '../../../services/factory';
 
 // Mock loadStripe to avoid actual network calls
@@ -22,9 +22,9 @@ jest.mock('../../../utils/i18n', () => ({
 
 // Mock service implementations
 let mockStripeService: jest.Mocked<IStripeService>;
-let mockCardElementManager: jest.Mocked<ICardElementManager>;
+let mockAddressElementManager: jest.Mocked<IAddressElementManager>;
 
-describe('stripe-card-element', () => {
+describe('stripe-address-element', () => {
   // Set up mocks before each test
   beforeEach(() => {
     // Create fresh mock implementations
@@ -45,17 +45,13 @@ describe('stripe-card-element', () => {
       dispose: jest.fn(),
     } as any;
 
-    mockCardElementManager = {
+    mockAddressElementManager = {
       getState: jest.fn().mockReturnValue({
         errorMessage: '',
-        errorSource: undefined,
+        isComplete: false,
       }),
-      initialize: jest.fn().mockResolvedValue({
-        cardNumber: {} as any,
-        cardExpiry: {} as any,
-        cardCVC: {} as any,
-      }),
-      getElements: jest.fn().mockReturnValue(undefined),
+      initialize: jest.fn().mockResolvedValue({} as any),
+      getElement: jest.fn().mockReturnValue(undefined),
       setError: jest.fn(),
       clearError: jest.fn(),
       unmount: jest.fn(),
@@ -63,7 +59,7 @@ describe('stripe-card-element', () => {
 
     // Spy on factory methods to return our mocks
     jest.spyOn(factoryModule.serviceFactory, 'createStripeService').mockReturnValue(mockStripeService);
-    jest.spyOn(factoryModule.serviceFactory, 'createCardElementManager').mockReturnValue(mockCardElementManager);
+    jest.spyOn(factoryModule.serviceFactory, 'createAddressElementManager').mockReturnValue(mockAddressElementManager);
   });
 
   afterEach(() => {
@@ -71,11 +67,24 @@ describe('stripe-card-element', () => {
   });
 
   describe('method test', () => {
-    let element: StripeCardElement = new StripeCardElement();
+    let element: StripeAddressElement = new StripeAddressElement();
 
     describe('#componentWillUpdate', () => {
       beforeEach(() => {
-        element = new StripeCardElement();
+        element = new StripeAddressElement();
+
+        // Mock element.el (host element) using defineProperty
+        Object.defineProperty(element, 'el', {
+          value: {
+            querySelector: jest.fn(),
+            classList: {
+              add: jest.fn(),
+            },
+          },
+          writable: true,
+          configurable: true,
+        });
+
         element.initStripe = jest.fn();
       });
       it.each([['' as const], ['failure' as const]])('If the publishableKey is not provided, should not call initStripe method(status: %s)', async loadingStatus => {
@@ -101,35 +110,55 @@ describe('stripe-card-element', () => {
         },
       );
     });
+
     describe('#setErrorMessage', () => {
       beforeEach(() => {
-        element = new StripeCardElement();
+        element = new StripeAddressElement();
+
+        // Mock element.el (host element) using defineProperty
+        Object.defineProperty(element, 'el', {
+          value: {
+            querySelector: jest.fn(),
+            classList: {
+              add: jest.fn(),
+            },
+          },
+          writable: true,
+          configurable: true,
+        });
       });
       it('should set the certain error message', async () => {
         const message = 'Error message is here';
 
         await element.setErrorMessage(message);
-        expect(mockCardElementManager.setError).toHaveBeenCalledWith(message);
+        expect(mockAddressElementManager.setError).toHaveBeenCalledWith(message);
       });
     });
+
     describe('#initStripe', () => {
       beforeEach(() => {
-        element = new StripeCardElement();
+        element = new StripeAddressElement();
 
-        // Mock element.el.querySelector for form submission listener
+        // Mock element.el (host element) using defineProperty
         const mockFormElement = {
           addEventListener: jest.fn(),
+          removeEventListener: jest.fn(),
         };
-        jest.spyOn(element.el, 'querySelector').mockReturnValue(mockFormElement as any);
+        Object.defineProperty(element, 'el', {
+          value: {
+            querySelector: jest.fn().mockReturnValue(mockFormElement),
+            classList: {
+              add: jest.fn(),
+            },
+          },
+          writable: true,
+          configurable: true,
+        });
 
         // Mock successful initialization
         mockStripeService.state.loadStripeStatus = 'success';
         mockStripeService.initialize.mockResolvedValue(undefined);
-        mockCardElementManager.initialize.mockResolvedValue({
-          cardNumber: {} as any,
-          cardExpiry: {} as any,
-          cardCVC: {} as any,
-        });
+        mockAddressElementManager.initialize.mockResolvedValue({} as any);
       });
 
       it('should call stripeService.initialize with correct parameters', async () => {
@@ -152,28 +181,44 @@ describe('stripe-card-element', () => {
         });
       });
     });
+
     describe('#updateStripeAccountId', () => {
       beforeEach(() => {
-        element = new StripeCardElement();
-        element.initStripe = jest.fn();
-        mockStripeService.state.publishableKey = 'pk_test_xxxx';
-      });
-      it('When call this, should call the #initStripe method only one time', async () => {
-        await element.updateStripeAccountId('acct_xxx');
-        expect(element.initStripe).toHaveBeenCalledTimes(1);
-      });
-      it('When call this, should call the #initStripe method with expected props', async () => {
-        await element.updateStripeAccountId('acct_xxx');
-        expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxxx', {
-          stripeAccount: 'acct_xxx',
+        element = new StripeAddressElement();
+
+        // Mock element.el (host element) using defineProperty
+        Object.defineProperty(element, 'el', {
+          value: {
+            querySelector: jest.fn(),
+            classList: {
+              add: jest.fn(),
+            },
+          },
+          writable: true,
+          configurable: true,
         });
+
+        element.initStripe = jest.fn();
       });
 
       it('Should not call initStripe when publishableKey is not set', async () => {
         mockStripeService.state.publishableKey = undefined;
-        element.publishableKey = undefined;
         await element.updateStripeAccountId('acct_xxx');
         expect(element.initStripe).toHaveBeenCalledTimes(0);
+      });
+
+      it('When call this, should call the #initStripe method only one time', async () => {
+        mockStripeService.state.publishableKey = 'pk_test_xxxx';
+        await element.updateStripeAccountId('acct_xxx');
+        expect(element.initStripe).toHaveBeenCalledTimes(1);
+      });
+
+      it('When call this, should call the #initStripe method with expected props', async () => {
+        mockStripeService.state.publishableKey = 'pk_test_xxxx';
+        await element.updateStripeAccountId('acct_xxx');
+        expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxxx', {
+          stripeAccount: 'acct_xxx',
+        });
       });
 
       it('Should fallback to publishableKey prop when service state is not initialized', async () => {
@@ -203,7 +248,20 @@ describe('stripe-card-element', () => {
 
     describe('#updatePublishableKey', () => {
       beforeEach(() => {
-        element = new StripeCardElement();
+        element = new StripeAddressElement();
+
+        // Mock element.el (host element) using defineProperty
+        Object.defineProperty(element, 'el', {
+          value: {
+            querySelector: jest.fn(),
+            classList: {
+              add: jest.fn(),
+            },
+          },
+          writable: true,
+          configurable: true,
+        });
+
         element.initStripe = jest.fn();
       });
       it('When call this, should call the #initStripe method only one time', async () => {
@@ -248,40 +306,43 @@ describe('stripe-card-element', () => {
       });
     });
   });
+
   describe('rendering test', () => {
     it('with the api key', async () => {
       const page = await newSpecPage({
-        components: [StripeCardElement],
-        html: `<stripe-card-element publishable-key='pk_test_xxx'></stripe-card-element>`,
+        components: [StripeAddressElement],
+        html: `<stripe-address-element publishable-key='pk_test_xxx'></stripe-address-element>`,
       });
 
       expect(page.root).toMatchSnapshot();
     });
 
-    it('api key and zip code props', async () => {
+    it('api key and mode props', async () => {
       const page = await newSpecPage({
-        components: [StripeCardElement],
-        html: `<stripe-card-element zip="false"  publishable-key='pk_test_xxx'></stripe-card-element>`,
+        components: [StripeAddressElement],
+        html: `<stripe-address-element mode="shipping" publishable-key='pk_test_xxx'></stripe-address-element>`,
       });
 
       expect(page.root).toMatchSnapshot();
     });
+
     it('should load stripe after setting the publishable-key', async () => {
       const page = await newSpecPage({
-        components: [StripeCardElement],
-        html: `<stripe-card-element></stripe-card-element>`,
+        components: [StripeAddressElement],
+        html: `<stripe-address-element></stripe-address-element>`,
       });
 
       // Without publishable-key, the form should still render (no failure state)
-      expect(page.root.textContent).toContain('Add your payment information');
+      expect(page.root.textContent).toContain('Billing address');
       page.root.setAttribute('publishable-key', 'yyyy');
       await page.waitForChanges();
-      expect(page.root.textContent).toContain('Add your payment information');
+      expect(page.root.textContent).toContain('Billing address');
     });
+
     it('should load stripe after setting the publishable-key (snapshot)', async () => {
       const page = await newSpecPage({
-        components: [StripeCardElement],
-        html: `<stripe-card-element zip="false"'></stripe-card-element>`,
+        components: [StripeAddressElement],
+        html: `<stripe-address-element></stripe-address-element>`,
       });
 
       page.root.setAttribute('publishable-key', 'yyyy');

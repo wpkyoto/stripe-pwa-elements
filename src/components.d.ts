@@ -5,13 +5,94 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { AddressSubmitEvent, AddressSubmitHandler } from "./components/stripe-address-element/stripe-address-element";
 import { DefaultFormSubmitResult, FormSubmitEvent, FormSubmitHandler, InitStripeOptions, IntentType, PaymentRequestButtonOption, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
 import { PaymentElementSubmitEvent, PaymentElementSubmitHandler } from "./components/stripe-payment-element/stripe-payment-element";
 import { PaymentRequestOptions, PaymentRequestWallet } from "@stripe/stripe-js";
+export { AddressSubmitEvent, AddressSubmitHandler } from "./components/stripe-address-element/stripe-address-element";
 export { DefaultFormSubmitResult, FormSubmitEvent, FormSubmitHandler, InitStripeOptions, IntentType, PaymentRequestButtonOption, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
 export { PaymentElementSubmitEvent, PaymentElementSubmitHandler } from "./components/stripe-payment-element/stripe-payment-element";
 export { PaymentRequestOptions, PaymentRequestWallet } from "@stripe/stripe-js";
 export namespace Components {
+    interface StripeAddressElement {
+        /**
+          * Allowed countries (array of country codes)
+         */
+        "allowedCountries"?: string[];
+        /**
+          * Overwrite the application name that registered For wrapper library (like Capacitor)
+          * @default 'stripe-pwa-elements'
+         */
+        "applicationName": string;
+        /**
+          * Submit button label By default we recommended to use these string - 'Save' or 'Continue' These strings will translated automatically by this library.
+          * @default 'Save'
+         */
+        "buttonLabel": string;
+        /**
+          * Default country code (e.g., 'US', 'JP', 'GB')
+         */
+        "defaultCountry"?: string;
+        /**
+          * Get the current address value
+          * @returns Promise resolving to the address value
+          * @example ``` const stripeElement = document.querySelector('stripe-address-element'); const addressValue = await stripeElement.getValue(); console.log('Address:', addressValue); ```
+         */
+        "getValue": () => Promise<{ value: import("@stripe/stripe-js").StripeAddressElementChangeEvent["value"]; complete: boolean; }>;
+        /**
+          * Form submit event handler
+         */
+        "handleSubmit": AddressSubmitHandler;
+        /**
+          * Get Stripe.js, and initialize elements
+          * @param publishableKey
+          * @param options
+          * @example ``` const stripeElement = document.createElement('stripe-address-element'); customElements  .whenDefined('stripe-address-element')  .then(() => {    stripeElement.initStripe('pk_test_XXXXXXXXX')  }) ```
+         */
+        "initStripe": (publishableKey: string, options?: InitStripeOptions) => Promise<void>;
+        /**
+          * Address mode: 'shipping' or 'billing'
+          * @default 'billing'
+         */
+        "mode": 'shipping' | 'billing';
+        /**
+          * Your Stripe publishable API key.
+         */
+        "publishableKey": string;
+        /**
+          * Set error message
+          * @param errorMessage string
+          * @returns 
+          * @example ``` const stripeElement = document.createElement('stripe-address-element'); customElements  .whenDefined('stripe-address-element')  .then(() => {    stripeElement.addEventListener('formSubmit', async props => {      try {        throw new Error('debug')      } catch (e) {        stripeElement.setErrorMessage(`Error: ${e.message}`)        stripeElement.updateProgress('failure')      }   }); }) ```
+         */
+        "setErrorMessage": (errorMessage: string) => Promise<this>;
+        /**
+          * Form title By default we recommended to use these string - 'Shipping address' for shipping mode - 'Billing address' for billing mode These strings will translated automatically by this library.
+          * @default 'Billing address'
+         */
+        "sheetTitle": string;
+        /**
+          * Show the form label
+          * @default false
+         */
+        "showLabel": boolean;
+        /**
+          * Optional. Making API calls for connected accounts
+          * @info https://stripe.com/docs/connect/authentication
+         */
+        "stripeAccount": string;
+        /**
+          * Stripe.js class loaded handler
+         */
+        "stripeDidLoaded"?: StripeDidLoadedHandler;
+        /**
+          * Update the form submit progress
+          * @param progress
+          * @returns 
+          * @example ``` const stripeElement = document.createElement('stripe-address-element'); customElements  .whenDefined('stripe-address-element')  .then(() => {    stripeElement.addEventListener('formSubmit', async props => {      const { detail: { address } } = props;      console.log('Address:', address);      stripeElement.updateProgress('success')    }); }) ```
+         */
+        "updateProgress": (progress: ProgressStatus) => Promise<this>;
+    }
     interface StripeCardElement {
         /**
           * Overwrite the application name that registered For wrapper library (like Capacitor)
@@ -348,6 +429,10 @@ export namespace Components {
         "stripeDidLoaded"?: StripeDidLoadedHandler;
     }
 }
+export interface StripeAddressElementCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLStripeAddressElementElement;
+}
 export interface StripeCardElementCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLStripeCardElementElement;
@@ -369,6 +454,24 @@ export interface StripePaymentRequestButtonCustomEvent<T> extends CustomEvent<T>
     target: HTMLStripePaymentRequestButtonElement;
 }
 declare global {
+    interface HTMLStripeAddressElementElementEventMap {
+        "stripeLoaded": StripeLoadedEvent;
+        "formSubmit": AddressSubmitEvent;
+    }
+    interface HTMLStripeAddressElementElement extends Components.StripeAddressElement, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLStripeAddressElementElementEventMap>(type: K, listener: (this: HTMLStripeAddressElementElement, ev: StripeAddressElementCustomEvent<HTMLStripeAddressElementElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLStripeAddressElementElementEventMap>(type: K, listener: (this: HTMLStripeAddressElementElement, ev: StripeAddressElementCustomEvent<HTMLStripeAddressElementElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLStripeAddressElementElement: {
+        prototype: HTMLStripeAddressElementElement;
+        new (): HTMLStripeAddressElementElement;
+    };
     interface HTMLStripeCardElementElementEventMap {
         "stripeLoaded": StripeLoadedEvent;
         "formSubmit": FormSubmitEvent;
@@ -459,6 +562,7 @@ declare global {
         new (): HTMLStripePaymentRequestButtonElement;
     };
     interface HTMLElementTagNameMap {
+        "stripe-address-element": HTMLStripeAddressElementElement;
         "stripe-card-element": HTMLStripeCardElementElement;
         "stripe-card-element-modal": HTMLStripeCardElementModalElement;
         "stripe-modal": HTMLStripeModalElement;
@@ -467,6 +571,68 @@ declare global {
     }
 }
 declare namespace LocalJSX {
+    interface StripeAddressElement {
+        /**
+          * Allowed countries (array of country codes)
+         */
+        "allowedCountries"?: string[];
+        /**
+          * Overwrite the application name that registered For wrapper library (like Capacitor)
+          * @default 'stripe-pwa-elements'
+         */
+        "applicationName"?: string;
+        /**
+          * Submit button label By default we recommended to use these string - 'Save' or 'Continue' These strings will translated automatically by this library.
+          * @default 'Save'
+         */
+        "buttonLabel"?: string;
+        /**
+          * Default country code (e.g., 'US', 'JP', 'GB')
+         */
+        "defaultCountry"?: string;
+        /**
+          * Form submit event handler
+         */
+        "handleSubmit"?: AddressSubmitHandler;
+        /**
+          * Address mode: 'shipping' or 'billing'
+          * @default 'billing'
+         */
+        "mode"?: 'shipping' | 'billing';
+        /**
+          * Form submit event
+          * @example ``` const stripeElement = document.createElement('stripe-address-element'); customElements  .whenDefined('stripe-address-element')  .then(() => {     stripeElement       .addEventListener('formSubmit', async props => {         const { detail: { address } } = props;         console.log('Address submitted:', address);       })   }) ```
+         */
+        "onFormSubmit"?: (event: StripeAddressElementCustomEvent<AddressSubmitEvent>) => void;
+        /**
+          * Stripe Client loaded event
+          * @example ``` const stripeElement = document.createElement('stripe-address-element'); customElements  .whenDefined('stripe-address-element')  .then(() => {     stripeElement      .addEventListener('stripeLoaded', async ({ detail: {stripe} }) => {        console.log('Stripe loaded:', stripe);       });   }) ```
+         */
+        "onStripeLoaded"?: (event: StripeAddressElementCustomEvent<StripeLoadedEvent>) => void;
+        /**
+          * Your Stripe publishable API key.
+         */
+        "publishableKey"?: string;
+        /**
+          * Form title By default we recommended to use these string - 'Shipping address' for shipping mode - 'Billing address' for billing mode These strings will translated automatically by this library.
+          * @default 'Billing address'
+         */
+        "sheetTitle"?: string;
+        /**
+          * Show the form label
+          * @default false
+         */
+        "showLabel"?: boolean;
+        /**
+          * Optional. Making API calls for connected accounts
+          * @info https://stripe.com/docs/connect/authentication
+         */
+        "stripeAccount"?: string;
+        /**
+          * Stripe.js class loaded handler
+         */
+        "stripeDidLoaded"?: StripeDidLoadedHandler;
+    }
     interface StripeCardElement {
         /**
           * Overwrite the application name that registered For wrapper library (like Capacitor)
@@ -734,6 +900,7 @@ declare namespace LocalJSX {
         "stripeDidLoaded"?: StripeDidLoadedHandler;
     }
     interface IntrinsicElements {
+        "stripe-address-element": StripeAddressElement;
         "stripe-card-element": StripeCardElement;
         "stripe-card-element-modal": StripeCardElementModal;
         "stripe-modal": StripeModal;
@@ -745,6 +912,7 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "stripe-address-element": LocalJSX.StripeAddressElement & JSXBase.HTMLAttributes<HTMLStripeAddressElementElement>;
             "stripe-card-element": LocalJSX.StripeCardElement & JSXBase.HTMLAttributes<HTMLStripeCardElementElement>;
             "stripe-card-element-modal": LocalJSX.StripeCardElementModal & JSXBase.HTMLAttributes<HTMLStripeCardElementModalElement>;
             "stripe-modal": LocalJSX.StripeModal & JSXBase.HTMLAttributes<HTMLStripeModalElement>;

@@ -175,10 +175,11 @@ export class StripeCardElement {
   updatePublishableKey(publishableKey: string) {
     const options: InitStripeOptions = {};
 
-    options.stripeAccount = this.stripeService.state.stripeAccount;
-    const hasOptionValue = Object.values(options).filter(Boolean).length > 0;
+    if (this.stripeAccount) {
+      options.stripeAccount = this.stripeAccount;
+    }
 
-    this.initStripe(publishableKey, hasOptionValue ? options : undefined);
+    this.initStripe(publishableKey, Object.keys(options).length ? options : undefined);
   }
 
   /**
@@ -188,8 +189,13 @@ export class StripeCardElement {
   @Prop() stripeAccount: string;
   @Watch('stripeAccount')
   updateStripeAccountId(stripeAccount: string) {
-    this.initStripe(this.stripeService.state.publishableKey, {
-      stripeAccount: stripeAccount,
+    const publishableKey = this.stripeService.state.publishableKey || this.publishableKey;
+    if (!publishableKey) {
+      return;
+    }
+
+    this.initStripe(publishableKey, {
+      stripeAccount,
     });
   }
 
@@ -415,7 +421,7 @@ export class StripeCardElement {
 
       this.defaultFormSubmitResultHandler(result);
     } catch (e) {
-      console.error(e)
+      console.error(e);
       this.defaultFormSubmitResultHandler(e);
       throw e;
     }
