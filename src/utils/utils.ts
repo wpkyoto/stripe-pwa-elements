@@ -27,7 +27,7 @@ export const waitForElm = (el: HTMLStripeCardElementElement, selector: string): 
 
     observer.observe(el, {
       childList: true,
-      subtree: true
+      subtree: true,
     });
   });
-}
+};

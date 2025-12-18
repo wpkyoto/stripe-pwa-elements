@@ -76,4 +76,4 @@ export type DefaultFormSubmitResult = Error | PaymentIntentResult | SetupIntentR
  */
 export type InitStripeOptions = {
   stripeAccount?: string;
-}
+};
