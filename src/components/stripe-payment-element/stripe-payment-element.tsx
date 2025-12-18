@@ -48,7 +48,7 @@ export class StripePaymentElement {
    * Default submit handle type.
    * If you want to use `setupIntent`, should update this attribute.
    */
-  @Prop() intentType: IntentType = 'payment';
+  @Prop() readonly intentType: IntentType = 'payment';
 
   /**
    * Payment sheet title
@@ -57,7 +57,7 @@ export class StripePaymentElement {
    * - 'Add a card' -> PaymentFlow(iOS)
    * These strings will translated automatically by this library.
    */
-  @Prop() sheetTitle = 'Add your payment information';
+  @Prop() readonly sheetTitle = 'Add your payment information';
 
   /**
    * Submit button label
@@ -68,7 +68,7 @@ export class StripePaymentElement {
    * - 'Add a card' -> PaymentFlow(iOS)
    * These strings will translated automatically by this library.
    */
-  @Prop() buttonLabel = 'Pay';
+  @Prop() readonly buttonLabel = 'Pay';
 
   /**
    * Get Stripe.js, and initialize elements
@@ -157,7 +157,7 @@ export class StripePaymentElement {
   /**
    * Your Stripe publishable API key.
    */
-  @Prop() publishableKey: string;
+  @Prop() readonly publishableKey: string;
 
   @Watch('publishableKey')
   updatePublishableKey(publishableKey: string) {
@@ -173,7 +173,7 @@ export class StripePaymentElement {
    * Optional. Making API calls for connected accounts
    * @info https://stripe.com/docs/connect/authentication
    */
-  @Prop() stripeAccount: string;
+  @Prop() readonly stripeAccount: string;
 
   @Watch('stripeAccount')
   updateStripeAccountId(stripeAccount: string) {
@@ -186,7 +186,7 @@ export class StripePaymentElement {
    * Overwrite the application name that registered
    * For wrapper library (like Capacitor)
    */
-  @Prop() applicationName = 'stripe-pwa-elements';
+  @Prop() readonly applicationName = 'stripe-pwa-elements';
 
   /**
    * The client secret from paymentIntent.create or setupIntent.create response
@@ -206,7 +206,7 @@ export class StripePaymentElement {
    * <stripe-payment-element intent-client-secret="pi_xxx_secret_xxx" />
    * ```
    */
-  @Prop() intentClientSecret?: string;
+  @Prop() readonly intentClientSecret?: string;
 
   @Watch('intentClientSecret')
   async updateIntentClientSecret() {
@@ -221,7 +221,7 @@ export class StripePaymentElement {
    * If you want to customize the behavior, should set false.
    * And listen the 'formSubmit' event on the element
    */
-  @Prop() shouldUseDefaultFormSubmitAction = true;
+  @Prop() readonly shouldUseDefaultFormSubmitAction = true;
 
   /**
    * Form submit event handler
