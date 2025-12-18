@@ -186,10 +186,11 @@ export class StripeAddressElement {
   updatePublishableKey(publishableKey: string) {
     const options: InitStripeOptions = {};
 
-    options.stripeAccount = this.stripeService.state.stripeAccount;
-    const hasOptionValue = Object.values(options).filter(Boolean).length > 0;
+    if (this.stripeAccount) {
+      options.stripeAccount = this.stripeAccount;
+    }
 
-    this.initStripe(publishableKey, hasOptionValue ? options : undefined);
+    this.initStripe(publishableKey, Object.keys(options).length ? options : undefined);
   }
 
   /**
@@ -200,12 +201,13 @@ export class StripeAddressElement {
 
   @Watch('stripeAccount')
   updateStripeAccountId(stripeAccount: string) {
-    if (!this.stripeService.state.publishableKey) {
+    const publishableKey = this.stripeService.state.publishableKey || this.publishableKey;
+    if (!publishableKey) {
       return;
     }
 
-    this.initStripe(this.stripeService.state.publishableKey, {
-      stripeAccount: stripeAccount,
+    this.initStripe(publishableKey, {
+      stripeAccount,
     });
   }
 
