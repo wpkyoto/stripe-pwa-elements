@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 export type Platforms = keyof typeof PLATFORMS_MAP;
 
 interface IsPlatformSignature {
