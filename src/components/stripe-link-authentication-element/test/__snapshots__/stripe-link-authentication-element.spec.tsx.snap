@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`stripe-link-authentication-element rendering test with default email 1`] = `
+<stripe-link-authentication-element class="undefined" default-email="test@example.com" publishable-key="pk_test_xxx">
+  <div class="stripe-link-authentication-wrap">
+    <div class="stripe-link-authentication-container">
+      <div id="link-authentication-element"></div>
+      <div class="stripe-element-errors" id="link-authentication-errors"></div>
+    </div>
+  </div>
+</stripe-link-authentication-element>
+`;
+
+exports[`stripe-link-authentication-element rendering test with the api key 1`] = `
+<stripe-link-authentication-element class="undefined" publishable-key="pk_test_xxx">
+  <div class="stripe-link-authentication-wrap">
+    <div class="stripe-link-authentication-container">
+      <div id="link-authentication-element"></div>
+      <div class="stripe-element-errors" id="link-authentication-errors"></div>
+    </div>
+  </div>
+</stripe-link-authentication-element>
+`;
