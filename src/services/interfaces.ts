@@ -1,4 +1,13 @@
-import { Stripe, StripeElements, StripeCardNumberElement, StripeCardExpiryElement, StripeCardCvcElement, StripePaymentElement, StripeAddressElement } from '@stripe/stripe-js';
+import {
+  Stripe,
+  StripeElements,
+  StripeCardNumberElement,
+  StripeCardExpiryElement,
+  StripeCardCvcElement,
+  StripePaymentElement,
+  StripeAddressElement,
+  StripeCurrencySelectorElement,
+} from '@stripe/stripe-js';
 import { ProgressStatus } from '../interfaces';
 
 /**
@@ -190,6 +199,51 @@ export interface IAddressElementManager {
 
   /**
    * Unmount address element
+   */
+  unmount(): void;
+}
+
+/**
+ * Currency Selector element state
+ */
+export type CurrencySelectorElementState = {
+  errorMessage: string;
+  selectedCurrency?: string;
+};
+
+/**
+ * Currency Selector Element manager interface
+ * Manages Stripe Currency Selector Element
+ */
+export interface ICurrencySelectorElementManager {
+  /**
+   * Get currency selector element state
+   */
+  getState(): CurrencySelectorElementState;
+
+  /**
+   * Initialize and mount currency selector element
+   * Note: StripeCurrencySelectorElementOptions is not yet exported in @stripe/stripe-js v8.6.0
+   */
+  initialize(containerElement: HTMLElement, options?: any): Promise<StripeCurrencySelectorElement>;
+
+  /**
+   * Get mounted currency selector element
+   */
+  getElement(): StripeCurrencySelectorElement | undefined;
+
+  /**
+   * Set error message
+   */
+  setError(message: string): void;
+
+  /**
+   * Clear error message
+   */
+  clearError(): void;
+
+  /**
+   * Unmount currency selector element
    */
   unmount(): void;
 }
