@@ -13,7 +13,7 @@ global.MutationObserver = class MutationObserver {
     mutationObserverInstance = this;
   }
 
-  observe(target: HTMLElement) {
+  observe(_target: HTMLElement) {
     // Mock implementation
   }
 
