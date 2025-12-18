@@ -220,6 +220,30 @@ describe('stripe-address-element', () => {
           stripeAccount: 'acct_xxx',
         });
       });
+
+      it('Should fallback to publishableKey prop when service state is not initialized', async () => {
+        mockStripeService.state.publishableKey = undefined;
+        element.publishableKey = 'pk_prop_value';
+        
+        await element.updateStripeAccountId('acct_xxx');
+        expect(element.initStripe).toHaveBeenCalledWith('pk_prop_value', {
+          stripeAccount: 'acct_xxx',
+        });
+      });
+
+      it('Should use prop value when publishableKey is set before service initialization', async () => {
+        // Set publishableKey prop first
+        element.publishableKey = 'pk_set_first';
+        mockStripeService.state.publishableKey = undefined;
+        
+        // Then set stripeAccount
+        await element.updateStripeAccountId('acct_xxx');
+        
+        // Should use the prop value, not the service state
+        expect(element.initStripe).toHaveBeenCalledWith('pk_set_first', {
+          stripeAccount: 'acct_xxx',
+        });
+      });
     });
 
     describe('#updatePublishableKey', () => {
@@ -249,10 +273,35 @@ describe('stripe-address-element', () => {
         expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxx', undefined);
       });
       it('When call this, should call the #initStripe method with expected props (with options)', async () => {
-        mockStripeService.state.stripeAccount = 'acct_xxx';
+        element.stripeAccount = 'acct_xxx';
         await element.updatePublishableKey('pk_test_xxx');
         expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxx', {
           stripeAccount: 'acct_xxx',
+        });
+      });
+
+      it('Should use stripeAccount prop value when service state is not yet initialized', async () => {
+        // Simulate stripeAccount prop set before publishableKey
+        element.stripeAccount = 'acct_prop_value';
+        mockStripeService.state.stripeAccount = undefined; // Service state not initialized yet
+        
+        await element.updatePublishableKey('pk_test_xxx');
+        expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxx', {
+          stripeAccount: 'acct_prop_value',
+        });
+      });
+
+      it('Should honor stripeAccount prop even when set before publishableKey', async () => {
+        // Set stripeAccount prop first
+        element.stripeAccount = 'acct_set_first';
+        mockStripeService.state.stripeAccount = undefined;
+        
+        // Then set publishableKey
+        await element.updatePublishableKey('pk_test_xxx');
+        
+        // Should use the prop value, not the service state
+        expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxx', {
+          stripeAccount: 'acct_set_first',
         });
       });
     });
