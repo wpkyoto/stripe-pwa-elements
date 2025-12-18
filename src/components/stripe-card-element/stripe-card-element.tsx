@@ -374,7 +374,7 @@ export class StripeCardElement {
     this.defaultFormSubmitResult.emit(result);
   }
 
-  componentWillUpdate() {
+  componentWillRender() {
     if (!this.stripeService.state.publishableKey) {
       return;
     }
