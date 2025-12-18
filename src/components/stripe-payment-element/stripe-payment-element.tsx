@@ -13,12 +13,14 @@ import { serviceFactory } from '../../services/factory';
 import type { IStripeService, IPaymentElementManager } from '../../services/interfaces';
 import { StripeAPIError } from '../../utils/error';
 
+import type { Stripe, StripeElements } from '@stripe/stripe-js';
+
 /**
  * Payment Element submit event
  */
 export type PaymentElementSubmitEvent = {
-  stripe: any;
-  elements: any;
+  stripe: Stripe;
+  elements: StripeElements;
   intentClientSecret?: string;
 };
 
@@ -447,7 +449,8 @@ export class StripePaymentElement {
           this.progress = 'success';
         }
       } catch (e) {
-        this.paymentElementManager.setError(e.message);
+        const errorMessage = e instanceof Error ? e.message : String(e);
+        this.paymentElementManager.setError(errorMessage);
         this.progress = 'failure';
       }
     };

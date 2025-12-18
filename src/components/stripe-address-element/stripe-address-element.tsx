@@ -391,7 +391,8 @@ export class StripeAddressElement {
           this.progress = 'success';
         }
       } catch (error) {
-        this.addressElementManager.setError(error.message);
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        this.addressElementManager.setError(errorMessage);
         this.progress = 'failure';
       }
     };

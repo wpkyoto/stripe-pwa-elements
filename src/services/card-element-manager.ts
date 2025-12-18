@@ -1,6 +1,7 @@
 import type { ICardElementManager, IStripeService, CardElementInstances, CardElementState } from './interfaces';
 import { i18n } from '../utils/i18n';
 import { createStore } from '@stencil/store';
+import { findElement } from '../utils/element-finder';
 
 /**
  * Card Element Manager
@@ -48,19 +49,19 @@ export class CardElementManager implements ICardElementManager {
     const cardNumber = elements.create('cardNumber', {
       placeholder: i18n.t('Card Number'),
     });
-    const cardNumberElement = await this.findElement(containerElement, '#card-number');
+    const cardNumberElement = await findElement(containerElement, '#card-number');
     cardNumber.mount(cardNumberElement);
     cardNumber.on('change', this.handleCardError('cardNumber'));
 
     // Create and mount card expiry element
     const cardExpiry = elements.create('cardExpiry');
-    const cardExpiryElement = await this.findElement(containerElement, '#card-expiry');
+    const cardExpiryElement = await findElement(containerElement, '#card-expiry');
     cardExpiry.mount(cardExpiryElement);
     cardExpiry.on('change', this.handleCardError('cardExpiry'));
 
     // Create and mount card CVC element
     const cardCVC = elements.create('cardCvc');
-    const cardCVCElement = await this.findElement(containerElement, '#card-cvc');
+    const cardCVCElement = await findElement(containerElement, '#card-cvc');
     cardCVC.mount(cardCVCElement);
     cardCVC.on('change', this.handleCardError('cardCvc'));
 
@@ -129,40 +130,5 @@ export class CardElementManager implements ICardElementManager {
         this.store.set('errorSource', undefined);
       }
     };
-  }
-
-  /**
-   * Wait for an element to appear in the DOM
-   * @param containerElement - Parent element to search in
-   * @param selector - CSS selector
-   * @param timeout - Timeout in milliseconds (default: 5000ms)
-   * @returns Promise that resolves to the found element or rejects on timeout
-   */
-  private findElement(containerElement: HTMLElement, selector: string, timeout = 5000): Promise<HTMLElement> {
-    return new Promise((resolve, reject) => {
-      const elem = containerElement.querySelector(selector);
-      if (elem) {
-        return resolve(elem as HTMLElement);
-      }
-
-      const timeoutId = setTimeout(() => {
-        observer.disconnect();
-        reject(new Error(`Element "${selector}" not found within ${timeout}ms`));
-      }, timeout);
-
-      const observer = new MutationObserver(() => {
-        const elem = containerElement.querySelector(selector);
-        if (elem) {
-          clearTimeout(timeoutId);
-          observer.disconnect();
-          resolve(elem as HTMLElement);
-        }
-      });
-
-      observer.observe(containerElement, {
-        childList: true,
-        subtree: true,
-      });
-    });
   }
 }

@@ -1,6 +1,7 @@
 import type { IPaymentElementManager, IStripeService, PaymentElementState } from './interfaces';
 import { createStore } from '@stencil/store';
 import type { StripePaymentElement, StripePaymentElementOptions } from '@stripe/stripe-js';
+import { findElement } from '../utils/element-finder';
 
 /**
  * Payment Element Manager
@@ -51,7 +52,7 @@ export class PaymentElementManager implements IPaymentElementManager {
     this.paymentElement = elements.create('payment', elementOptions);
 
     // Find mount point and mount
-    const paymentElementContainer = await this.findElement(containerElement, '#payment-element');
+    const paymentElementContainer = await findElement(containerElement, '#payment-element');
     this.paymentElement.mount(paymentElementContainer);
 
     // Note: Payment Element errors are handled during submission
@@ -91,40 +92,5 @@ export class PaymentElementManager implements IPaymentElementManager {
 
     this.paymentElement.unmount();
     this.paymentElement = undefined;
-  }
-
-  /**
-   * Wait for an element to appear in the DOM
-   * @param containerElement - Parent element to search in
-   * @param selector - CSS selector
-   * @param timeout - Timeout in milliseconds (default: 5000ms)
-   * @returns Promise that resolves to the found element or rejects on timeout
-   */
-  private findElement(containerElement: HTMLElement, selector: string, timeout = 5000): Promise<HTMLElement> {
-    return new Promise((resolve, reject) => {
-      const elem = containerElement.querySelector(selector);
-      if (elem) {
-        return resolve(elem as HTMLElement);
-      }
-
-      const timeoutId = setTimeout(() => {
-        observer.disconnect();
-        reject(new Error(`Element "${selector}" not found within ${timeout}ms`));
-      }, timeout);
-
-      const observer = new MutationObserver(() => {
-        const elem = containerElement.querySelector(selector);
-        if (elem) {
-          clearTimeout(timeoutId);
-          observer.disconnect();
-          resolve(elem as HTMLElement);
-        }
-      });
-
-      observer.observe(containerElement, {
-        childList: true,
-        subtree: true,
-      });
-    });
   }
 }
