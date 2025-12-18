@@ -1,7 +1,7 @@
 import type { IExpressCheckoutElementManager, IStripeService, ExpressCheckoutElementOptions, ExpressCheckoutElementState, ExpressCheckoutElementEventHandlers } from './interfaces';
 import { StripeExpressCheckoutElement } from '@stripe/stripe-js';
 import { createStore } from '@stencil/store';
-import { ElementNotFoundError } from '../utils/error';
+import { findElement } from '../utils/element-finder';
 
 /**
  * Express Checkout Element Manager
@@ -55,7 +55,7 @@ export class ExpressCheckoutElementManager implements IExpressCheckoutElementMan
     const expressCheckout = elements.create('expressCheckout', options);
 
     // Find the mount point
-    const mountPoint = await this.findElement(containerElement, '#express-checkout-element');
+    const mountPoint = await findElement(containerElement, '#express-checkout-element');
 
     // Set up event handlers before mounting
     if (eventHandlers?.onConfirm) {
@@ -136,40 +136,5 @@ export class ExpressCheckoutElementManager implements IExpressCheckoutElementMan
     this.expressCheckoutElement.unmount();
     this.expressCheckoutElement = undefined;
     this.store.set('isReady', false);
-  }
-
-  /**
-   * Wait for an element to appear in the DOM
-   * @param containerElement - Parent element to search in
-   * @param selector - CSS selector
-   * @param timeout - Timeout in milliseconds (default: 5000ms)
-   * @returns Promise that resolves to the found element or rejects on timeout
-   */
-  private findElement(containerElement: HTMLElement, selector: string, timeout = 5000): Promise<HTMLElement> {
-    return new Promise((resolve, reject) => {
-      const elem = containerElement.querySelector(selector);
-      if (elem) {
-        return resolve(elem as HTMLElement);
-      }
-
-      const timeoutId = setTimeout(() => {
-        observer.disconnect();
-        reject(new ElementNotFoundError(selector, timeout));
-      }, timeout);
-
-      const observer = new MutationObserver(() => {
-        const elem = containerElement.querySelector(selector);
-        if (elem) {
-          clearTimeout(timeoutId);
-          observer.disconnect();
-          resolve(elem as HTMLElement);
-        }
-      });
-
-      observer.observe(containerElement, {
-        childList: true,
-        subtree: true,
-      });
-    });
   }
 }

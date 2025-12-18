@@ -4,6 +4,8 @@ import {
   StripeCardNumberElement,
   StripeCardExpiryElement,
   StripeCardCvcElement,
+  StripePaymentElement,
+  StripeAddressElement,
   StripeExpressCheckoutElement,
   StripeExpressCheckoutElementConfirmEvent,
   StripeExpressCheckoutElementClickEvent,
@@ -39,6 +41,21 @@ export type CardElementInstances = {
 export type CardElementState = {
   errorMessage: string;
   errorSource?: 'cardNumber' | 'cardExpiry' | 'cardCvc';
+};
+
+/**
+ * Payment element state
+ */
+export type PaymentElementState = {
+  errorMessage: string;
+};
+
+/**
+ * Address element state
+ */
+export type AddressElementState = {
+  errorMessage: string;
+  isComplete: boolean;
 };
 
 /**
@@ -114,6 +131,78 @@ export interface ICardElementManager {
 
   /**
    * Unmount all card elements
+   */
+  unmount(): void;
+}
+
+/**
+ * Payment Element manager interface
+ * Manages the unified Stripe Payment Element
+ */
+export interface IPaymentElementManager {
+  /**
+   * Get payment element state
+   */
+  getState(): PaymentElementState;
+
+  /**
+   * Initialize and mount payment element
+   */
+  initialize(containerElement: HTMLElement): Promise<StripePaymentElement>;
+
+  /**
+   * Get mounted payment element
+   */
+  getElement(): StripePaymentElement | undefined;
+
+  /**
+   * Set error message
+   */
+  setError(message: string): void;
+
+  /**
+   * Clear error message
+   */
+  clearError(): void;
+
+  /**
+   * Unmount payment element
+   */
+  unmount(): void;
+}
+
+/**
+ * Address Element manager interface
+ * Manages Stripe Address Element
+ */
+export interface IAddressElementManager {
+  /**
+   * Get address element state
+   */
+  getState(): AddressElementState;
+
+  /**
+   * Initialize and mount address element
+   */
+  initialize(containerElement: HTMLElement, options?: import('@stripe/stripe-js').StripeAddressElementOptions): Promise<StripeAddressElement>;
+
+  /**
+   * Get mounted address element
+   */
+  getElement(): StripeAddressElement | undefined;
+
+  /**
+   * Set error message
+   */
+  setError(message: string): void;
+
+  /**
+   * Clear error message
+   */
+  clearError(): void;
+
+  /**
+   * Unmount address element
    */
   unmount(): void;
 }

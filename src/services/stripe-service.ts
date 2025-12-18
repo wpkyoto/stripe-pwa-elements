@@ -37,6 +37,7 @@ class StripeServiceClass implements IStripeService {
     if (!this.changeListeners.has(key as string)) {
       this.changeListeners.set(key as string, []);
     }
+
     this.changeListeners.get(key as string).push(dispose);
 
     return dispose;
@@ -53,6 +54,7 @@ class StripeServiceClass implements IStripeService {
     if (options?.stripeAccount) {
       this.store.state.stripeAccount = options.stripeAccount;
     }
+
     if (options?.applicationName) {
       this.store.state.applicationName = options.applicationName;
     }
