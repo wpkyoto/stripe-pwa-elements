@@ -2,6 +2,7 @@
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property           | Attribute          | Description                                                                                                                                                                                       | Type                                                         | Default                 |
@@ -18,22 +19,24 @@
 | `stripeAccount`    | `stripe-account`   | Optional. Making API calls for connected accounts                                                                                                                                                 | `string`                                                     | `undefined`             |
 | `stripeDidLoaded`  | --                 | Stripe.js class loaded handler                                                                                                                                                                    | `(event: StripeLoadedEvent) => Promise<void>`                | `undefined`             |
 
+
 ## Events
 
-| Event          | Description                | Type                                                            |
-| -------------- | -------------------------- | --------------------------------------------------------------- |
-| `formSubmit`   | Form submit event          | `CustomEvent<{ address: { value: any; complete: boolean; }; }>` |
-| `stripeLoaded` | Stripe Client loaded event | `CustomEvent<{ stripe: Stripe; }>`                              |
+| Event          | Description                | Type                                                                                                                                                                                                                                                |
+| -------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `formSubmit`   | Form submit event          | `CustomEvent<{ address: { value: { name: string; firstName?: string; lastName?: string; address: { line1: string; line2: string; city: string; state: string; postal_code: string; country: string; }; phone?: string; }; complete: boolean; }; }>` |
+| `stripeLoaded` | Stripe Client loaded event | `CustomEvent<{ stripe: Stripe; }>`                                                                                                                                                                                                                  |
+
 
 ## Methods
 
-### `getValue() => Promise<{ value: import("@stripe/stripe-js").AddressDetails; complete: boolean; }>`
+### `getValue() => Promise<{ value: import("@stripe/stripe-js").StripeAddressElementChangeEvent["value"]; complete: boolean; }>`
 
 Get the current address value
 
 #### Returns
 
-Type: `Promise<{ value: any; complete: boolean; }>`
+Type: `Promise<{ value: { name: string; firstName?: string; lastName?: string; address: { line1: string; line2: string; city: string; state: string; postal_code: string; country: string; }; phone?: string; }; complete: boolean; }>`
 
 Promise resolving to the address value
 
@@ -52,6 +55,8 @@ Get Stripe.js, and initialize elements
 
 Type: `Promise<void>`
 
+
+
 ### `setErrorMessage(errorMessage: string) => Promise<this>`
 
 Set error message
@@ -65,6 +70,8 @@ Set error message
 #### Returns
 
 Type: `Promise<this>`
+
+
 
 ### `updateProgress(progress: ProgressStatus) => Promise<this>`
 
@@ -80,6 +87,9 @@ Update the form submit progress
 
 Type: `Promise<this>`
 
----
 
-_Built with [StencilJS](https://stenciljs.com/)_
+
+
+----------------------------------------------
+
+*Built with [StencilJS](https://stenciljs.com/)*
