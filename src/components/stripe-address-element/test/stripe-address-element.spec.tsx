@@ -69,7 +69,7 @@ describe('stripe-address-element', () => {
   describe('method test', () => {
     let element: StripeAddressElement = new StripeAddressElement();
 
-    describe('#componentWillUpdate', () => {
+    describe('#componentWillRender', () => {
       beforeEach(() => {
         element = new StripeAddressElement();
 
@@ -89,13 +89,13 @@ describe('stripe-address-element', () => {
       });
       it.each([['' as const], ['failure' as const]])('If the publishableKey is not provided, should not call initStripe method(status: %s)', async loadingStatus => {
         mockStripeService.state.loadStripeStatus = loadingStatus;
-        element.componentWillUpdate();
+        element.componentWillRender();
         expect(element.initStripe).toHaveBeenCalledTimes(0);
       });
       it.each([['' as const], ['failure' as const]])('Should call initStripe method when the status is not a part of "success" or "loading" (status: %s)', async loadingStatus => {
         mockStripeService.state.publishableKey = 'pk_test_xxxx';
         mockStripeService.state.loadStripeStatus = loadingStatus;
-        element.componentWillUpdate();
+        element.componentWillRender();
         expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxxx', {
           stripeAccount: undefined,
         });
@@ -105,7 +105,7 @@ describe('stripe-address-element', () => {
         async loadingStatus => {
           mockStripeService.state.publishableKey = 'pk_test_xxxx';
           mockStripeService.state.loadStripeStatus = loadingStatus;
-          element.componentWillUpdate();
+          element.componentWillRender();
           expect(element.initStripe).toHaveBeenCalledTimes(0);
         },
       );

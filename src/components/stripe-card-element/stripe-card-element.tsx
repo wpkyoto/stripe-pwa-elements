@@ -28,6 +28,9 @@ export class StripeCardElement {
   private stripeService: IStripeService;
   private cardElementManager: ICardElementManager;
 
+  // Track if payment request button has been created to prevent duplicates
+  private paymentRequestButtonCreated = false;
+
   /**
    * Default submit handle type.
    * If you want to use `setupIntent`, should update this attribute.
@@ -375,7 +378,7 @@ export class StripeCardElement {
     this.defaultFormSubmitResult.emit(result);
   }
 
-  componentWillUpdate() {
+  componentWillRender() {
     if (!this.stripeService.state.publishableKey) {
       return;
     }
@@ -387,7 +390,6 @@ export class StripeCardElement {
     this.initStripe(this.stripeService.state.publishableKey, {
       stripeAccount: this.stripeService.state.stripeAccount,
     });
-    this.createPaymentRequestButton();
   }
 
   /**
@@ -498,6 +500,14 @@ export class StripeCardElement {
     this.el.classList.add(checkPlatform());
   }
 
+  componentDidRender() {
+    // Safely create payment request button after DOM is ready
+    // Only runs if conditions are met and button hasn't been created yet
+    if (this.showPaymentRequestButton && this.paymentRequestOption && !this.paymentRequestButtonCreated) {
+      this.createPaymentRequestButton();
+    }
+  }
+
   disconnectedCallback() {
     this.cardElementManager.unmount();
   }
@@ -508,6 +518,11 @@ export class StripeCardElement {
    */
   private createPaymentRequestButton() {
     const { showPaymentRequestButton, paymentRequestOption } = this;
+
+    // Guard: prevent duplicate creation
+    if (this.paymentRequestButtonCreated) {
+      return null;
+    }
 
     if (!showPaymentRequestButton || !paymentRequestOption) {
       return null;
@@ -521,6 +536,12 @@ export class StripeCardElement {
 
     if (!targetElement) {
       console.error('Target element #stripe-payment-request-button not found');
+      return null;
+    }
+
+    // Check if button already exists in DOM to prevent duplicates
+    if (targetElement.querySelector('stripe-payment-request-button')) {
+      this.paymentRequestButtonCreated = true;
       return null;
     }
 
@@ -547,6 +568,9 @@ export class StripeCardElement {
 
       return stripePaymentRequestElement.initStripe(this.publishableKey);
     });
+
+    // Mark as created
+    this.paymentRequestButtonCreated = true;
   }
 
   render() {

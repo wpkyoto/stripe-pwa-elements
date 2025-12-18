@@ -306,7 +306,7 @@ export class StripeAddressElement {
     });
   }
 
-  componentWillUpdate() {
+  componentWillRender() {
     if (!this.stripeService.state.publishableKey) {
       return;
     }
