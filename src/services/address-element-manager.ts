@@ -1,6 +1,7 @@
 import type { IAddressElementManager, IStripeService, AddressElementState } from './interfaces';
 import { StripeAddressElement } from '@stripe/stripe-js';
 import { createStore } from '@stencil/store';
+import { findElement } from '../utils/element-finder';
 
 /**
  * Address Element Manager
@@ -48,7 +49,7 @@ export class AddressElementManager implements IAddressElementManager {
     // Create and mount address element
     this.addressElement = elements.create('address', options || { mode: 'billing' });
 
-    const addressElementContainer = await this.findElement(containerElement, '#address-element');
+    const addressElementContainer = await findElement(containerElement, '#address-element');
 
     this.addressElement.mount(addressElementContainer);
 
@@ -94,42 +95,5 @@ export class AddressElementManager implements IAddressElementManager {
 
     this.addressElement.unmount();
     this.addressElement = undefined;
-  }
-
-  /**
-   * Wait for an element to appear in the DOM
-   * @param containerElement - Parent element to search in
-   * @param selector - CSS selector
-   * @param timeout - Timeout in milliseconds (default: 5000ms)
-   * @returns Promise that resolves to the found element or rejects on timeout
-   */
-  private findElement(containerElement: HTMLElement, selector: string, timeout = 5000): Promise<HTMLElement> {
-    return new Promise((resolve, reject) => {
-      const elem = containerElement.querySelector(selector);
-
-      if (elem) {
-        return resolve(elem as HTMLElement);
-      }
-
-      const timeoutId = setTimeout(() => {
-        observer.disconnect();
-        reject(new Error(`Element "${selector}" not found within ${timeout}ms`));
-      }, timeout);
-
-      const observer = new MutationObserver(() => {
-        const elem = containerElement.querySelector(selector);
-
-        if (elem) {
-          clearTimeout(timeoutId);
-          observer.disconnect();
-          resolve(elem as HTMLElement);
-        }
-      });
-
-      observer.observe(containerElement, {
-        childList: true,
-        subtree: true,
-      });
-    });
   }
 }

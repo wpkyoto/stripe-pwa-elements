@@ -1,4 +1,4 @@
-import { Stripe, StripeElements, StripeCardNumberElement, StripeCardExpiryElement, StripeCardCvcElement, StripeAddressElement } from '@stripe/stripe-js';
+import { Stripe, StripeElements, StripeCardNumberElement, StripeCardExpiryElement, StripeCardCvcElement, StripePaymentElement, StripeAddressElement } from '@stripe/stripe-js';
 import { ProgressStatus } from '../interfaces';
 
 /**
@@ -28,6 +28,21 @@ export type CardElementInstances = {
 export type CardElementState = {
   errorMessage: string;
   errorSource?: 'cardNumber' | 'cardExpiry' | 'cardCvc';
+};
+
+/**
+ * Payment element state
+ */
+export type PaymentElementState = {
+  errorMessage: string;
+};
+
+/**
+ * Address element state
+ */
+export type AddressElementState = {
+  errorMessage: string;
+  isComplete: boolean;
 };
 
 /**
@@ -108,12 +123,40 @@ export interface ICardElementManager {
 }
 
 /**
- * Address element state
+ * Payment Element manager interface
+ * Manages the unified Stripe Payment Element
  */
-export type AddressElementState = {
-  errorMessage: string;
-  isComplete: boolean;
-};
+export interface IPaymentElementManager {
+  /**
+   * Get payment element state
+   */
+  getState(): PaymentElementState;
+
+  /**
+   * Initialize and mount payment element
+   */
+  initialize(containerElement: HTMLElement): Promise<StripePaymentElement>;
+
+  /**
+   * Get mounted payment element
+   */
+  getElement(): StripePaymentElement | undefined;
+
+  /**
+   * Set error message
+   */
+  setError(message: string): void;
+
+  /**
+   * Clear error message
+   */
+  clearError(): void;
+
+  /**
+   * Unmount payment element
+   */
+  unmount(): void;
+}
 
 /**
  * Address Element manager interface
