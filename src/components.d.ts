@@ -7,12 +7,14 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { AddressSubmitEvent, AddressSubmitHandler } from "./components/stripe-address-element/stripe-address-element";
 import { DefaultFormSubmitResult, FormSubmitEvent, FormSubmitHandler, InitStripeOptions, IntentType, PaymentRequestButtonOption, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
+import { PaymentRequestOptions, PaymentRequestWallet, StripeExpressCheckoutElementClickEvent, StripeExpressCheckoutElementConfirmEvent } from "@stripe/stripe-js";
+import { ExpressCheckoutElementOptions } from "./services/interfaces";
 import { PaymentElementSubmitEvent, PaymentElementSubmitHandler } from "./components/stripe-payment-element/stripe-payment-element";
-import { PaymentRequestOptions, PaymentRequestWallet } from "@stripe/stripe-js";
 export { AddressSubmitEvent, AddressSubmitHandler } from "./components/stripe-address-element/stripe-address-element";
 export { DefaultFormSubmitResult, FormSubmitEvent, FormSubmitHandler, InitStripeOptions, IntentType, PaymentRequestButtonOption, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
+export { PaymentRequestOptions, PaymentRequestWallet, StripeExpressCheckoutElementClickEvent, StripeExpressCheckoutElementConfirmEvent } from "@stripe/stripe-js";
+export { ExpressCheckoutElementOptions } from "./services/interfaces";
 export { PaymentElementSubmitEvent, PaymentElementSubmitHandler } from "./components/stripe-payment-element/stripe-payment-element";
-export { PaymentRequestOptions, PaymentRequestWallet } from "@stripe/stripe-js";
 export namespace Components {
     interface StripeAddressElement {
         /**
@@ -271,6 +273,92 @@ export namespace Components {
          */
         "zip": boolean;
     }
+    /**
+     * Express Checkout Element Component
+     * Provides one-click payment methods (Apple Pay, Google Pay, Link, PayPal, etc.)
+     * @example ```html
+     * <stripe-express-checkout-element
+     *   publishable-key="pk_test_..."
+     *   client-secret="pi_..."
+     *   amount="1099"
+     *   currency="usd"
+     * />
+     * ```
+     */
+    interface StripeExpressCheckoutElement {
+        /**
+          * Payment amount in cents (e.g., 1099 for $10.99)
+         */
+        "amount"?: number;
+        /**
+          * Overwrite the application name that registered For wrapper library (like Capacitor)
+          * @default 'stripe-pwa-elements'
+         */
+        "applicationName": string;
+        /**
+          * Button height in pixels (e.g., '48px')
+         */
+        "buttonHeight"?: string;
+        /**
+          * The client secret from paymentIntent.create or setupIntent.create response
+          * @example ``` const element = document.createElement('stripe-express-checkout-element'); customElements  .whenDefined('stripe-express-checkout-element')  .then(() => {     element.setAttribute('client-secret', 'pi_xxx_secret_xxx')   }) ```
+         */
+        "clientSecret"?: string;
+        /**
+          * Three-letter ISO currency code (e.g., 'usd', 'eur')
+         */
+        "currency"?: string;
+        /**
+          * Get Stripe.js, and initialize elements
+          * @param publishableKey
+          * @param options
+          * @example ``` const element = document.createElement('stripe-express-checkout-element'); customElements  .whenDefined('stripe-express-checkout-element')  .then(() => {    element.initStripe('pk_test_XXXXXXXXX')  }) ```
+         */
+        "initStripe": (publishableKey: string, options?: InitStripeOptions) => Promise<void>;
+        /**
+          * Default submit handle type. If you want to use `setupIntent`, should update this attribute.
+          * @default 'payment'
+         */
+        "intentType": IntentType;
+        /**
+          * Your Stripe publishable API key.
+         */
+        "publishableKey": string;
+        /**
+          * Set error message
+          * @param errorMessage string
+          * @returns 
+          * @example ``` const element = document.createElement('stripe-express-checkout-element'); customElements  .whenDefined('stripe-express-checkout-element')  .then(() => {    element.setErrorMessage('Payment failed')  }) ```
+         */
+        "setErrorMessage": (errorMessage: string) => Promise<this>;
+        /**
+          * The component will provide a function to call the confirmation API. If you want to customize the behavior, should set false. And listen the 'confirm' event on the element
+          * @default true
+         */
+        "shouldUseDefaultConfirmAction": boolean;
+        /**
+          * Optional. Making API calls for connected accounts
+          * @info https://stripe.com/docs/connect/authentication
+         */
+        "stripeAccount": string;
+        /**
+          * Stripe.js class loaded handler
+         */
+        "stripeDidLoaded"?: StripeDidLoadedHandler;
+        /**
+          * Update element options dynamically
+          * @param options - Partial options to update
+          * @example ``` const element = document.createElement('stripe-express-checkout-element'); customElements  .whenDefined('stripe-express-checkout-element')  .then(async () => {    await element.initStripe('pk_test_xxx')    element.updateElementOptions({ amount: 2000 })  }) ```
+         */
+        "updateElementOptions": (options: Partial<ExpressCheckoutElementOptions>) => Promise<this>;
+        /**
+          * Update the progress status
+          * @param progress
+          * @returns 
+          * @example ``` const element = document.createElement('stripe-express-checkout-element'); customElements  .whenDefined('stripe-express-checkout-element')  .then(() => {    element.updateProgress('success')  }) ```
+         */
+        "updateProgress": (progress: ProgressStatus) => Promise<this>;
+    }
     interface StripeModal {
         /**
           * Close the modal
@@ -300,12 +388,12 @@ export namespace Components {
           * Overwrite the application name that registered For wrapper library (like Capacitor)
           * @default 'stripe-pwa-elements'
          */
-        "applicationName": string;
+        "applicationName": "stripe-pwa-elements";
         /**
           * Submit button label By default we recommended to use these string - 'Pay' -> PaymentSheet - 'Add' -> PaymentFlow(Android) - 'Add card' -> PaymentFlow(iOS) - 'Add a card' -> PaymentFlow(iOS) These strings will translated automatically by this library.
           * @default 'Pay'
          */
-        "buttonLabel": string;
+        "buttonLabel": "Pay";
         /**
           * Form submit event handler
          */
@@ -343,12 +431,12 @@ export namespace Components {
           * Payment sheet title By default we recommended to use these string - 'Add your payment information' -> PaymentSheet / PaymentFlow(Android) - 'Add a card' -> PaymentFlow(iOS) These strings will translated automatically by this library.
           * @default 'Add your payment information'
          */
-        "sheetTitle": string;
+        "sheetTitle": "Add your payment information";
         /**
           * The component will provide a function to call the `stripe.confirmPayment` API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element
           * @default true
          */
-        "shouldUseDefaultFormSubmitAction": boolean;
+        "shouldUseDefaultFormSubmitAction": true;
         /**
           * Optional. Making API calls for connected accounts
           * @info https://stripe.com/docs/connect/authentication
@@ -441,6 +529,10 @@ export interface StripeCardElementModalCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLStripeCardElementModalElement;
 }
+export interface StripeExpressCheckoutElementCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLStripeExpressCheckoutElementElement;
+}
 export interface StripeModalCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLStripeModalElement;
@@ -508,6 +600,39 @@ declare global {
         prototype: HTMLStripeCardElementModalElement;
         new (): HTMLStripeCardElementModalElement;
     };
+    interface HTMLStripeExpressCheckoutElementElementEventMap {
+        "stripeLoaded": StripeLoadedEvent;
+        "confirm": StripeExpressCheckoutElementConfirmEvent;
+        "expressCheckoutClick": StripeExpressCheckoutElementClickEvent;
+        "cancel": void;
+        "defaultConfirmResult": DefaultFormSubmitResult;
+    }
+    /**
+     * Express Checkout Element Component
+     * Provides one-click payment methods (Apple Pay, Google Pay, Link, PayPal, etc.)
+     * @example ```html
+     * <stripe-express-checkout-element
+     *   publishable-key="pk_test_..."
+     *   client-secret="pi_..."
+     *   amount="1099"
+     *   currency="usd"
+     * />
+     * ```
+     */
+    interface HTMLStripeExpressCheckoutElementElement extends Components.StripeExpressCheckoutElement, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLStripeExpressCheckoutElementElementEventMap>(type: K, listener: (this: HTMLStripeExpressCheckoutElementElement, ev: StripeExpressCheckoutElementCustomEvent<HTMLStripeExpressCheckoutElementElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLStripeExpressCheckoutElementElementEventMap>(type: K, listener: (this: HTMLStripeExpressCheckoutElementElement, ev: StripeExpressCheckoutElementCustomEvent<HTMLStripeExpressCheckoutElementElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLStripeExpressCheckoutElementElement: {
+        prototype: HTMLStripeExpressCheckoutElementElement;
+        new (): HTMLStripeExpressCheckoutElementElement;
+    };
     interface HTMLStripeModalElementEventMap {
         "close": any;
     }
@@ -565,6 +690,7 @@ declare global {
         "stripe-address-element": HTMLStripeAddressElementElement;
         "stripe-card-element": HTMLStripeCardElementElement;
         "stripe-card-element-modal": HTMLStripeCardElementModalElement;
+        "stripe-express-checkout-element": HTMLStripeExpressCheckoutElementElement;
         "stripe-modal": HTMLStripeModalElement;
         "stripe-payment-element": HTMLStripePaymentElementElement;
         "stripe-payment-request-button": HTMLStripePaymentRequestButtonElement;
@@ -781,6 +907,89 @@ declare namespace LocalJSX {
          */
         "zip"?: boolean;
     }
+    /**
+     * Express Checkout Element Component
+     * Provides one-click payment methods (Apple Pay, Google Pay, Link, PayPal, etc.)
+     * @example ```html
+     * <stripe-express-checkout-element
+     *   publishable-key="pk_test_..."
+     *   client-secret="pi_..."
+     *   amount="1099"
+     *   currency="usd"
+     * />
+     * ```
+     */
+    interface StripeExpressCheckoutElement {
+        /**
+          * Payment amount in cents (e.g., 1099 for $10.99)
+         */
+        "amount"?: number;
+        /**
+          * Overwrite the application name that registered For wrapper library (like Capacitor)
+          * @default 'stripe-pwa-elements'
+         */
+        "applicationName"?: string;
+        /**
+          * Button height in pixels (e.g., '48px')
+         */
+        "buttonHeight"?: string;
+        /**
+          * The client secret from paymentIntent.create or setupIntent.create response
+          * @example ``` const element = document.createElement('stripe-express-checkout-element'); customElements  .whenDefined('stripe-express-checkout-element')  .then(() => {     element.setAttribute('client-secret', 'pi_xxx_secret_xxx')   }) ```
+         */
+        "clientSecret"?: string;
+        /**
+          * Three-letter ISO currency code (e.g., 'usd', 'eur')
+         */
+        "currency"?: string;
+        /**
+          * Default submit handle type. If you want to use `setupIntent`, should update this attribute.
+          * @default 'payment'
+         */
+        "intentType"?: IntentType;
+        /**
+          * Express Checkout cancel event Fired when user cancels the express checkout flow
+         */
+        "onCancel"?: (event: StripeExpressCheckoutElementCustomEvent<void>) => void;
+        /**
+          * Express Checkout confirm event Fired when user completes the express checkout flow
+          * @example ``` const element = document.createElement('stripe-express-checkout-element'); customElements  .whenDefined('stripe-express-checkout-element')  .then(() => {     element.addEventListener('confirm', async ({ detail }) => {       console.log('Payment confirmed', detail)     })   }) ```
+         */
+        "onConfirm"?: (event: StripeExpressCheckoutElementCustomEvent<StripeExpressCheckoutElementConfirmEvent>) => void;
+        /**
+          * Receive the result of default confirm action
+          * @example ``` const element = document.createElement('stripe-express-checkout-element'); customElements  .whenDefined('stripe-express-checkout-element')  .then(() => {     element.addEventListener('defaultConfirmResult', async ({detail}) => {       if (detail instanceof Error) {         console.error(detail)       } else {         console.log(detail)       }     })   }) ```
+         */
+        "onDefaultConfirmResult"?: (event: StripeExpressCheckoutElementCustomEvent<DefaultFormSubmitResult>) => void;
+        /**
+          * Express Checkout click event Fired when user clicks on an express checkout button
+          * @example ``` const element = document.createElement('stripe-express-checkout-element'); customElements  .whenDefined('stripe-express-checkout-element')  .then(() => {     element.addEventListener('expressCheckoutClick', async ({ detail }) => {       console.log('Button clicked', detail)     })   }) ```
+         */
+        "onExpressCheckoutClick"?: (event: StripeExpressCheckoutElementCustomEvent<StripeExpressCheckoutElementClickEvent>) => void;
+        /**
+          * Stripe Client loaded event
+          * @example ``` const element = document.createElement('stripe-express-checkout-element'); customElements  .whenDefined('stripe-express-checkout-element')  .then(() => {     element.addEventListener('stripeLoaded', async ({ detail: {stripe} }) => {       console.log('Stripe loaded', stripe)     });   }) ```
+         */
+        "onStripeLoaded"?: (event: StripeExpressCheckoutElementCustomEvent<StripeLoadedEvent>) => void;
+        /**
+          * Your Stripe publishable API key.
+         */
+        "publishableKey"?: string;
+        /**
+          * The component will provide a function to call the confirmation API. If you want to customize the behavior, should set false. And listen the 'confirm' event on the element
+          * @default true
+         */
+        "shouldUseDefaultConfirmAction"?: boolean;
+        /**
+          * Optional. Making API calls for connected accounts
+          * @info https://stripe.com/docs/connect/authentication
+         */
+        "stripeAccount"?: string;
+        /**
+          * Stripe.js class loaded handler
+         */
+        "stripeDidLoaded"?: StripeDidLoadedHandler;
+    }
     interface StripeModal {
         "onClose"?: (event: StripeModalCustomEvent<any>) => void;
         /**
@@ -799,12 +1008,12 @@ declare namespace LocalJSX {
           * Overwrite the application name that registered For wrapper library (like Capacitor)
           * @default 'stripe-pwa-elements'
          */
-        "applicationName"?: string;
+        "applicationName"?: "stripe-pwa-elements";
         /**
           * Submit button label By default we recommended to use these string - 'Pay' -> PaymentSheet - 'Add' -> PaymentFlow(Android) - 'Add card' -> PaymentFlow(iOS) - 'Add a card' -> PaymentFlow(iOS) These strings will translated automatically by this library.
           * @default 'Pay'
          */
-        "buttonLabel"?: string;
+        "buttonLabel"?: "Pay";
         /**
           * Form submit event handler
          */
@@ -843,12 +1052,12 @@ declare namespace LocalJSX {
           * Payment sheet title By default we recommended to use these string - 'Add your payment information' -> PaymentSheet / PaymentFlow(Android) - 'Add a card' -> PaymentFlow(iOS) These strings will translated automatically by this library.
           * @default 'Add your payment information'
          */
-        "sheetTitle"?: string;
+        "sheetTitle"?: "Add your payment information";
         /**
           * The component will provide a function to call the `stripe.confirmPayment` API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element
           * @default true
          */
-        "shouldUseDefaultFormSubmitAction"?: boolean;
+        "shouldUseDefaultFormSubmitAction"?: true;
         /**
           * Optional. Making API calls for connected accounts
           * @info https://stripe.com/docs/connect/authentication
@@ -903,6 +1112,7 @@ declare namespace LocalJSX {
         "stripe-address-element": StripeAddressElement;
         "stripe-card-element": StripeCardElement;
         "stripe-card-element-modal": StripeCardElementModal;
+        "stripe-express-checkout-element": StripeExpressCheckoutElement;
         "stripe-modal": StripeModal;
         "stripe-payment-element": StripePaymentElement;
         "stripe-payment-request-button": StripePaymentRequestButton;
@@ -915,6 +1125,19 @@ declare module "@stencil/core" {
             "stripe-address-element": LocalJSX.StripeAddressElement & JSXBase.HTMLAttributes<HTMLStripeAddressElementElement>;
             "stripe-card-element": LocalJSX.StripeCardElement & JSXBase.HTMLAttributes<HTMLStripeCardElementElement>;
             "stripe-card-element-modal": LocalJSX.StripeCardElementModal & JSXBase.HTMLAttributes<HTMLStripeCardElementModalElement>;
+            /**
+             * Express Checkout Element Component
+             * Provides one-click payment methods (Apple Pay, Google Pay, Link, PayPal, etc.)
+             * @example ```html
+             * <stripe-express-checkout-element
+             *   publishable-key="pk_test_..."
+             *   client-secret="pi_..."
+             *   amount="1099"
+             *   currency="usd"
+             * />
+             * ```
+             */
+            "stripe-express-checkout-element": LocalJSX.StripeExpressCheckoutElement & JSXBase.HTMLAttributes<HTMLStripeExpressCheckoutElementElement>;
             "stripe-modal": LocalJSX.StripeModal & JSXBase.HTMLAttributes<HTMLStripeModalElement>;
             "stripe-payment-element": LocalJSX.StripePaymentElement & JSXBase.HTMLAttributes<HTMLStripePaymentElementElement>;
             "stripe-payment-request-button": LocalJSX.StripePaymentRequestButton & JSXBase.HTMLAttributes<HTMLStripePaymentRequestButtonElement>;
