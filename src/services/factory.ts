@@ -1,9 +1,17 @@
-import type { IStripeService, ICardElementManager, IPaymentElementManager, IAddressElementManager, ICurrencySelectorElementManager } from './interfaces';
+import type {
+  IStripeService,
+  ICardElementManager,
+  IPaymentElementManager,
+  IAddressElementManager,
+  ICurrencySelectorElementManager,
+  IExpressCheckoutElementManager,
+} from './interfaces';
 import { StripeServiceClass } from './stripe-service';
 import { CardElementManager } from './card-element-manager';
 import { PaymentElementManager } from './payment-element-manager';
 import { AddressElementManager } from './address-element-manager';
 import { CurrencySelectorElementManager } from './currency-selector-element-manager';
+import { ExpressCheckoutElementManager } from './express-checkout-element-manager';
 
 /**
  * Service Factory
@@ -48,6 +56,14 @@ export class ServiceFactory {
    */
   createCurrencySelectorElementManager(stripeService: IStripeService): ICurrencySelectorElementManager {
     return new CurrencySelectorElementManager(stripeService);
+  }
+
+  /**
+   * Create a new ExpressCheckoutElementManager instance
+   * @param stripeService - Injected StripeService dependency
+   */
+  createExpressCheckoutElementManager(stripeService: IStripeService): IExpressCheckoutElementManager {
+    return new ExpressCheckoutElementManager(stripeService);
   }
 }
 
