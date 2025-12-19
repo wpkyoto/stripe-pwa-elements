@@ -213,6 +213,11 @@ export interface ILinkAuthenticationElementManager {
   getState(): LinkAuthenticationElementState;
 
   /**
+   * Register state change listener
+   */
+  onChange<K extends keyof LinkAuthenticationElementState>(key: K, callback: (newValue: LinkAuthenticationElementState[K]) => void): () => void;
+
+  /**
    * Initialize and mount link authentication element
    */
   initialize(containerElement: HTMLElement, options?: import('@stripe/stripe-js').StripeLinkAuthenticationElementOptions): Promise<StripeLinkAuthenticationElement>;

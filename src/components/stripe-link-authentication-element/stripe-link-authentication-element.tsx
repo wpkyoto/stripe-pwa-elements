@@ -166,7 +166,7 @@ export class StripeLinkAuthenticationElement {
 
   /**
    * Get the current email value from the element
-   * @returns The current email value or undefined
+   * @returns {Promise<string | undefined>} The current email value or undefined
    * @example
    * ```
    * const stripeElement = document.createElement('stripe-link-authentication-element');
@@ -291,15 +291,11 @@ export class StripeLinkAuthenticationElement {
     }
 
     // Initialize link authentication element
-    const linkAuthElement = await this.linkAuthenticationElementManager.initialize(this.el, Object.keys(options).length ? options : undefined);
+    await this.linkAuthenticationElementManager.initialize(this.el, Object.keys(options).length ? options : undefined);
 
-    // Listen for change events from the manager's state
-    this.stripeService.onChange('loadStripeStatus', () => {
-      const { email } = this.linkAuthenticationElementManager.getState();
-
-      if (email) {
-        this.linkAuthenticationChangeEventHandler(email);
-      }
+    // Listen for email changes from the manager's store
+    this.linkAuthenticationElementManager.onChange('email', email => {
+      this.linkAuthenticationChangeEventHandler(email);
     });
   }
 

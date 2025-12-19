@@ -50,6 +50,7 @@ describe('stripe-link-authentication-element', () => {
         errorMessage: '',
         email: undefined,
       }),
+      onChange: jest.fn().mockReturnValue(jest.fn()),
       initialize: jest.fn().mockResolvedValue({} as any),
       getElement: jest.fn().mockReturnValue(undefined),
       setError: jest.fn(),

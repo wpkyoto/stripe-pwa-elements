@@ -1,6 +1,5 @@
 import type { ILinkAuthenticationElementManager, IStripeService, LinkAuthenticationElementState } from './interfaces';
 import type { StripeLinkAuthenticationElement, StripeLinkAuthenticationElementOptions } from '@stripe/stripe-js';
-import { i18n } from '../utils/i18n';
 import { createStore } from '@stencil/store';
 import { findElement } from '../utils/element-finder';
 
@@ -30,6 +29,16 @@ export class LinkAuthenticationElementManager implements ILinkAuthenticationElem
   }
 
   /**
+   * Register state change listener
+   * @param key - State property to watch
+   * @param callback - Callback function invoked when property changes
+   * @returns Unsubscribe function
+   */
+  onChange<K extends keyof LinkAuthenticationElementState>(key: K, callback: (newValue: LinkAuthenticationElementState[K]) => void): () => void {
+    return this.store.onChange(key, callback);
+  }
+
+  /**
    * Initialize and mount link authentication element to DOM
    * @param containerElement - Parent element containing mount point
    * @param options - Optional configuration for Link Authentication Element
@@ -55,16 +64,9 @@ export class LinkAuthenticationElementManager implements ILinkAuthenticationElem
 
     // Listen for change events
     linkAuthentication.on('change', event => {
-      if (event.value?.email) {
-        this.store.set('email', event.value.email);
-      }
-
-      if (event.error) {
-        this.store.set('errorMessage', event.error.message);
-      } else {
-        // Clear error only if no error exists
-        this.store.set('errorMessage', '');
-      }
+      // Unconditionally set email from event.value.email
+      // This handles all cases: valid email, empty string, or undefined
+      this.store.set('email', event.value?.email);
     });
 
     this.linkAuthenticationElement = linkAuthentication;
