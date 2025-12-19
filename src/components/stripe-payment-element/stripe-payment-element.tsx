@@ -10,24 +10,36 @@ import {
 } from '../../interfaces';
 import { i18n } from '../../utils/i18n';
 import { serviceFactory } from '../../services/factory';
-import type { IStripeService, IPaymentElementManager } from '../../services/interfaces';
+import type { IStripeService, IPaymentElementManager, CheckoutSessionOptions } from '../../services/interfaces';
 import { StripeAPIError } from '../../utils/error';
 
-import type { Stripe, StripeElements } from '@stripe/stripe-js';
+import type { Stripe, StripeElements, StripeCheckout, StripeCheckoutConfirmResult } from '@stripe/stripe-js';
 
 /**
  * Payment Element submit event
  */
 export type PaymentElementSubmitEvent = {
   stripe: Stripe;
-  elements: StripeElements;
+  elements?: StripeElements;
   intentClientSecret?: string;
+  checkout?: StripeCheckout;
+  checkoutSessionClientSecret?: string;
 };
+
+/**
+ * Checkout Session submit event result
+ */
+export type CheckoutSessionFormSubmitResult = StripeCheckoutConfirmResult | Error;
 
 /**
  * Payment Element submit handler
  */
 export type PaymentElementSubmitHandler = (event: Event, props: PaymentElementSubmitEvent) => Promise<void>;
+
+/**
+ * Checkout Session initialization options
+ */
+export type InitCheckoutSessionOptions = InitStripeOptions & CheckoutSessionOptions;
 
 @Component({
   tag: 'stripe-payment-element',
@@ -89,6 +101,51 @@ export class StripePaymentElement {
     await this.stripeService.initialize(publishableKey, {
       stripeAccount: options?.stripeAccount,
       applicationName: this.applicationName,
+    });
+
+    // If already successfully loaded, initialize elements immediately
+    if (this.stripeService.state.loadStripeStatus === 'success') {
+      await this.initElement();
+      this.stripeLoadedEventHandler();
+    } else {
+      // Otherwise, wait for successful load
+      const unsubscribe = this.stripeService.onChange('loadStripeStatus', async newState => {
+        if (newState !== 'success') {
+          return;
+        }
+
+        await this.initElement();
+        this.stripeLoadedEventHandler();
+        unsubscribe(); // Clean up listener after first success
+      });
+    }
+  }
+
+  /**
+   * Get Stripe.js and initialize with Checkout Session mode
+   * Use this method when you have a Checkout Session client secret instead of Payment/Setup Intent
+   * @param publishableKey - Your Stripe publishable API key
+   * @param checkoutSessionClientSecret - The client secret from Checkout Session
+   * @param options - Optional configuration
+   * @example
+   * ```
+   * const stripeElement = document.createElement('stripe-payment-element');
+   * customElements
+   *  .whenDefined('stripe-payment-element')
+   *  .then(() => {
+   *    stripeElement.initStripeWithCheckoutSession(
+   *      'pk_test_XXXXXXXXX',
+   *      'cs_xxx_secret_xxx'
+   *    )
+   *  })
+   * ```
+   */
+  @Method()
+  public async initStripeWithCheckoutSession(publishableKey: string, checkoutSessionClientSecret: string, options?: InitCheckoutSessionOptions) {
+    await this.stripeService.initializeWithCheckoutSession(publishableKey, checkoutSessionClientSecret, {
+      stripeAccount: options?.stripeAccount,
+      applicationName: this.applicationName,
+      elementsOptions: options?.elementsOptions,
     });
 
     // If already successfully loaded, initialize elements immediately
@@ -190,6 +247,7 @@ export class StripePaymentElement {
 
   /**
    * The client secret from paymentIntent.create or setupIntent.create response
+   * Use this for Payment Intent / Setup Intent mode
    *
    * @example
    * ```
@@ -213,6 +271,33 @@ export class StripePaymentElement {
     // Re-initialize the payment element when client secret changes
     if (this.stripeService.state.loadStripeStatus === 'success') {
       await this.initElement();
+    }
+  }
+
+  /**
+   * The client secret from checkout session response
+   * Use this for Checkout Session mode instead of intentClientSecret
+   * When this prop is set, the component will use Checkout Session API
+   *
+   * @example
+   * ```
+   * const stripeElement = document.createElement('stripe-payment-element');
+   * customElements
+   *  .whenDefined('stripe-payment-element')
+   *  .then(() => {
+   *     stripeElement.initStripeWithCheckoutSession('pk_test_xxx', 'cs_xxx_secret_xxx')
+   *   })
+   * ```
+   */
+  @Prop() readonly checkoutSessionClientSecret?: string;
+
+  @Watch('checkoutSessionClientSecret')
+  async updateCheckoutSessionClientSecret(newValue: string) {
+    // Re-initialize with checkout session when client secret changes
+    if (this.publishableKey && newValue) {
+      await this.initStripeWithCheckoutSession(this.publishableKey, newValue, {
+        stripeAccount: this.stripeAccount,
+      });
     }
   }
 
@@ -304,6 +389,7 @@ export class StripePaymentElement {
 
   /**
    * Receive the result of defaultFormSubmit event
+   * This event is emitted when using Payment Intent / Setup Intent mode
    * @example
    * ```
    * const stripeElement = document.createElement('stripe-payment-element');
@@ -326,6 +412,33 @@ export class StripePaymentElement {
     this.defaultFormSubmitResult.emit(result);
   }
 
+  /**
+   * Receive the result of checkout session confirm
+   * This event is emitted when using Checkout Session mode
+   * @example
+   * ```
+   * const stripeElement = document.createElement('stripe-payment-element');
+   * customElements
+   *  .whenDefined('stripe-payment-element')
+   *  .then(() => {
+   *     stripeElement.addEventListener('checkoutSessionConfirmResult', async ({detail}) => {
+   *       if (detail instanceof Error) {
+   *         console.error(detail)
+   *       } else if (detail.type === 'success') {
+   *         console.log('Payment successful:', detail.session)
+   *       } else {
+   *         console.error('Payment failed:', detail.error)
+   *       }
+   *     })
+   *   })
+   * ```
+   */
+  @Event() checkoutSessionConfirmResult: EventEmitter<CheckoutSessionFormSubmitResult>;
+
+  private async checkoutSessionConfirmResultHandler(result: CheckoutSessionFormSubmitResult) {
+    this.checkoutSessionConfirmResult.emit(result);
+  }
+
   componentWillRender() {
     if (!this.stripeService.state.publishableKey) {
       return;
@@ -341,7 +454,8 @@ export class StripePaymentElement {
   }
 
   /**
-   * Default form submit action (call confirmPayment or confirmSetup).
+   * Default form submit action for Payment Intent / Setup Intent mode
+   * Calls confirmPayment or confirmSetup based on intentType
    * If you don't want use it, please set `should-use-default-form-submit-action="false"`
    * @param event
    * @param param1
@@ -386,6 +500,45 @@ export class StripePaymentElement {
     }
   }
 
+  /**
+   * Checkout Session form submit action
+   * Uses checkout.loadActions().confirm() to confirm the payment
+   * @param event
+   * @param checkout - The Stripe Checkout instance
+   */
+  private async checkoutSessionFormSubmitAction(event: Event, checkout: StripeCheckout) {
+    event.preventDefault();
+    try {
+      // Load actions from the checkout session
+      const loadActionsResult = await checkout.loadActions();
+
+      if (loadActionsResult.type === 'error') {
+        throw new Error(loadActionsResult.error.message);
+      }
+
+      const { actions } = loadActionsResult;
+
+      // Get current page URL for return_url
+      const returnUrl = window.location.href;
+
+      // Confirm the payment using checkout session actions
+      const result = await actions.confirm({
+        returnUrl,
+        redirect: 'if_required',
+      });
+
+      if (result.type === 'error') {
+        throw new Error(result.error.message);
+      }
+
+      this.checkoutSessionConfirmResultHandler(result);
+    } catch (e) {
+      console.error(e);
+      this.checkoutSessionConfirmResultHandler(e instanceof Error ? e : new Error(String(e)));
+      throw e;
+    }
+  }
+
   constructor() {
     // Dependency Injection via factory
     this.stripeService = serviceFactory.createStripeService();
@@ -420,27 +573,57 @@ export class StripePaymentElement {
 
     // Create and store the submit handler
     this._submitHandler = async (e: Event) => {
-      const elements = this.stripeService.getElements();
       const stripe = this.stripeService.getStripe();
-      const { intentClientSecret } = this;
+      const isCheckoutSession = this.stripeService.state.isCheckoutSession;
 
-      if (!elements || !stripe) {
+      if (!stripe) {
         console.error('Stripe not properly initialized');
         return;
       }
 
+      // Build submit event props based on mode
       const submitEventProps: PaymentElementSubmitEvent = {
         stripe,
-        elements,
-        intentClientSecret,
       };
+
+      if (isCheckoutSession) {
+        // Checkout Session mode
+        const checkout = this.stripeService.getCheckout();
+
+        if (!checkout) {
+          console.error('Checkout not properly initialized');
+          return;
+        }
+
+        submitEventProps.checkout = checkout;
+        submitEventProps.checkoutSessionClientSecret = this.checkoutSessionClientSecret;
+      } else {
+        // Payment Intent / Setup Intent mode
+        const elements = this.stripeService.getElements();
+
+        if (!elements) {
+          console.error('Elements not properly initialized');
+          return;
+        }
+
+        submitEventProps.elements = elements;
+        submitEventProps.intentClientSecret = this.intentClientSecret;
+      }
 
       this.progress = 'loading';
       try {
         if (this.handleSubmit) {
           await this.handleSubmit(e, submitEventProps);
-        } else if (this.shouldUseDefaultFormSubmitAction === true && intentClientSecret) {
-          await this.defaultFormSubmitAction(e, submitEventProps);
+        } else if (this.shouldUseDefaultFormSubmitAction === true) {
+          if (isCheckoutSession && submitEventProps.checkout) {
+            // Use Checkout Session confirmation
+            await this.checkoutSessionFormSubmitAction(e, submitEventProps.checkout);
+          } else if (this.intentClientSecret) {
+            // Use Payment Intent / Setup Intent confirmation
+            await this.defaultFormSubmitAction(e, submitEventProps);
+          } else {
+            e.preventDefault();
+          }
         } else {
           e.preventDefault();
         }
@@ -449,8 +632,8 @@ export class StripePaymentElement {
         if (this.handleSubmit || this.shouldUseDefaultFormSubmitAction === true) {
           this.progress = 'success';
         }
-      } catch (e) {
-        const errorMessage = e instanceof Error ? e.message : String(e);
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : String(err);
 
         this.paymentElementManager.setError(errorMessage);
         this.progress = 'failure';
@@ -478,14 +661,18 @@ export class StripePaymentElement {
   }
 
   render() {
-    const { loadStripeStatus } = this.stripeService.state;
+    const { loadStripeStatus, isCheckoutSession } = this.stripeService.state;
     const { errorMessage } = this.paymentElementManager.getState();
 
     if (loadStripeStatus === 'failure') {
       return <p>{i18n.t('Failed to load Stripe')}</p>;
     }
 
-    const disabled = this.progress === 'loading' || !this.intentClientSecret;
+    // Determine if button should be disabled
+    // For Checkout Session mode: check if checkout is initialized (loadStripeStatus === 'success')
+    // For Payment Intent mode: check if intentClientSecret is set
+    const hasValidSecret = isCheckoutSession ? loadStripeStatus === 'success' : !!this.intentClientSecret;
+    const disabled = this.progress === 'loading' || !hasValidSecret;
 
     return (
       <div class="stripe-payment-sheet-wrap">
