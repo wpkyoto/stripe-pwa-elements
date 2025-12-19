@@ -88,4 +88,4 @@ export type CurrencySelectorChangeEvent = {
 /**
  * Currency Selector Element change handler
  */
-export type CurrencySelectorChangeHandler = (event: Event, props: CurrencySelectorChangeEvent) => Promise<void>;
+export type CurrencySelectorChangeHandler = (props: CurrencySelectorChangeEvent) => Promise<void>;

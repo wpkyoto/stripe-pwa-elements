@@ -12,14 +12,14 @@ Allows customers to select their preferred currency for Adaptive Pricing
 
 ## Properties
 
-| Property               | Attribute          | Description                                                                         | Type                                                                  | Default                 |
-| ---------------------- | ------------------ | ----------------------------------------------------------------------------------- | --------------------------------------------------------------------- | ----------------------- |
-| `applicationName`      | `application-name` | Overwrite the application name that registered For wrapper library (like Capacitor) | `string`                                                              | `'stripe-pwa-elements'` |
-| `clientSecret`         | `client-secret`    | The client secret from Checkout Session Required for Currency Selector Element      | `string`                                                              | `undefined`             |
-| `handleCurrencyChange` | --                 | Currency change event handler                                                       | `(event: Event, props: CurrencySelectorChangeEvent) => Promise<void>` | `undefined`             |
-| `publishableKey`       | `publishable-key`  | Your Stripe publishable API key.                                                    | `string`                                                              | `undefined`             |
-| `stripeAccount`        | `stripe-account`   | Optional. Making API calls for connected accounts                                   | `string`                                                              | `undefined`             |
-| `stripeDidLoaded`      | --                 | Stripe.js class loaded handler                                                      | `(event: StripeLoadedEvent) => Promise<void>`                         | `undefined`             |
+| Property               | Attribute          | Description                                                                         | Type                                                    | Default                 |
+| ---------------------- | ------------------ | ----------------------------------------------------------------------------------- | ------------------------------------------------------- | ----------------------- |
+| `applicationName`      | `application-name` | Overwrite the application name that registered For wrapper library (like Capacitor) | `string`                                                | `'stripe-pwa-elements'` |
+| `clientSecret`         | `client-secret`    | The client secret from Checkout Session Required for Currency Selector Element      | `string`                                                | `undefined`             |
+| `handleCurrencyChange` | --                 | Currency change event handler                                                       | `(props: CurrencySelectorChangeEvent) => Promise<void>` | `undefined`             |
+| `publishableKey`       | `publishable-key`  | Your Stripe publishable API key.                                                    | `string`                                                | `undefined`             |
+| `stripeAccount`        | `stripe-account`   | Optional. Making API calls for connected accounts                                   | `string`                                                | `undefined`             |
+| `stripeDidLoaded`      | --                 | Stripe.js class loaded handler                                                      | `(event: StripeLoadedEvent) => Promise<void>`           | `undefined`             |
 
 
 ## Events
@@ -48,10 +48,10 @@ Get Stripe.js, and initialize elements
 
 #### Parameters
 
-| Name             | Type                          | Description |
-| ---------------- | ----------------------------- | ----------- |
-| `publishableKey` | `string`                      |             |
-| `options`        | `{ stripeAccount?: string; }` |             |
+| Name             | Type                          | Description                                             |
+| ---------------- | ----------------------------- | ------------------------------------------------------- |
+| `publishableKey` | `string`                      | - Your Stripe publishable API key                       |
+| `options`        | `{ stripeAccount?: string; }` | - Optional initialization options (e.g., stripeAccount) |
 
 #### Returns
 
@@ -65,15 +65,15 @@ Set error message
 
 #### Parameters
 
-| Name           | Type     | Description |
-| -------------- | -------- | ----------- |
-| `errorMessage` | `string` | string      |
+| Name           | Type     | Description                    |
+| -------------- | -------- | ------------------------------ |
+| `errorMessage` | `string` | - The error message to display |
 
 #### Returns
 
 Type: `Promise<this>`
 
-
+Promise resolving to this instance for method chaining
 
 
 ----------------------------------------------

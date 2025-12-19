@@ -29,13 +29,9 @@ export class StripeCurrencySelector {
 
   @Watch('publishableKey')
   updatePublishableKey(publishableKey: string) {
-    const options: InitStripeOptions = {};
-
-    if (this.stripeAccount) {
-      options.stripeAccount = this.stripeAccount;
-    }
-
-    this.initStripe(publishableKey, Object.keys(options).length ? options : undefined);
+    this.initStripe(publishableKey, {
+      stripeAccount: this.stripeAccount,
+    });
   }
 
   /**
@@ -88,8 +84,8 @@ export class StripeCurrencySelector {
 
   /**
    * Get Stripe.js, and initialize elements
-   * @param publishableKey
-   * @param options
+   * @param publishableKey - Your Stripe publishable API key
+   * @param options - Optional initialization options (e.g., stripeAccount)
    * @example
    * ```
    * const stripeCurrencySelector = document.createElement('stripe-currency-selector');
@@ -127,8 +123,8 @@ export class StripeCurrencySelector {
 
   /**
    * Set error message
-   * @param errorMessage string
-   * @returns
+   * @param errorMessage - The error message to display
+   * @returns Promise resolving to this instance for method chaining
    * @example
    * ```
    * const stripeCurrencySelector = document.createElement('stripe-currency-selector');
@@ -216,7 +212,7 @@ export class StripeCurrencySelector {
     this.currencyChange.emit(changeEvent);
 
     if (this.handleCurrencyChange) {
-      await this.handleCurrencyChange({} as globalThis.Event, changeEvent);
+      await this.handleCurrencyChange(changeEvent);
     }
   }
 
@@ -265,14 +261,18 @@ export class StripeCurrencySelector {
     // Note: The 'change' event type is not yet in @stripe/stripe-js type definitions
     // but is documented in Stripe's Currency Selector Element documentation
     (currencySelectorElement as any).on('change', (event: any) => {
-      if (event.value && event.value.currency) {
+      if (event?.value?.currency) {
         this.currencyChangeEventHandler(event.value.currency);
       }
     });
   }
 
   componentDidLoad() {
-    this.el.classList.add(checkPlatform());
+    const platform = checkPlatform();
+
+    if (platform) {
+      this.el.classList.add(platform);
+    }
   }
 
   disconnectedCallback() {

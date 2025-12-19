@@ -299,8 +299,8 @@ export namespace Components {
         "handleCurrencyChange"?: CurrencySelectorChangeHandler;
         /**
           * Get Stripe.js, and initialize elements
-          * @param publishableKey
-          * @param options
+          * @param publishableKey - Your Stripe publishable API key
+          * @param options - Optional initialization options (e.g., stripeAccount)
           * @example ``` const stripeCurrencySelector = document.createElement('stripe-currency-selector'); customElements  .whenDefined('stripe-currency-selector')  .then(() => {    stripeCurrencySelector.initStripe('pk_test_XXXXXXXXX')  }) ```
          */
         "initStripe": (publishableKey: string, options?: InitStripeOptions) => Promise<void>;
@@ -310,8 +310,8 @@ export namespace Components {
         "publishableKey": string;
         /**
           * Set error message
-          * @param errorMessage string
-          * @returns 
+          * @param errorMessage - The error message to display
+          * @returns Promise resolving to this instance for method chaining
           * @example ``` const stripeCurrencySelector = document.createElement('stripe-currency-selector'); customElements  .whenDefined('stripe-currency-selector')  .then(() => {    stripeCurrencySelector.setErrorMessage('Invalid currency selected')   }); }) ```
          */
         "setErrorMessage": (errorMessage: string) => Promise<this>;

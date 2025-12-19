@@ -269,7 +269,9 @@ describe('stripe-currency-selector', () => {
 
       it('When call this, should call the #initStripe method with expected props', async () => {
         await element.updatePublishableKey('pk_test_xxx');
-        expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxx', undefined);
+        expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxx', {
+          stripeAccount: undefined,
+        });
       });
 
       it('When call this, should call the #initStripe method with expected props (with options)', async () => {

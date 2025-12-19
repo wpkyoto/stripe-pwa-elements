@@ -60,10 +60,13 @@ export class CurrencySelectorElementManager implements ICurrencySelectorElementM
     // Note: The 'change' event type is not yet in @stripe/stripe-js type definitions
     // but is documented in Stripe's Currency Selector Element documentation
     (this.currencySelectorElement as any).on('change', (event: any) => {
-      // Update selected currency
-      this.store.set('selectedCurrency', event.value.currency);
       // Clear error on change
       this.store.set('errorMessage', '');
+
+      // Update selected currency if available
+      if (event?.value?.currency) {
+        this.store.set('selectedCurrency', event.value.currency);
+      }
     });
 
     return this.currencySelectorElement;
