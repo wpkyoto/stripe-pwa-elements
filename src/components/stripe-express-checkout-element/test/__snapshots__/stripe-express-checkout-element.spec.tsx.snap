@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`stripe-express-checkout-element rendering tests should render in setup mode 1`] = `
+<stripe-express-checkout-element class="undefined" intent-type="setup" publishable-key="pk_test_xxx">
+  <div class="stripe-express-checkout-wrap">
+    <div id="express-checkout-element"></div>
+    <div class="stripe-express-checkout-loading">
+      Loading
+    </div>
+  </div>
+</stripe-express-checkout-element>
+`;
+
+exports[`stripe-express-checkout-element rendering tests should render with publishable key and amount 1`] = `
+<stripe-express-checkout-element amount="1099" class="undefined" currency="usd" publishable-key="pk_test_xxx">
+  <div class="stripe-express-checkout-wrap">
+    <div id="express-checkout-element"></div>
+    <div class="stripe-express-checkout-loading">
+      Loading
+    </div>
+  </div>
+</stripe-express-checkout-element>
+`;
