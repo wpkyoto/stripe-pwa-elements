@@ -131,9 +131,8 @@ export class StripeCurrencySelector {
    * customElements
    *  .whenDefined('stripe-currency-selector')
    *  .then(() => {
-   *    stripeCurrencySelector.setErrorMessage('Invalid currency selected')
+   *    stripeCurrencySelector.setErrorMessage('Invalid currency selected');
    *   });
-   * })
    * ```
    */
   @Method()

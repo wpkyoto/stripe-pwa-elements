@@ -57,7 +57,7 @@ export class StripePaymentElement {
    * - 'Add a card' -> PaymentFlow(iOS)
    * These strings will translated automatically by this library.
    */
-  @Prop() readonly sheetTitle = 'Add your payment information';
+  @Prop() readonly sheetTitle: string = 'Add your payment information';
 
   /**
    * Submit button label
@@ -68,7 +68,7 @@ export class StripePaymentElement {
    * - 'Add a card' -> PaymentFlow(iOS)
    * These strings will translated automatically by this library.
    */
-  @Prop() readonly buttonLabel = 'Pay';
+  @Prop() readonly buttonLabel: string = 'Pay';
 
   /**
    * Get Stripe.js, and initialize elements
@@ -186,7 +186,7 @@ export class StripePaymentElement {
    * Overwrite the application name that registered
    * For wrapper library (like Capacitor)
    */
-  @Prop() readonly applicationName = 'stripe-pwa-elements';
+  @Prop() readonly applicationName: string = 'stripe-pwa-elements';
 
   /**
    * The client secret from paymentIntent.create or setupIntent.create response
@@ -221,7 +221,7 @@ export class StripePaymentElement {
    * If you want to customize the behavior, should set false.
    * And listen the 'formSubmit' event on the element
    */
-  @Prop() readonly shouldUseDefaultFormSubmitAction = true;
+  @Prop() readonly shouldUseDefaultFormSubmitAction: boolean = true;
 
   /**
    * Form submit event handler
