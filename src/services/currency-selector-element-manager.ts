@@ -47,12 +47,13 @@ export class CurrencySelectorElementManager implements ICurrencySelectorElementM
       this.unmount();
     }
 
+    // Find mount point first to avoid element leak if findElement throws
+    const currencySelectorElementContainer = await findElement(containerElement, '#currency-selector');
+
     // Create and mount currency selector element
     // Note: 'currencySelector' type is not yet in @stripe/stripe-js v8.6.0 type definitions
     // but is documented in Stripe's Currency Selector Element documentation
     this.currencySelectorElement = (elements as any).create('currencySelector', options || {}) as StripeCurrencySelectorElement;
-
-    const currencySelectorElementContainer = await findElement(containerElement, '#currency-selector');
 
     this.currencySelectorElement.mount(currencySelectorElementContainer);
 
