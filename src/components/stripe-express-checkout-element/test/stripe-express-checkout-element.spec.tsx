@@ -1,40 +1,30 @@
-import { newSpecPage } from '@stencil/core/testing';
 import { StripeExpressCheckoutElement } from '../stripe-express-checkout-element';
 import type { IStripeService, IExpressCheckoutElementManager } from '../../../services/interfaces';
 import * as factoryModule from '../../../services/factory';
 
-// Mock loadStripe to avoid actual network calls
+/**
+ * Unit tests for StripeExpressCheckoutElement
+ *
+ * Following Kent Beck's unit test philosophy:
+ * - Test one thing per test
+ * - Run in milliseconds (no newSpecPage)
+ * - Completely isolated with mocks
+ */
+
+// Mock all external dependencies
 jest.mock('@stripe/stripe-js', () => ({
-  loadStripe: jest.fn(() =>
-    Promise.resolve({
-      registerAppInfo: jest.fn(),
-      elements: jest.fn(() => ({
-        create: jest.fn(() => ({
-          mount: jest.fn(),
-          unmount: jest.fn(),
-          on: jest.fn(),
-        })),
-      })),
-      confirmPayment: jest.fn(),
-      confirmSetup: jest.fn(),
-    }),
-  ),
+  loadStripe: jest.fn(() => Promise.resolve(null)),
 }));
 
-// Mock i18n
 jest.mock('../../../utils/i18n', () => ({
-  i18n: {
-    t: (key: string) => key,
-  },
+  i18n: { t: (key: string) => key },
 }));
 
-// Mock service implementations
-let mockStripeService: jest.Mocked<IStripeService>;
-let mockExpressCheckoutManager: jest.Mocked<IExpressCheckoutElementManager>;
+describe('StripeExpressCheckoutElement', () => {
+  let mockStripeService: jest.Mocked<IStripeService>;
+  let mockExpressCheckoutManager: jest.Mocked<IExpressCheckoutElementManager>;
 
-describe('stripe-express-checkout-element', () => {
   beforeEach(() => {
-    // Create fresh mock implementations
     mockStripeService = {
       state: {
         loadStripeStatus: '',
@@ -56,10 +46,7 @@ describe('stripe-express-checkout-element', () => {
     } as any;
 
     mockExpressCheckoutManager = {
-      getState: jest.fn().mockReturnValue({
-        errorMessage: '',
-        isReady: false,
-      }),
+      getState: jest.fn().mockReturnValue({ errorMessage: '', isReady: false }),
       initialize: jest.fn().mockResolvedValue({} as any),
       getElement: jest.fn().mockReturnValue(undefined),
       update: jest.fn(),
@@ -68,7 +55,6 @@ describe('stripe-express-checkout-element', () => {
       unmount: jest.fn(),
     } as any;
 
-    // Spy on factory methods to return our mocks
     jest.spyOn(factoryModule.serviceFactory, 'createStripeService').mockReturnValue(mockStripeService);
     jest.spyOn(factoryModule.serviceFactory, 'createExpressCheckoutElementManager').mockReturnValue(mockExpressCheckoutManager);
   });
@@ -77,349 +63,213 @@ describe('stripe-express-checkout-element', () => {
     jest.restoreAllMocks();
   });
 
-  describe('component initialization', () => {
-    it('should create component instance', () => {
+  describe('default property values', () => {
+    it('intentType defaults to payment', () => {
       const element = new StripeExpressCheckoutElement();
-
-      expect(element).toBeDefined();
-    });
-
-    it('should have default intentType of payment', () => {
-      const element = new StripeExpressCheckoutElement();
-
       expect(element.intentType).toBe('payment');
     });
 
-    it('should have default shouldUseDefaultConfirmAction as true', () => {
+    it('shouldUseDefaultConfirmAction defaults to true', () => {
       const element = new StripeExpressCheckoutElement();
-
       expect(element.shouldUseDefaultConfirmAction).toBe(true);
     });
 
-    it('should have default applicationName', () => {
+    it('applicationName defaults to stripe-pwa-elements', () => {
       const element = new StripeExpressCheckoutElement();
-
       expect(element.applicationName).toBe('stripe-pwa-elements');
     });
   });
 
-  describe('method tests', () => {
-    let element: StripeExpressCheckoutElement;
+  describe('componentWillUpdate', () => {
+    it('does not call initStripe when publishableKey is undefined', () => {
+      const element = new StripeExpressCheckoutElement();
+      element.initStripe = jest.fn();
+      mockStripeService.state.publishableKey = undefined;
 
-    describe('#componentWillUpdate', () => {
-      beforeEach(() => {
-        element = new StripeExpressCheckoutElement();
-        element.initStripe = jest.fn();
-      });
+      element.componentWillUpdate();
 
-      it('should not call initStripe when publishableKey is not set', () => {
-        mockStripeService.state.publishableKey = undefined;
-        element.componentWillUpdate();
+      expect(element.initStripe).not.toHaveBeenCalled();
+    });
 
-        expect(element.initStripe).not.toHaveBeenCalled();
-      });
+    it('does not call initStripe when status is success', () => {
+      const element = new StripeExpressCheckoutElement();
+      element.initStripe = jest.fn();
+      mockStripeService.state.publishableKey = 'pk_test_xxx';
+      mockStripeService.state.loadStripeStatus = 'success';
 
-      it.each([['success' as const], ['loading' as const]])('should not call initStripe when status is %s', loadingStatus => {
-        mockStripeService.state.publishableKey = 'pk_test_xxxx';
-        mockStripeService.state.loadStripeStatus = loadingStatus;
-        element.componentWillUpdate();
+      element.componentWillUpdate();
 
-        expect(element.initStripe).not.toHaveBeenCalled();
-      });
+      expect(element.initStripe).not.toHaveBeenCalled();
+    });
 
-      it.each([['' as const], ['failure' as const]])('should call initStripe when status is %s', loadingStatus => {
-        mockStripeService.state.publishableKey = 'pk_test_xxxx';
-        mockStripeService.state.loadStripeStatus = loadingStatus;
-        element.componentWillUpdate();
+    it('does not call initStripe when status is loading', () => {
+      const element = new StripeExpressCheckoutElement();
+      element.initStripe = jest.fn();
+      mockStripeService.state.publishableKey = 'pk_test_xxx';
+      mockStripeService.state.loadStripeStatus = 'loading';
 
-        expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxxx', {
-          stripeAccount: undefined,
-        });
+      element.componentWillUpdate();
+
+      expect(element.initStripe).not.toHaveBeenCalled();
+    });
+
+    it('calls initStripe when status is empty', () => {
+      const element = new StripeExpressCheckoutElement();
+      element.initStripe = jest.fn();
+      mockStripeService.state.publishableKey = 'pk_test_xxx';
+      mockStripeService.state.loadStripeStatus = '';
+
+      element.componentWillUpdate();
+
+      expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxx', { stripeAccount: undefined });
+    });
+
+    it('calls initStripe when status is failure', () => {
+      const element = new StripeExpressCheckoutElement();
+      element.initStripe = jest.fn();
+      mockStripeService.state.publishableKey = 'pk_test_xxx';
+      mockStripeService.state.loadStripeStatus = 'failure';
+
+      element.componentWillUpdate();
+
+      expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxx', { stripeAccount: undefined });
+    });
+  });
+
+  describe('setErrorMessage', () => {
+    it('delegates to manager.setError', async () => {
+      const element = new StripeExpressCheckoutElement();
+
+      await element.setErrorMessage('Test error');
+
+      expect(mockExpressCheckoutManager.setError).toHaveBeenCalledWith('Test error');
+    });
+
+    it('returns the element for chaining', async () => {
+      const element = new StripeExpressCheckoutElement();
+
+      const result = await element.setErrorMessage('error');
+
+      expect(result).toBe(element);
+    });
+  });
+
+  describe('updateProgress', () => {
+    it('sets progress to loading', async () => {
+      const element = new StripeExpressCheckoutElement();
+
+      await element.updateProgress('loading');
+
+      expect((element as any).progress).toBe('loading');
+    });
+
+    it('sets progress to success', async () => {
+      const element = new StripeExpressCheckoutElement();
+
+      await element.updateProgress('success');
+
+      expect((element as any).progress).toBe('success');
+    });
+
+    it('sets progress to failure', async () => {
+      const element = new StripeExpressCheckoutElement();
+
+      await element.updateProgress('failure');
+
+      expect((element as any).progress).toBe('failure');
+    });
+
+    it('returns the element for chaining', async () => {
+      const element = new StripeExpressCheckoutElement();
+
+      const result = await element.updateProgress('loading');
+
+      expect(result).toBe(element);
+    });
+  });
+
+  describe('initStripe', () => {
+    it('calls stripeService.initialize with key', async () => {
+      const element = new StripeExpressCheckoutElement();
+
+      await element.initStripe('pk_test_xxx');
+
+      expect(mockStripeService.initialize).toHaveBeenCalledWith('pk_test_xxx', {
+        stripeAccount: undefined,
+        applicationName: 'stripe-pwa-elements',
       });
     });
 
-    describe('#setErrorMessage', () => {
-      beforeEach(() => {
-        element = new StripeExpressCheckoutElement();
-      });
+    it('passes stripeAccount to initialize', async () => {
+      const element = new StripeExpressCheckoutElement();
 
-      it('should call manager setError with message', async () => {
-        const message = 'Test error message';
+      await element.initStripe('pk_test_xxx', { stripeAccount: 'acct_xxx' });
 
-        await element.setErrorMessage(message);
-
-        expect(mockExpressCheckoutManager.setError).toHaveBeenCalledWith(message);
-      });
-
-      it('should return the element for chaining', async () => {
-        const result = await element.setErrorMessage('error');
-
-        expect(result).toBe(element);
-      });
-    });
-
-    describe('#updateProgress', () => {
-      beforeEach(() => {
-        element = new StripeExpressCheckoutElement();
-      });
-
-      it('should update progress state to loading', async () => {
-        await element.updateProgress('loading');
-
-        expect((element as any).progress).toBe('loading');
-      });
-
-      it('should update progress state to success', async () => {
-        await element.updateProgress('success');
-
-        expect((element as any).progress).toBe('success');
-      });
-
-      it('should update progress state to failure', async () => {
-        await element.updateProgress('failure');
-
-        expect((element as any).progress).toBe('failure');
-      });
-
-      it('should return the element for chaining', async () => {
-        const result = await element.updateProgress('loading');
-
-        expect(result).toBe(element);
-      });
-    });
-
-    describe('#initStripe', () => {
-      beforeEach(() => {
-        element = new StripeExpressCheckoutElement();
-        mockStripeService.state.loadStripeStatus = 'success';
-      });
-
-      it('should call stripeService.initialize with correct parameters', async () => {
-        await element.initStripe('pk_test_xxx');
-
-        expect(mockStripeService.initialize).toHaveBeenCalledWith('pk_test_xxx', {
-          stripeAccount: undefined,
-          applicationName: 'stripe-pwa-elements',
-        });
-      });
-
-      it('should call stripeService.initialize with stripe account', async () => {
-        await element.initStripe('pk_test_xxx', { stripeAccount: 'acct_xxx' });
-
-        expect(mockStripeService.initialize).toHaveBeenCalledWith('pk_test_xxx', {
-          stripeAccount: 'acct_xxx',
-          applicationName: 'stripe-pwa-elements',
-        });
-      });
-    });
-
-    describe('#updateElementOptions', () => {
-      beforeEach(() => {
-        element = new StripeExpressCheckoutElement();
-      });
-
-      it('should call manager update with options', async () => {
-        await element.updateElementOptions({ amount: 2000 });
-
-        expect(mockExpressCheckoutManager.update).toHaveBeenCalledWith({ amount: 2000 });
-      });
-
-      it('should return the element for chaining', async () => {
-        const result = await element.updateElementOptions({ amount: 2000 });
-
-        expect(result).toBe(element);
-      });
-    });
-
-    describe('#updatePublishableKey', () => {
-      beforeEach(() => {
-        element = new StripeExpressCheckoutElement();
-        element.initStripe = jest.fn();
-      });
-
-      it('should call initStripe with new publishable key', async () => {
-        await element.updatePublishableKey('pk_test_new');
-
-        expect(element.initStripe).toHaveBeenCalledWith('pk_test_new', undefined);
-      });
-
-      it('should include existing stripe account in options', async () => {
-        mockStripeService.state.stripeAccount = 'acct_existing';
-        await element.updatePublishableKey('pk_test_new');
-
-        expect(element.initStripe).toHaveBeenCalledWith('pk_test_new', {
-          stripeAccount: 'acct_existing',
-        });
-      });
-    });
-
-    describe('#updateStripeAccountId', () => {
-      beforeEach(() => {
-        element = new StripeExpressCheckoutElement();
-        element.initStripe = jest.fn();
-        mockStripeService.state.publishableKey = 'pk_test_xxxx';
-      });
-
-      it('should call initStripe with new stripe account', async () => {
-        await element.updateStripeAccountId('acct_new');
-
-        expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxxx', {
-          stripeAccount: 'acct_new',
-        });
-      });
-    });
-
-    describe('#disconnectedCallback', () => {
-      beforeEach(() => {
-        element = new StripeExpressCheckoutElement();
-      });
-
-      it('should call manager unmount', () => {
-        element.disconnectedCallback();
-
-        expect(mockExpressCheckoutManager.unmount).toHaveBeenCalled();
+      expect(mockStripeService.initialize).toHaveBeenCalledWith('pk_test_xxx', {
+        stripeAccount: 'acct_xxx',
+        applicationName: 'stripe-pwa-elements',
       });
     });
   });
 
-  describe('rendering tests', () => {
-    it('should render loading state when stripe is loading', async () => {
-      mockStripeService.state.loadStripeStatus = 'loading';
+  describe('updateElementOptions', () => {
+    it('delegates to manager.update', async () => {
+      const element = new StripeExpressCheckoutElement();
 
-      const page = await newSpecPage({
-        components: [StripeExpressCheckoutElement],
-        html: `<stripe-express-checkout-element></stripe-express-checkout-element>`,
-      });
+      await element.updateElementOptions({ amount: 2000 });
 
-      expect(page.root.textContent).toContain('Loading');
+      expect(mockExpressCheckoutManager.update).toHaveBeenCalledWith({ amount: 2000 });
     });
 
-    it('should render failure message when stripe fails to load', async () => {
-      mockStripeService.state.loadStripeStatus = 'failure';
+    it('returns the element for chaining', async () => {
+      const element = new StripeExpressCheckoutElement();
 
-      const page = await newSpecPage({
-        components: [StripeExpressCheckoutElement],
-        html: `<stripe-express-checkout-element></stripe-express-checkout-element>`,
-      });
+      const result = await element.updateElementOptions({ amount: 2000 });
 
-      expect(page.root.textContent).toContain('Failed to load Stripe');
+      expect(result).toBe(element);
+    });
+  });
+
+  describe('updatePublishableKey', () => {
+    it('calls initStripe with new key', async () => {
+      const element = new StripeExpressCheckoutElement();
+      element.initStripe = jest.fn();
+
+      await element.updatePublishableKey('pk_test_new');
+
+      expect(element.initStripe).toHaveBeenCalledWith('pk_test_new', undefined);
     });
 
-    it('should render express checkout container when loaded', async () => {
-      mockStripeService.state.loadStripeStatus = 'success';
+    it('preserves existing stripeAccount', async () => {
+      const element = new StripeExpressCheckoutElement();
+      element.initStripe = jest.fn();
+      mockStripeService.state.stripeAccount = 'acct_existing';
 
-      const page = await newSpecPage({
-        components: [StripeExpressCheckoutElement],
-        html: `<stripe-express-checkout-element></stripe-express-checkout-element>`,
-      });
+      await element.updatePublishableKey('pk_test_new');
 
-      const container = page.root.querySelector('.stripe-express-checkout-wrap');
-
-      expect(container).not.toBeNull();
+      expect(element.initStripe).toHaveBeenCalledWith('pk_test_new', { stripeAccount: 'acct_existing' });
     });
+  });
 
-    it('should render express checkout element mount point', async () => {
-      mockStripeService.state.loadStripeStatus = 'success';
+  describe('updateStripeAccountId', () => {
+    it('calls initStripe with new account', async () => {
+      const element = new StripeExpressCheckoutElement();
+      element.initStripe = jest.fn();
+      mockStripeService.state.publishableKey = 'pk_test_xxx';
 
-      const page = await newSpecPage({
-        components: [StripeExpressCheckoutElement],
-        html: `<stripe-express-checkout-element></stripe-express-checkout-element>`,
-      });
+      await element.updateStripeAccountId('acct_new');
 
-      const mountPoint = page.root.querySelector('#express-checkout-element');
-
-      expect(mountPoint).not.toBeNull();
+      expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxx', { stripeAccount: 'acct_new' });
     });
+  });
 
-    it('should render loading indicator when not ready', async () => {
-      mockStripeService.state.loadStripeStatus = 'success';
-      mockExpressCheckoutManager.getState.mockReturnValue({
-        errorMessage: '',
-        isReady: false,
-      });
+  describe('disconnectedCallback', () => {
+    it('calls manager.unmount', () => {
+      const element = new StripeExpressCheckoutElement();
 
-      const page = await newSpecPage({
-        components: [StripeExpressCheckoutElement],
-        html: `<stripe-express-checkout-element></stripe-express-checkout-element>`,
-      });
+      element.disconnectedCallback();
 
-      const loadingDiv = page.root.querySelector('.stripe-express-checkout-loading');
-
-      expect(loadingDiv).not.toBeNull();
-    });
-
-    it('should not render loading indicator when ready', async () => {
-      mockStripeService.state.loadStripeStatus = 'success';
-      mockExpressCheckoutManager.getState.mockReturnValue({
-        errorMessage: '',
-        isReady: true,
-      });
-
-      const page = await newSpecPage({
-        components: [StripeExpressCheckoutElement],
-        html: `<stripe-express-checkout-element></stripe-express-checkout-element>`,
-      });
-
-      const loadingDiv = page.root.querySelector('.stripe-express-checkout-loading');
-
-      expect(loadingDiv).toBeNull();
-    });
-
-    it('should render error message when present', async () => {
-      mockStripeService.state.loadStripeStatus = 'success';
-      mockExpressCheckoutManager.getState.mockReturnValue({
-        errorMessage: 'Test error',
-        isReady: true,
-      });
-
-      const page = await newSpecPage({
-        components: [StripeExpressCheckoutElement],
-        html: `<stripe-express-checkout-element></stripe-express-checkout-element>`,
-      });
-
-      const errorDiv = page.root.querySelector('#express-checkout-errors');
-
-      expect(errorDiv).not.toBeNull();
-      expect(errorDiv.textContent).toBe('Test error');
-    });
-
-    it('should not render error div when no error', async () => {
-      mockStripeService.state.loadStripeStatus = 'success';
-      mockExpressCheckoutManager.getState.mockReturnValue({
-        errorMessage: '',
-        isReady: true,
-      });
-
-      const page = await newSpecPage({
-        components: [StripeExpressCheckoutElement],
-        html: `<stripe-express-checkout-element></stripe-express-checkout-element>`,
-      });
-
-      const errorDiv = page.root.querySelector('#express-checkout-errors');
-
-      expect(errorDiv).toBeNull();
-    });
-
-    it('should render with publishable key and amount', async () => {
-      mockStripeService.state.loadStripeStatus = 'success';
-
-      const page = await newSpecPage({
-        components: [StripeExpressCheckoutElement],
-        html: `<stripe-express-checkout-element publishable-key="pk_test_xxx" amount="1099" currency="usd"></stripe-express-checkout-element>`,
-      });
-
-      expect(page.root).toMatchSnapshot();
-    });
-
-    it('should render in setup mode', async () => {
-      mockStripeService.state.loadStripeStatus = 'success';
-
-      const page = await newSpecPage({
-        components: [StripeExpressCheckoutElement],
-        html: `<stripe-express-checkout-element publishable-key="pk_test_xxx" intent-type="setup"></stripe-express-checkout-element>`,
-      });
-
-      expect(page.root).toMatchSnapshot();
+      expect(mockExpressCheckoutManager.unmount).toHaveBeenCalled();
     });
   });
 });
