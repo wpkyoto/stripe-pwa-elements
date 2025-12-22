@@ -372,19 +372,43 @@ export class StripePaymentElement {
   @Event() formSubmit: EventEmitter<PaymentElementSubmitEvent>;
 
   private async formSubmitEventHandler() {
-    const elements = this.stripeService.getElements();
     const stripe = this.stripeService.getStripe();
+    const isCheckoutSession = this.stripeService.state.isCheckoutSession;
 
-    if (!elements || !stripe) {
+    if (!stripe) {
       console.error('Stripe not properly initialized');
       return;
     }
 
-    this.formSubmit.emit({
+    const eventData: PaymentElementSubmitEvent = {
       stripe,
-      elements,
-      intentClientSecret: this.intentClientSecret,
-    });
+    };
+
+    if (isCheckoutSession) {
+      // Checkout Session mode
+      const checkout = this.stripeService.getCheckout();
+
+      if (!checkout) {
+        console.error('Checkout not properly initialized');
+        return;
+      }
+
+      eventData.checkout = checkout;
+      eventData.checkoutSessionClientSecret = this.checkoutSessionClientSecret;
+    } else {
+      // Payment Intent / Setup Intent mode
+      const elements = this.stripeService.getElements();
+
+      if (!elements) {
+        console.error('Elements not properly initialized');
+        return;
+      }
+
+      eventData.elements = elements;
+      eventData.intentClientSecret = this.intentClientSecret;
+    }
+
+    this.formSubmit.emit(eventData);
   }
 
   /**
@@ -513,7 +537,14 @@ export class StripePaymentElement {
       const loadActionsResult = await checkout.loadActions();
 
       if (loadActionsResult.type === 'error') {
-        throw new Error(loadActionsResult.error.message);
+        // Create a StripeError-compatible object from the Checkout Session error
+        const stripeError = {
+          type: 'api_error' as const,
+          code: loadActionsResult.error.code || 'checkout_session_error',
+          message: loadActionsResult.error.message,
+        };
+
+        throw new StripeAPIError(stripeError);
       }
 
       const { actions } = loadActionsResult;
@@ -528,7 +559,15 @@ export class StripePaymentElement {
       });
 
       if (result.type === 'error') {
-        throw new Error(result.error.message);
+        // Create a StripeError-compatible object from the confirm error
+        const stripeError = {
+          type: 'card_error' as const,
+          code: result.error.code || 'payment_failed',
+          message: result.error.message,
+          decline_code: result.error.code === 'paymentFailed' ? (result.error as { paymentFailed?: { declineCode?: string } }).paymentFailed?.declineCode : undefined,
+        };
+
+        throw new StripeAPIError(stripeError);
       }
 
       this.checkoutSessionConfirmResultHandler(result);

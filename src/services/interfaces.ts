@@ -181,8 +181,9 @@ export interface IPaymentElementManager {
 
   /**
    * Initialize and mount payment element
+   * Supports both Payment Intent mode and Checkout Session mode
    */
-  initialize(containerElement: HTMLElement): Promise<StripePaymentElement>;
+  initialize(containerElement: HTMLElement, options?: import('@stripe/stripe-js').StripePaymentElementOptions | import('@stripe/stripe-js').StripeCheckoutPaymentElementOptions): Promise<StripePaymentElement>;
 
   /**
    * Get mounted payment element
