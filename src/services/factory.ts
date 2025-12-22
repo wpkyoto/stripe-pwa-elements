@@ -3,6 +3,7 @@ import type {
   ICardElementManager,
   IPaymentElementManager,
   IAddressElementManager,
+  ILinkAuthenticationElementManager,
   ICurrencySelectorElementManager,
   IExpressCheckoutElementManager,
 } from './interfaces';
@@ -10,6 +11,7 @@ import { StripeServiceClass } from './stripe-service';
 import { CardElementManager } from './card-element-manager';
 import { PaymentElementManager } from './payment-element-manager';
 import { AddressElementManager } from './address-element-manager';
+import { LinkAuthenticationElementManager } from './link-authentication-element-manager';
 import { CurrencySelectorElementManager } from './currency-selector-element-manager';
 import { ExpressCheckoutElementManager } from './express-checkout-element-manager';
 
@@ -48,6 +50,14 @@ export class ServiceFactory {
    */
   createAddressElementManager(stripeService: IStripeService): IAddressElementManager {
     return new AddressElementManager(stripeService);
+  }
+
+  /**
+   * Create a new LinkAuthenticationElementManager instance
+   * @param stripeService - Injected StripeService dependency
+   */
+  createLinkAuthenticationElementManager(stripeService: IStripeService): ILinkAuthenticationElementManager {
+    return new LinkAuthenticationElementManager(stripeService);
   }
 
   /**

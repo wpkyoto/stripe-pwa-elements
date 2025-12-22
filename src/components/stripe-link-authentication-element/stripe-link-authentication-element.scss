@@ -1,0 +1,33 @@
+@import '../../style/theme';
+
+.stripe-link-authentication-wrap {
+  @import '../../style/rest';
+  display: block;
+  width: 100%;
+  background: #fff;
+  padding: 16px;
+
+  .stripe-link-authentication-container {
+    #link-authentication-element {
+      .StripeElement {
+        padding: 8px 16px;
+        min-height: 64px;
+        border: 1px solid var(--color-input-border);
+        border-radius: 4px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        > .__PrivateStripeElement {
+          width: 100%;
+        }
+      }
+    }
+
+    .stripe-element-errors {
+      margin-top: 8px;
+      font-size: 14px;
+      color: var(--color-text-error);
+    }
+  }
+}

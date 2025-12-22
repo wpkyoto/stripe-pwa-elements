@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
+    <title>Link Authentication Element Example</title>
+    <script type="module" src="/stripe-elements/stripe-elements.esm.js"></script>
+    <script nomodule src="/stripe-elements/stripe-elements.js"></script>
+  </head>
+  <body>
+      <nav>
+        <ul>
+          <li><a href="/">Example1: Dynamic Control</a></li>
+          <li><a href="/example2.html">Example2: Static HTML</a></li>
+          <li><a href="/example3.html">Example3: Payment Element</a></li>
+          <li><a href="/example4.html">Example4: Link Authentication Element</a></li>
+        </ul>
+      </nav>
+
+      <div class="container">
+        <div class="demo-section">
+          <h1>Example4: Stripe Link Authentication Element</h1>
+          <p>The Link Authentication Element collects email addresses and enables faster checkouts with Link.</p>
+
+          <form id="link-auth-form" name="link-auth-form">
+              <div id="error-message"></div>
+              <fieldset>
+                  <label>
+                      <legend>Stripe Publishable API Key</legend>
+                      <input name="stripe-publishable-api-key" type="text" placeholder="pk_test_..." />
+                      <small>Use a key starting with "pk_test_" for test environment</small>
+                  </label>
+              </fieldset>
+              <fieldset>
+                  <label>
+                      <legend>Default Email (Optional)</legend>
+                      <input name="default-email" type="email" placeholder="customer@example.com" />
+                      <small>Pre-fill the email field with a default value</small>
+                  </label>
+              </fieldset>
+              <button type="submit">Initialize Link Authentication</button>
+          </form>
+
+          <div id="stripe-link-container"></div>
+          <div id="result"></div>
+        </div>
+
+        <div class="docs-section">
+          <h2>Documentation</h2>
+          <p>
+            <strong>About Link Authentication Element:</strong>
+          </p>
+          <ul>
+            <li>Collects customer email addresses</li>
+            <li>Enables one-click checkouts with Stripe Link</li>
+            <li>Automatically recognizes returning Link customers</li>
+            <li>Can be combined with other Stripe Elements for complete checkout flows</li>
+            <li>Supports prefilling email addresses</li>
+          </ul>
+          <p>
+            <strong>Use Cases:</strong>
+          </p>
+          <ul>
+            <li>Email collection for payment flows</li>
+            <li>Enabling Link's one-click checkout</li>
+            <li>Reducing friction for returning customers</li>
+            <li>Building custom checkout experiences</li>
+          </ul>
+          <p>
+            <strong>Implementation Pattern:</strong>
+          </p>
+          <pre><code>// 1. Create Link Authentication Element
+const linkAuthElement = document.createElement('stripe-link-authentication-element');
+
+// 2. Set publishable key
+linkAuthElement.setAttribute('publishable-key', 'pk_test_...');
+
+// 3. Optional: Set default email
+linkAuthElement.setAttribute('default-email', 'customer@example.com');
+
+// 4. Listen for email changes
+linkAuthElement.addEventListener('linkAuthenticationChange', (event) => {
+  const { detail: { email, stripe, linkAuthenticationElement } } = event;
+  console.log('Customer email:', email);
+
+  // Use the email for your payment flow
+});
+
+// 5. Get the current email value
+const email = await linkAuthElement.getEmail();
+console.log('Current email:', email);</code></pre>
+
+          <p>
+            <strong>Integration with Payment Element:</strong>
+          </p>
+          <pre><code>// Combine with Payment Element for complete checkout
+const linkAuthElement = document.createElement('stripe-link-authentication-element');
+const paymentElement = document.createElement('stripe-payment-element');
+
+// Initialize both elements
+linkAuthElement.setAttribute('publishable-key', publishableKey);
+paymentElement.setAttribute('publishable-key', publishableKey);
+paymentElement.setAttribute('intent-client-secret', clientSecret);
+
+// When email changes, you can update your backend
+linkAuthElement.addEventListener('linkAuthenticationChange', async (event) => {
+  const { detail: { email } } = event;
+
+  // Update Payment Intent with customer email
+  await fetch('/update-payment-intent', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+    headers: { 'Content-Type': 'application/json' }
+  });
+});</code></pre>
+
+          <p>
+            <strong>Learn More:</strong>
+          </p>
+          <ul>
+            <li><a href="https://stripe.com/docs/payments/link" target="_blank">Stripe Link Documentation</a></li>
+            <li><a href="https://stripe.com/docs/payments/elements/link-authentication-element" target="_blank">Link Authentication Element Guide</a></li>
+          </ul>
+        </div>
+      </div>
+
+
+    <script>
+        const form = document.getElementById('link-auth-form');
+        const resultElement = document.getElementById('result');
+        const errorMessage = document.getElementById('error-message');
+        const containerElement = document.getElementById('stripe-link-container');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            // Clear previous content
+            containerElement.innerHTML = '';
+            errorMessage.innerText = '';
+            resultElement.innerHTML = '';
+
+            // Get form values
+            const stripePublishableAPIKey = document['link-auth-form']['stripe-publishable-api-key'].value;
+            if (!stripePublishableAPIKey) {
+                errorMessage.innerText = 'Stripe Publishable API Key is required';
+                return;
+            }
+
+            const defaultEmail = document['link-auth-form']['default-email'].value;
+
+            // Create Link Authentication Element
+            const linkAuthElement = document.createElement('stripe-link-authentication-element');
+
+            // Set attributes
+            linkAuthElement.setAttribute('publishable-key', stripePublishableAPIKey);
+            if (defaultEmail) {
+                linkAuthElement.setAttribute('default-email', defaultEmail);
+            }
+
+            // Append to container
+            containerElement.appendChild(linkAuthElement);
+
+            // Wait for component to be defined
+            await customElements.whenDefined('stripe-link-authentication-element');
+
+            // Listen for email changes
+            linkAuthElement.addEventListener('linkAuthenticationChange', async (event) => {
+              const { detail: { email, stripe } } = event;
+
+              resultElement.innerHTML = `
+                <div class="success-message">
+                  <h3>Email Updated</h3>
+                  <p><strong>Email:</strong> ${email || 'Not entered yet'}</p>
+                  <p><strong>Stripe initialized:</strong> ${!!stripe}</p>
+                  <p>
+                    <small>In a real application, you would send this email to your server
+                    to update the Payment Intent or Setup Intent.</small>
+                  </p>
+                </div>
+              `;
+            });
+
+            // Listen for Stripe loaded event
+            linkAuthElement.addEventListener('stripeLoaded', (event) => {
+              const { detail: { stripe } } = event;
+              console.log('Stripe loaded:', stripe);
+
+              resultElement.innerHTML = `
+                <div class="info-message">
+                  <h3>Link Authentication Element Ready</h3>
+                  <p>Enter your email address in the field above.</p>
+                  <p>
+                    <small>If you have a Stripe Link account, you'll see a prompt to sign in.</small>
+                  </p>
+                </div>
+              `;
+            });
+
+            // Demonstrate getting email programmatically
+            setTimeout(async () => {
+              const currentEmail = await linkAuthElement.getEmail();
+              console.log('Current email (after 2s):', currentEmail);
+            }, 2000);
+        });
+    </script>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        background-color: #f5f5f5;
+        line-height: 1.6;
+      }
+      nav {
+        background-color: #fff;
+        padding: 1rem;
+        border-bottom: 1px solid #e0e0e0;
+      }
+      nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      nav a {
+        color: #0066cc;
+        text-decoration: none;
+      }
+      nav a:hover {
+        text-decoration: underline;
+      }
+      .container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+      .demo-section,
+      .docs-section {
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .demo-section h1,
+      .docs-section h2 {
+        margin-top: 0;
+        color: #333;
+      }
+      .demo-section h1 {
+        font-size: 1.5rem;
+      }
+      .docs-section h2 {
+        font-size: 1.25rem;
+        border-bottom: 2px solid #e0e0e0;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+      }
+      form {
+        margin: 1.5rem 0;
+      }
+      fieldset {
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+      legend {
+        font-weight: 600;
+        color: #333;
+      }
+      input[type="text"],
+      input[type="email"] {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 1rem;
+      }
+      button[type="submit"] {
+        background-color: #0066cc;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+        width: 100%;
+      }
+      button[type="submit"]:hover {
+        background-color: #0052a3;
+      }
+      #error-message {
+        color: #d32f2f;
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+        background-color: #ffebee;
+        border-radius: 4px;
+        min-height: 1rem;
+      }
+      #result {
+        margin-top: 1.5rem;
+      }
+      .success-message,
+      .info-message {
+        padding: 1rem;
+        border-radius: 4px;
+        margin-top: 1rem;
+      }
+      .success-message {
+        background-color: #e8f5e9;
+        border: 1px solid #4caf50;
+        color: #2e7d32;
+      }
+      .info-message {
+        background-color: #e3f2fd;
+        border: 1px solid #2196f3;
+        color: #1565c0;
+      }
+      .success-message h3,
+      .info-message h3 {
+        margin-top: 0;
+        font-size: 1.1rem;
+      }
+      pre {
+        background-color: #f5f5f5;
+        padding: 1rem;
+        border-radius: 4px;
+        overflow-x: auto;
+        border: 1px solid #e0e0e0;
+      }
+      code {
+        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        font-size: 0.875rem;
+      }
+      pre code {
+        display: block;
+      }
+      #stripe-link-container {
+        margin-top: 2rem;
+        padding: 1rem;
+        border: 1px dashed #ccc;
+        border-radius: 4px;
+        min-height: 100px;
+      }
+      @media (max-width: 768px) {
+        .container {
+          grid-template-columns: 1fr;
+          padding: 1rem;
+        }
+        nav ul {
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+      }
+    </style>
+  </body>
+</html>

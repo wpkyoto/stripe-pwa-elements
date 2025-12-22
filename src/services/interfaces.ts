@@ -6,6 +6,7 @@ import {
   StripeCardCvcElement,
   StripePaymentElement,
   StripeAddressElement,
+  StripeLinkAuthenticationElement,
   StripeCurrencySelectorElement,
   StripeExpressCheckoutElement,
   StripeExpressCheckoutElementConfirmEvent,
@@ -74,6 +75,14 @@ export type PaymentElementState = {
 export type AddressElementState = {
   errorMessage: string;
   isComplete: boolean;
+};
+
+/**
+ * Link Authentication element state
+ */
+export type LinkAuthenticationElementState = {
+  errorMessage: string;
+  email?: string;
 };
 
 /**
@@ -239,6 +248,47 @@ export interface IAddressElementManager {
 
   /**
    * Unmount address element
+   */
+  unmount(): void;
+}
+
+/**
+ * Link Authentication Element manager interface
+ * Manages Stripe Link Authentication Element for email collection and Link authentication
+ */
+export interface ILinkAuthenticationElementManager {
+  /**
+   * Get link authentication element state
+   */
+  getState(): LinkAuthenticationElementState;
+
+  /**
+   * Register state change listener
+   */
+  onChange<K extends keyof LinkAuthenticationElementState>(key: K, callback: (newValue: LinkAuthenticationElementState[K]) => void): () => void;
+
+  /**
+   * Initialize and mount link authentication element
+   */
+  initialize(containerElement: HTMLElement, options?: import('@stripe/stripe-js').StripeLinkAuthenticationElementOptions): Promise<StripeLinkAuthenticationElement>;
+
+  /**
+   * Get mounted link authentication element
+   */
+  getElement(): StripeLinkAuthenticationElement | undefined;
+
+  /**
+   * Set error message
+   */
+  setError(message: string): void;
+
+  /**
+   * Clear error message
+   */
+  clearError(): void;
+
+  /**
+   * Unmount link authentication element
    */
   unmount(): void;
 }

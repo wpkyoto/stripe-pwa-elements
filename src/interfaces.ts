@@ -3,6 +3,7 @@ import {
   StripeCardCvcElement,
   StripeCardExpiryElement,
   StripeCardNumberElement,
+  StripeLinkAuthenticationElement,
   PaymentRequestPaymentMethodEvent,
   PaymentRequestShippingOptionEvent,
   PaymentRequestShippingAddressEvent,
@@ -77,6 +78,20 @@ export type DefaultFormSubmitResult = Error | PaymentIntentResult | SetupIntentR
 export type InitStripeOptions = {
   stripeAccount?: string;
 };
+
+/**
+ * Event object of Link Authentication Element 'change' event
+ */
+export type LinkAuthenticationElementChangeEvent = {
+  stripe: Stripe;
+  linkAuthenticationElement: StripeLinkAuthenticationElement;
+  email?: string;
+};
+
+/**
+ * Handler function of the Link Authentication Element 'change' event
+ */
+export type LinkAuthenticationElementChangeHandler = (event: LinkAuthenticationElementChangeEvent) => Promise<void> | void;
 
 /**
  * Currency Selector Element change event data
