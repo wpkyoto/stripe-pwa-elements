@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`stripe-currency-selector rendering test should load stripe after setting the publishable-key (snapshot) 1`] = `
+<stripe-currency-selector publishable-key="yyyy">
+  <div class="stripe-currency-selector-wrap">
+    <div id="currency-selector"></div>
+  </div>
+</stripe-currency-selector>
+`;
+
+exports[`stripe-currency-selector rendering test with client secret 1`] = `
+<stripe-currency-selector client-secret="cs_test_xxx" publishable-key="pk_test_xxx">
+  <div class="stripe-currency-selector-wrap">
+    <div id="currency-selector"></div>
+  </div>
+</stripe-currency-selector>
+`;
+
+exports[`stripe-currency-selector rendering test with the api key 1`] = `
+<stripe-currency-selector publishable-key="pk_test_xxx">
+  <div class="stripe-currency-selector-wrap">
+    <div id="currency-selector"></div>
+  </div>
+</stripe-currency-selector>
+`;

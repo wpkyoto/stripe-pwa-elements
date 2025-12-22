@@ -77,3 +77,15 @@ export type DefaultFormSubmitResult = Error | PaymentIntentResult | SetupIntentR
 export type InitStripeOptions = {
   stripeAccount?: string;
 };
+
+/**
+ * Currency Selector Element change event data
+ */
+export type CurrencySelectorChangeEvent = {
+  currency: string;
+};
+
+/**
+ * Currency Selector Element change handler
+ */
+export type CurrencySelectorChangeHandler = (props: CurrencySelectorChangeEvent) => Promise<void>;
