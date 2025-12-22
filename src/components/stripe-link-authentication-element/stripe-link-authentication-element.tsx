@@ -308,6 +308,7 @@ export class StripeLinkAuthenticationElement {
 
   componentDidLoad() {
     const platform = checkPlatform();
+
     if (platform) {
       this.el.classList.add(platform);
     }
