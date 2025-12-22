@@ -6,15 +6,15 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { AddressSubmitEvent, AddressSubmitHandler } from "./components/stripe-address-element/stripe-address-element";
-import { DefaultFormSubmitResult, FormSubmitEvent, FormSubmitHandler, InitStripeOptions, IntentType, LinkAuthenticationElementChangeEvent, LinkAuthenticationElementChangeHandler, PaymentRequestButtonOption, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
+import { CurrencySelectorChangeEvent, CurrencySelectorChangeHandler, DefaultFormSubmitResult, FormSubmitEvent, FormSubmitHandler, InitStripeOptions, IntentType, LinkAuthenticationElementChangeEvent, LinkAuthenticationElementChangeHandler, PaymentRequestButtonOption, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
 import { PaymentRequestOptions, PaymentRequestWallet, StripeExpressCheckoutElementClickEvent, StripeExpressCheckoutElementConfirmEvent } from "@stripe/stripe-js";
 import { ExpressCheckoutElementOptions } from "./services/interfaces";
-import { PaymentElementSubmitEvent, PaymentElementSubmitHandler } from "./components/stripe-payment-element/stripe-payment-element";
+import { CheckoutSessionFormSubmitResult, InitCheckoutSessionOptions, PaymentElementSubmitEvent, PaymentElementSubmitHandler } from "./components/stripe-payment-element/stripe-payment-element";
 export { AddressSubmitEvent, AddressSubmitHandler } from "./components/stripe-address-element/stripe-address-element";
-export { DefaultFormSubmitResult, FormSubmitEvent, FormSubmitHandler, InitStripeOptions, IntentType, LinkAuthenticationElementChangeEvent, LinkAuthenticationElementChangeHandler, PaymentRequestButtonOption, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
+export { CurrencySelectorChangeEvent, CurrencySelectorChangeHandler, DefaultFormSubmitResult, FormSubmitEvent, FormSubmitHandler, InitStripeOptions, IntentType, LinkAuthenticationElementChangeEvent, LinkAuthenticationElementChangeHandler, PaymentRequestButtonOption, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
 export { PaymentRequestOptions, PaymentRequestWallet, StripeExpressCheckoutElementClickEvent, StripeExpressCheckoutElementConfirmEvent } from "@stripe/stripe-js";
 export { ExpressCheckoutElementOptions } from "./services/interfaces";
-export { PaymentElementSubmitEvent, PaymentElementSubmitHandler } from "./components/stripe-payment-element/stripe-payment-element";
+export { CheckoutSessionFormSubmitResult, InitCheckoutSessionOptions, PaymentElementSubmitEvent, PaymentElementSubmitHandler } from "./components/stripe-payment-element/stripe-payment-element";
 export namespace Components {
     interface StripeAddressElement {
         /**
@@ -274,6 +274,60 @@ export namespace Components {
         "zip": boolean;
     }
     /**
+     * Stripe Currency Selector Element
+     * Allows customers to select their preferred currency for Adaptive Pricing
+     * @info https://docs.stripe.com/elements/currency-selector-element
+     */
+    interface StripeCurrencySelector {
+        /**
+          * Overwrite the application name that registered For wrapper library (like Capacitor)
+          * @default 'stripe-pwa-elements'
+         */
+        "applicationName": string;
+        /**
+          * The client secret from Checkout Session Required for Currency Selector Element
+          * @info https://docs.stripe.com/elements/currency-selector-element
+         */
+        "clientSecret"?: string;
+        /**
+          * Get the selected currency
+          * @returns Promise resolving to the selected currency code (e.g., 'USD', 'EUR')
+          * @example ``` const stripeCurrencySelector = document.querySelector('stripe-currency-selector'); const currency = await stripeCurrencySelector.getSelectedCurrency(); console.log('Selected currency:', currency); ```
+         */
+        "getSelectedCurrency": () => Promise<string | undefined>;
+        /**
+          * Currency change event handler
+         */
+        "handleCurrencyChange"?: CurrencySelectorChangeHandler;
+        /**
+          * Get Stripe.js, and initialize elements
+          * @param publishableKey - Your Stripe publishable API key
+          * @param options - Optional initialization options (e.g., stripeAccount)
+          * @example ``` const stripeCurrencySelector = document.createElement('stripe-currency-selector'); customElements  .whenDefined('stripe-currency-selector')  .then(() => {    stripeCurrencySelector.initStripe('pk_test_XXXXXXXXX')  }) ```
+         */
+        "initStripe": (publishableKey: string, options?: InitStripeOptions) => Promise<void>;
+        /**
+          * Your Stripe publishable API key.
+         */
+        "publishableKey": string;
+        /**
+          * Set error message
+          * @param errorMessage - The error message to display
+          * @returns Promise resolving to this instance for method chaining
+          * @example ``` const stripeCurrencySelector = document.createElement('stripe-currency-selector'); customElements  .whenDefined('stripe-currency-selector')  .then(() => {    stripeCurrencySelector.setErrorMessage('Invalid currency selected');   }); ```
+         */
+        "setErrorMessage": (errorMessage: string) => Promise<this>;
+        /**
+          * Optional. Making API calls for connected accounts
+          * @info https://stripe.com/docs/connect/authentication
+         */
+        "stripeAccount": string;
+        /**
+          * Stripe.js class loaded handler
+         */
+        "stripeDidLoaded"?: StripeDidLoadedHandler;
+    }
+    /**
      * Express Checkout Element Component
      * Provides one-click payment methods (Apple Pay, Google Pay, Link, PayPal, etc.)
      * @example ```html
@@ -443,12 +497,17 @@ export namespace Components {
           * Overwrite the application name that registered For wrapper library (like Capacitor)
           * @default 'stripe-pwa-elements'
          */
-        "applicationName": "stripe-pwa-elements";
+        "applicationName": string;
         /**
           * Submit button label By default we recommended to use these string - 'Pay' -> PaymentSheet - 'Add' -> PaymentFlow(Android) - 'Add card' -> PaymentFlow(iOS) - 'Add a card' -> PaymentFlow(iOS) These strings will translated automatically by this library.
           * @default 'Pay'
          */
-        "buttonLabel": "Pay";
+        "buttonLabel": string;
+        /**
+          * The client secret from checkout session response Use this for Checkout Session mode instead of intentClientSecret When this prop is set, the component will use Checkout Session API
+          * @example ``` const stripeElement = document.createElement('stripe-payment-element'); customElements  .whenDefined('stripe-payment-element')  .then(() => {     stripeElement.initStripeWithCheckoutSession('pk_test_xxx', 'cs_xxx_secret_xxx')   }) ```
+         */
+        "checkoutSessionClientSecret"?: string;
         /**
           * Form submit event handler
          */
@@ -461,7 +520,15 @@ export namespace Components {
          */
         "initStripe": (publishableKey: string, options?: InitStripeOptions) => Promise<void>;
         /**
-          * The client secret from paymentIntent.create or setupIntent.create response
+          * Get Stripe.js and initialize with Checkout Session mode Use this method when you have a Checkout Session client secret instead of Payment/Setup Intent
+          * @param publishableKey - Your Stripe publishable API key
+          * @param checkoutSessionClientSecret - The client secret from Checkout Session
+          * @param options - Optional configuration
+          * @example ``` const stripeElement = document.createElement('stripe-payment-element'); customElements  .whenDefined('stripe-payment-element')  .then(() => {    stripeElement.initStripeWithCheckoutSession(      'pk_test_XXXXXXXXX',      'cs_xxx_secret_xxx'    )  }) ```
+         */
+        "initStripeWithCheckoutSession": (publishableKey: string, checkoutSessionClientSecret: string, options?: InitCheckoutSessionOptions) => Promise<void>;
+        /**
+          * The client secret from paymentIntent.create or setupIntent.create response Use this for Payment Intent / Setup Intent mode
           * @example ``` const stripeElement = document.createElement('stripe-payment-element'); customElements  .whenDefined('stripe-payment-element')  .then(() => {     stripeElement.setAttribute('intent-client-secret', 'pi_xxx_secret_xxx')   }) ```
           * @example ``` <stripe-payment-element intent-client-secret="pi_xxx_secret_xxx" /> ```
          */
@@ -486,12 +553,12 @@ export namespace Components {
           * Payment sheet title By default we recommended to use these string - 'Add your payment information' -> PaymentSheet / PaymentFlow(Android) - 'Add a card' -> PaymentFlow(iOS) These strings will translated automatically by this library.
           * @default 'Add your payment information'
          */
-        "sheetTitle": "Add your payment information";
+        "sheetTitle": string;
         /**
           * The component will provide a function to call the `stripe.confirmPayment` API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element
           * @default true
          */
-        "shouldUseDefaultFormSubmitAction": true;
+        "shouldUseDefaultFormSubmitAction": boolean;
         /**
           * Optional. Making API calls for connected accounts
           * @info https://stripe.com/docs/connect/authentication
@@ -584,6 +651,10 @@ export interface StripeCardElementModalCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLStripeCardElementModalElement;
 }
+export interface StripeCurrencySelectorCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLStripeCurrencySelectorElement;
+}
 export interface StripeExpressCheckoutElementCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLStripeExpressCheckoutElementElement;
@@ -659,6 +730,29 @@ declare global {
         prototype: HTMLStripeCardElementModalElement;
         new (): HTMLStripeCardElementModalElement;
     };
+    interface HTMLStripeCurrencySelectorElementEventMap {
+        "stripeLoaded": StripeLoadedEvent;
+        "currencyChange": CurrencySelectorChangeEvent;
+    }
+    /**
+     * Stripe Currency Selector Element
+     * Allows customers to select their preferred currency for Adaptive Pricing
+     * @info https://docs.stripe.com/elements/currency-selector-element
+     */
+    interface HTMLStripeCurrencySelectorElement extends Components.StripeCurrencySelector, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLStripeCurrencySelectorElementEventMap>(type: K, listener: (this: HTMLStripeCurrencySelectorElement, ev: StripeCurrencySelectorCustomEvent<HTMLStripeCurrencySelectorElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLStripeCurrencySelectorElementEventMap>(type: K, listener: (this: HTMLStripeCurrencySelectorElement, ev: StripeCurrencySelectorCustomEvent<HTMLStripeCurrencySelectorElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLStripeCurrencySelectorElement: {
+        prototype: HTMLStripeCurrencySelectorElement;
+        new (): HTMLStripeCurrencySelectorElement;
+    };
     interface HTMLStripeExpressCheckoutElementElementEventMap {
         "stripeLoaded": StripeLoadedEvent;
         "confirm": StripeExpressCheckoutElementConfirmEvent;
@@ -731,6 +825,7 @@ declare global {
         "stripeLoaded": StripeLoadedEvent;
         "formSubmit": PaymentElementSubmitEvent;
         "defaultFormSubmitResult": DefaultFormSubmitResult;
+        "checkoutSessionConfirmResult": CheckoutSessionFormSubmitResult;
     }
     interface HTMLStripePaymentElementElement extends Components.StripePaymentElement, HTMLStencilElement {
         addEventListener<K extends keyof HTMLStripePaymentElementElementEventMap>(type: K, listener: (this: HTMLStripePaymentElementElement, ev: StripePaymentElementCustomEvent<HTMLStripePaymentElementElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -767,6 +862,7 @@ declare global {
         "stripe-address-element": HTMLStripeAddressElementElement;
         "stripe-card-element": HTMLStripeCardElementElement;
         "stripe-card-element-modal": HTMLStripeCardElementModalElement;
+        "stripe-currency-selector": HTMLStripeCurrencySelectorElement;
         "stripe-express-checkout-element": HTMLStripeExpressCheckoutElementElement;
         "stripe-link-authentication-element": HTMLStripeLinkAuthenticationElementElement;
         "stripe-modal": HTMLStripeModalElement;
@@ -986,6 +1082,50 @@ declare namespace LocalJSX {
         "zip"?: boolean;
     }
     /**
+     * Stripe Currency Selector Element
+     * Allows customers to select their preferred currency for Adaptive Pricing
+     * @info https://docs.stripe.com/elements/currency-selector-element
+     */
+    interface StripeCurrencySelector {
+        /**
+          * Overwrite the application name that registered For wrapper library (like Capacitor)
+          * @default 'stripe-pwa-elements'
+         */
+        "applicationName"?: string;
+        /**
+          * The client secret from Checkout Session Required for Currency Selector Element
+          * @info https://docs.stripe.com/elements/currency-selector-element
+         */
+        "clientSecret"?: string;
+        /**
+          * Currency change event handler
+         */
+        "handleCurrencyChange"?: CurrencySelectorChangeHandler;
+        /**
+          * Currency change event
+          * @example ``` const stripeCurrencySelector = document.createElement('stripe-currency-selector'); customElements  .whenDefined('stripe-currency-selector')  .then(() => {     stripeCurrencySelector       .addEventListener('currencyChange', async props => {         const { detail: { currency } } = props;         console.log('Currency changed:', currency);       })   }) ```
+         */
+        "onCurrencyChange"?: (event: StripeCurrencySelectorCustomEvent<CurrencySelectorChangeEvent>) => void;
+        /**
+          * Stripe Client loaded event
+          * @example ``` const stripeCurrencySelector = document.createElement('stripe-currency-selector'); customElements  .whenDefined('stripe-currency-selector')  .then(() => {     stripeCurrencySelector      .addEventListener('stripeLoaded', async ({ detail: {stripe} }) => {        console.log('Stripe loaded:', stripe);       });   }) ```
+         */
+        "onStripeLoaded"?: (event: StripeCurrencySelectorCustomEvent<StripeLoadedEvent>) => void;
+        /**
+          * Your Stripe publishable API key.
+         */
+        "publishableKey"?: string;
+        /**
+          * Optional. Making API calls for connected accounts
+          * @info https://stripe.com/docs/connect/authentication
+         */
+        "stripeAccount"?: string;
+        /**
+          * Stripe.js class loaded handler
+         */
+        "stripeDidLoaded"?: StripeDidLoadedHandler;
+    }
+    /**
      * Express Checkout Element Component
      * Provides one-click payment methods (Apple Pay, Google Pay, Link, PayPal, etc.)
      * @example ```html
@@ -1124,18 +1264,23 @@ declare namespace LocalJSX {
           * Overwrite the application name that registered For wrapper library (like Capacitor)
           * @default 'stripe-pwa-elements'
          */
-        "applicationName"?: "stripe-pwa-elements";
+        "applicationName"?: string;
         /**
           * Submit button label By default we recommended to use these string - 'Pay' -> PaymentSheet - 'Add' -> PaymentFlow(Android) - 'Add card' -> PaymentFlow(iOS) - 'Add a card' -> PaymentFlow(iOS) These strings will translated automatically by this library.
           * @default 'Pay'
          */
-        "buttonLabel"?: "Pay";
+        "buttonLabel"?: string;
+        /**
+          * The client secret from checkout session response Use this for Checkout Session mode instead of intentClientSecret When this prop is set, the component will use Checkout Session API
+          * @example ``` const stripeElement = document.createElement('stripe-payment-element'); customElements  .whenDefined('stripe-payment-element')  .then(() => {     stripeElement.initStripeWithCheckoutSession('pk_test_xxx', 'cs_xxx_secret_xxx')   }) ```
+         */
+        "checkoutSessionClientSecret"?: string;
         /**
           * Form submit event handler
          */
         "handleSubmit"?: PaymentElementSubmitHandler;
         /**
-          * The client secret from paymentIntent.create or setupIntent.create response
+          * The client secret from paymentIntent.create or setupIntent.create response Use this for Payment Intent / Setup Intent mode
           * @example ``` const stripeElement = document.createElement('stripe-payment-element'); customElements  .whenDefined('stripe-payment-element')  .then(() => {     stripeElement.setAttribute('intent-client-secret', 'pi_xxx_secret_xxx')   }) ```
           * @example ``` <stripe-payment-element intent-client-secret="pi_xxx_secret_xxx" /> ```
          */
@@ -1146,7 +1291,12 @@ declare namespace LocalJSX {
          */
         "intentType"?: IntentType;
         /**
-          * Receive the result of defaultFormSubmit event
+          * Receive the result of checkout session confirm This event is emitted when using Checkout Session mode
+          * @example ``` const stripeElement = document.createElement('stripe-payment-element'); customElements  .whenDefined('stripe-payment-element')  .then(() => {     stripeElement.addEventListener('checkoutSessionConfirmResult', async ({detail}) => {       if (detail instanceof Error) {         console.error(detail)       } else if (detail.type === 'success') {         console.log('Payment successful:', detail.session)       } else {         console.error('Payment failed:', detail.error)       }     })   }) ```
+         */
+        "onCheckoutSessionConfirmResult"?: (event: StripePaymentElementCustomEvent<CheckoutSessionFormSubmitResult>) => void;
+        /**
+          * Receive the result of defaultFormSubmit event This event is emitted when using Payment Intent / Setup Intent mode
           * @example ``` const stripeElement = document.createElement('stripe-payment-element'); customElements  .whenDefined('stripe-payment-element')  .then(() => {     stripeElement.addEventListener('defaultFormSubmitResult', async ({detail}) => {       if (detail instanceof Error) {         console.error(detail)       } else {         console.log(detail)       }     })   }) ```
          */
         "onDefaultFormSubmitResult"?: (event: StripePaymentElementCustomEvent<DefaultFormSubmitResult>) => void;
@@ -1168,12 +1318,12 @@ declare namespace LocalJSX {
           * Payment sheet title By default we recommended to use these string - 'Add your payment information' -> PaymentSheet / PaymentFlow(Android) - 'Add a card' -> PaymentFlow(iOS) These strings will translated automatically by this library.
           * @default 'Add your payment information'
          */
-        "sheetTitle"?: "Add your payment information";
+        "sheetTitle"?: string;
         /**
           * The component will provide a function to call the `stripe.confirmPayment` API. If you want to customize the behavior, should set false. And listen the 'formSubmit' event on the element
           * @default true
          */
-        "shouldUseDefaultFormSubmitAction"?: true;
+        "shouldUseDefaultFormSubmitAction"?: boolean;
         /**
           * Optional. Making API calls for connected accounts
           * @info https://stripe.com/docs/connect/authentication
@@ -1228,6 +1378,7 @@ declare namespace LocalJSX {
         "stripe-address-element": StripeAddressElement;
         "stripe-card-element": StripeCardElement;
         "stripe-card-element-modal": StripeCardElementModal;
+        "stripe-currency-selector": StripeCurrencySelector;
         "stripe-express-checkout-element": StripeExpressCheckoutElement;
         "stripe-link-authentication-element": StripeLinkAuthenticationElement;
         "stripe-modal": StripeModal;
@@ -1242,6 +1393,12 @@ declare module "@stencil/core" {
             "stripe-address-element": LocalJSX.StripeAddressElement & JSXBase.HTMLAttributes<HTMLStripeAddressElementElement>;
             "stripe-card-element": LocalJSX.StripeCardElement & JSXBase.HTMLAttributes<HTMLStripeCardElementElement>;
             "stripe-card-element-modal": LocalJSX.StripeCardElementModal & JSXBase.HTMLAttributes<HTMLStripeCardElementModalElement>;
+            /**
+             * Stripe Currency Selector Element
+             * Allows customers to select their preferred currency for Adaptive Pricing
+             * @info https://docs.stripe.com/elements/currency-selector-element
+             */
+            "stripe-currency-selector": LocalJSX.StripeCurrencySelector & JSXBase.HTMLAttributes<HTMLStripeCurrencySelectorElement>;
             /**
              * Express Checkout Element Component
              * Provides one-click payment methods (Apple Pay, Google Pay, Link, PayPal, etc.)

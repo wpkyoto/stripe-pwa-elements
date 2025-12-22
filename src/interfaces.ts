@@ -92,3 +92,15 @@ export type LinkAuthenticationElementChangeEvent = {
  * Handler function of the Link Authentication Element 'change' event
  */
 export type LinkAuthenticationElementChangeHandler = (event: LinkAuthenticationElementChangeEvent) => Promise<void> | void;
+
+/**
+ * Currency Selector Element change event data
+ */
+export type CurrencySelectorChangeEvent = {
+  currency: string;
+};
+
+/**
+ * Currency Selector Element change handler
+ */
+export type CurrencySelectorChangeHandler = (props: CurrencySelectorChangeEvent) => Promise<void>;

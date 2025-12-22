@@ -7,13 +7,23 @@ import {
   StripePaymentElement,
   StripeAddressElement,
   StripeLinkAuthenticationElement,
+  StripeCurrencySelectorElement,
   StripeExpressCheckoutElement,
   StripeExpressCheckoutElementConfirmEvent,
   StripeExpressCheckoutElementClickEvent,
   StripeExpressCheckoutElementShippingAddressChangeEvent,
   StripeExpressCheckoutElementShippingRateChangeEvent,
+  StripeCheckout,
+  StripeCheckoutElementsOptions,
 } from '@stripe/stripe-js';
 import { ProgressStatus } from '../interfaces';
+
+/**
+ * Checkout session initialization options
+ */
+export type CheckoutSessionOptions = {
+  elementsOptions?: StripeCheckoutElementsOptions;
+};
 
 /**
  * Stripe service state
@@ -25,6 +35,14 @@ export type StripeServiceState = {
   loadStripeStatus: ProgressStatus;
   stripe?: Stripe;
   elements?: StripeElements;
+  /**
+   * Checkout instance for Checkout Session mode
+   */
+  checkout?: StripeCheckout;
+  /**
+   * Whether the service is initialized with Checkout Session
+   */
+  isCheckoutSession?: boolean;
 };
 
 /**
@@ -78,9 +96,21 @@ export interface IStripeService {
   readonly state: StripeServiceState;
 
   /**
-   * Initialize Stripe.js
+   * Initialize Stripe.js with Payment Intent mode
    */
   initialize(publishableKey: string, options?: { stripeAccount?: string; applicationName?: string }): Promise<void>;
+
+  /**
+   * Initialize Stripe.js with Checkout Session mode
+   * @param publishableKey - Your Stripe publishable API key
+   * @param checkoutSessionClientSecret - The client secret from Checkout Session
+   * @param options - Optional configuration
+   */
+  initializeWithCheckoutSession(
+    publishableKey: string,
+    checkoutSessionClientSecret: string,
+    options?: { stripeAccount?: string; applicationName?: string } & CheckoutSessionOptions
+  ): Promise<void>;
 
   /**
    * Register state change listener
@@ -96,6 +126,11 @@ export interface IStripeService {
    * Get Elements instance
    */
   getElements(): StripeElements | undefined;
+
+  /**
+   * Get Checkout instance (for Checkout Session mode)
+   */
+  getCheckout(): StripeCheckout | undefined;
 
   /**
    * Reset service (for testing)
@@ -156,8 +191,9 @@ export interface IPaymentElementManager {
 
   /**
    * Initialize and mount payment element
+   * Supports both Payment Intent mode and Checkout Session mode
    */
-  initialize(containerElement: HTMLElement): Promise<StripePaymentElement>;
+  initialize(containerElement: HTMLElement, options?: import('@stripe/stripe-js').StripePaymentElementOptions | import('@stripe/stripe-js').StripeCheckoutPaymentElementOptions): Promise<StripePaymentElement>;
 
   /**
    * Get mounted payment element
@@ -253,6 +289,51 @@ export interface ILinkAuthenticationElementManager {
 
   /**
    * Unmount link authentication element
+   */
+  unmount(): void;
+}
+
+/**
+ * Currency Selector element state
+ */
+export type CurrencySelectorElementState = {
+  errorMessage: string;
+  selectedCurrency?: string;
+};
+
+/**
+ * Currency Selector Element manager interface
+ * Manages Stripe Currency Selector Element
+ */
+export interface ICurrencySelectorElementManager {
+  /**
+   * Get currency selector element state
+   */
+  getState(): CurrencySelectorElementState;
+
+  /**
+   * Initialize and mount currency selector element
+   * Note: StripeCurrencySelectorElementOptions is not yet exported in @stripe/stripe-js v8.6.0
+   */
+  initialize(containerElement: HTMLElement, options?: any): Promise<StripeCurrencySelectorElement>;
+
+  /**
+   * Get mounted currency selector element
+   */
+  getElement(): StripeCurrencySelectorElement | undefined;
+
+  /**
+   * Set error message
+   */
+  setError(message: string): void;
+
+  /**
+   * Clear error message
+   */
+  clearError(): void;
+
+  /**
+   * Unmount currency selector element
    */
   unmount(): void;
 }
