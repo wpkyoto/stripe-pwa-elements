@@ -201,8 +201,15 @@ export class StripeLinkAuthenticationElement {
   @Event() stripeLoaded: EventEmitter<StripeLoadedEvent>;
 
   private stripeLoadedEventHandler() {
+    const stripe = this.stripeService.getStripe();
+
+    if (!stripe) {
+      console.error('Stripe instance is not available');
+      return;
+    }
+
     const event: StripeLoadedEvent = {
-      stripe: this.stripeService.getStripe(),
+      stripe,
     };
 
     if (this.stripeDidLoaded) {
@@ -300,7 +307,10 @@ export class StripeLinkAuthenticationElement {
   }
 
   componentDidLoad() {
-    this.el.classList.add(checkPlatform());
+    const platform = checkPlatform();
+    if (platform) {
+      this.el.classList.add(platform);
+    }
   }
 
   disconnectedCallback() {
