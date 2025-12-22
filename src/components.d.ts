@@ -9,12 +9,12 @@ import { AddressSubmitEvent, AddressSubmitHandler } from "./components/stripe-ad
 import { DefaultFormSubmitResult, FormSubmitEvent, FormSubmitHandler, InitStripeOptions, IntentType, PaymentRequestButtonOption, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
 import { PaymentRequestOptions, PaymentRequestWallet, StripeExpressCheckoutElementClickEvent, StripeExpressCheckoutElementConfirmEvent } from "@stripe/stripe-js";
 import { ExpressCheckoutElementOptions } from "./services/interfaces";
-import { PaymentElementSubmitEvent, PaymentElementSubmitHandler } from "./components/stripe-payment-element/stripe-payment-element";
+import { CheckoutSessionFormSubmitResult, InitCheckoutSessionOptions, PaymentElementSubmitEvent, PaymentElementSubmitHandler } from "./components/stripe-payment-element/stripe-payment-element";
 export { AddressSubmitEvent, AddressSubmitHandler } from "./components/stripe-address-element/stripe-address-element";
 export { DefaultFormSubmitResult, FormSubmitEvent, FormSubmitHandler, InitStripeOptions, IntentType, PaymentRequestButtonOption, PaymentRequestPaymentMethodEventHandler, PaymentRequestShippingAddressEventHandler, PaymentRequestShippingOptionEventHandler, ProgressStatus, StripeDidLoadedHandler, StripeLoadedEvent } from "./interfaces";
 export { PaymentRequestOptions, PaymentRequestWallet, StripeExpressCheckoutElementClickEvent, StripeExpressCheckoutElementConfirmEvent } from "@stripe/stripe-js";
 export { ExpressCheckoutElementOptions } from "./services/interfaces";
-export { PaymentElementSubmitEvent, PaymentElementSubmitHandler } from "./components/stripe-payment-element/stripe-payment-element";
+export { CheckoutSessionFormSubmitResult, InitCheckoutSessionOptions, PaymentElementSubmitEvent, PaymentElementSubmitHandler } from "./components/stripe-payment-element/stripe-payment-element";
 export namespace Components {
     interface StripeAddressElement {
         /**
@@ -395,6 +395,11 @@ export namespace Components {
          */
         "buttonLabel": "Pay";
         /**
+          * The client secret from checkout session response Use this for Checkout Session mode instead of intentClientSecret When this prop is set, the component will use Checkout Session API
+          * @example ``` const stripeElement = document.createElement('stripe-payment-element'); customElements  .whenDefined('stripe-payment-element')  .then(() => {     stripeElement.initStripeWithCheckoutSession('pk_test_xxx', 'cs_xxx_secret_xxx')   }) ```
+         */
+        "checkoutSessionClientSecret"?: string;
+        /**
           * Form submit event handler
          */
         "handleSubmit": PaymentElementSubmitHandler;
@@ -406,7 +411,15 @@ export namespace Components {
          */
         "initStripe": (publishableKey: string, options?: InitStripeOptions) => Promise<void>;
         /**
-          * The client secret from paymentIntent.create or setupIntent.create response
+          * Get Stripe.js and initialize with Checkout Session mode Use this method when you have a Checkout Session client secret instead of Payment/Setup Intent
+          * @param publishableKey - Your Stripe publishable API key
+          * @param checkoutSessionClientSecret - The client secret from Checkout Session
+          * @param options - Optional configuration
+          * @example ``` const stripeElement = document.createElement('stripe-payment-element'); customElements  .whenDefined('stripe-payment-element')  .then(() => {    stripeElement.initStripeWithCheckoutSession(      'pk_test_XXXXXXXXX',      'cs_xxx_secret_xxx'    )  }) ```
+         */
+        "initStripeWithCheckoutSession": (publishableKey: string, checkoutSessionClientSecret: string, options?: InitCheckoutSessionOptions) => Promise<void>;
+        /**
+          * The client secret from paymentIntent.create or setupIntent.create response Use this for Payment Intent / Setup Intent mode
           * @example ``` const stripeElement = document.createElement('stripe-payment-element'); customElements  .whenDefined('stripe-payment-element')  .then(() => {     stripeElement.setAttribute('intent-client-secret', 'pi_xxx_secret_xxx')   }) ```
           * @example ``` <stripe-payment-element intent-client-secret="pi_xxx_secret_xxx" /> ```
          */
@@ -654,6 +667,7 @@ declare global {
         "stripeLoaded": StripeLoadedEvent;
         "formSubmit": PaymentElementSubmitEvent;
         "defaultFormSubmitResult": DefaultFormSubmitResult;
+        "checkoutSessionConfirmResult": CheckoutSessionFormSubmitResult;
     }
     interface HTMLStripePaymentElementElement extends Components.StripePaymentElement, HTMLStencilElement {
         addEventListener<K extends keyof HTMLStripePaymentElementElementEventMap>(type: K, listener: (this: HTMLStripePaymentElementElement, ev: StripePaymentElementCustomEvent<HTMLStripePaymentElementElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -1015,11 +1029,16 @@ declare namespace LocalJSX {
          */
         "buttonLabel"?: "Pay";
         /**
+          * The client secret from checkout session response Use this for Checkout Session mode instead of intentClientSecret When this prop is set, the component will use Checkout Session API
+          * @example ``` const stripeElement = document.createElement('stripe-payment-element'); customElements  .whenDefined('stripe-payment-element')  .then(() => {     stripeElement.initStripeWithCheckoutSession('pk_test_xxx', 'cs_xxx_secret_xxx')   }) ```
+         */
+        "checkoutSessionClientSecret"?: string;
+        /**
           * Form submit event handler
          */
         "handleSubmit"?: PaymentElementSubmitHandler;
         /**
-          * The client secret from paymentIntent.create or setupIntent.create response
+          * The client secret from paymentIntent.create or setupIntent.create response Use this for Payment Intent / Setup Intent mode
           * @example ``` const stripeElement = document.createElement('stripe-payment-element'); customElements  .whenDefined('stripe-payment-element')  .then(() => {     stripeElement.setAttribute('intent-client-secret', 'pi_xxx_secret_xxx')   }) ```
           * @example ``` <stripe-payment-element intent-client-secret="pi_xxx_secret_xxx" /> ```
          */
@@ -1030,7 +1049,12 @@ declare namespace LocalJSX {
          */
         "intentType"?: IntentType;
         /**
-          * Receive the result of defaultFormSubmit event
+          * Receive the result of checkout session confirm This event is emitted when using Checkout Session mode
+          * @example ``` const stripeElement = document.createElement('stripe-payment-element'); customElements  .whenDefined('stripe-payment-element')  .then(() => {     stripeElement.addEventListener('checkoutSessionConfirmResult', async ({detail}) => {       if (detail instanceof Error) {         console.error(detail)       } else if (detail.type === 'success') {         console.log('Payment successful:', detail.session)       } else {         console.error('Payment failed:', detail.error)       }     })   }) ```
+         */
+        "onCheckoutSessionConfirmResult"?: (event: StripePaymentElementCustomEvent<CheckoutSessionFormSubmitResult>) => void;
+        /**
+          * Receive the result of defaultFormSubmit event This event is emitted when using Payment Intent / Setup Intent mode
           * @example ``` const stripeElement = document.createElement('stripe-payment-element'); customElements  .whenDefined('stripe-payment-element')  .then(() => {     stripeElement.addEventListener('defaultFormSubmitResult', async ({detail}) => {       if (detail instanceof Error) {         console.error(detail)       } else {         console.log(detail)       }     })   }) ```
          */
         "onDefaultFormSubmitResult"?: (event: StripePaymentElementCustomEvent<DefaultFormSubmitResult>) => void;

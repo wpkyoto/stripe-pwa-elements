@@ -1,12 +1,13 @@
 import type { IPaymentElementManager, IStripeService, PaymentElementState } from './interfaces';
 import { createStore } from '@stencil/store';
-import type { StripePaymentElement, StripePaymentElementOptions } from '@stripe/stripe-js';
+import type { StripePaymentElement, StripePaymentElementOptions, StripeCheckoutPaymentElementOptions } from '@stripe/stripe-js';
 import { findElement } from '../utils/element-finder';
 
 /**
  * Payment Element Manager
  * Manages Stripe Payment Element (unified payment form)
  * with dependency injection of StripeService
+ * Supports both Payment Intent mode and Checkout Session mode
  */
 export class PaymentElementManager implements IPaymentElementManager {
   private paymentElement?: StripePaymentElement;
@@ -29,27 +30,43 @@ export class PaymentElementManager implements IPaymentElementManager {
 
   /**
    * Initialize and mount payment element to DOM
+   * Supports both Payment Intent mode and Checkout Session mode
    * @param containerElement - Parent element containing mount point
+   * @param options - Optional payment element options
    * @returns Promise resolving to payment element instance
    */
-  async initialize(containerElement: HTMLElement): Promise<StripePaymentElement> {
-    const elements = this.stripeService.getElements();
-
-    if (!elements) {
-      throw new Error('StripeService not initialized. Call StripeService.initialize() first.');
-    }
+  async initialize(containerElement: HTMLElement, options?: StripePaymentElementOptions | StripeCheckoutPaymentElementOptions): Promise<StripePaymentElement> {
+    const isCheckoutSession = this.stripeService.state.isCheckoutSession;
 
     // Unmount if already initialized
     if (this.paymentElement) {
       this.unmount();
     }
 
-    // Create payment element with options
-    // Note: Payment Element options are typed for better type safety
-    const elementOptions: StripePaymentElementOptions = {};
+    if (isCheckoutSession) {
+      // Checkout Session mode: use checkout.createPaymentElement()
+      const checkout = this.stripeService.getCheckout();
 
-    // Create the payment element
-    this.paymentElement = elements.create('payment', elementOptions);
+      if (!checkout) {
+        throw new Error('StripeService not initialized with Checkout Session. Call StripeService.initializeWithCheckoutSession() first.');
+      }
+
+      // Create payment element using Checkout instance
+      this.paymentElement = checkout.createPaymentElement(options as StripeCheckoutPaymentElementOptions);
+    } else {
+      // Payment Intent mode: use elements.create('payment')
+      const elements = this.stripeService.getElements();
+
+      if (!elements) {
+        throw new Error('StripeService not initialized. Call StripeService.initialize() first.');
+      }
+
+      // Create payment element with options
+      const elementOptions: StripePaymentElementOptions = options as StripePaymentElementOptions || {};
+
+      // Create the payment element
+      this.paymentElement = elements.create('payment', elementOptions);
+    }
 
     // Find mount point and mount
     const paymentElementContainer = await findElement(containerElement, '#payment-element');
