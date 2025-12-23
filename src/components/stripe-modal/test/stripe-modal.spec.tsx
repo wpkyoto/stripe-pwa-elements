@@ -1,86 +1,16 @@
 import { newSpecPage } from '@stencil/core/testing';
 import { StripeModal } from '../stripe-modal';
 
-describe('stripe-modal', () => {
-  describe('Component Logic test', () => {
-    describe('#openModal', () => {
-      it('open props should change to true when the openModal method was called', async () => {
-        const component = new StripeModal();
-
-        component.open = false;
-        await component.openModal();
-        expect(component.open).toEqual(true);
-      });
-    });
-    describe('#closeModal', () => {
-      it('open props should change to false when the closeModal method was called', async () => {
-        const component = new StripeModal();
-
-        component.close = {
-          emit: jest.fn(),
-        };
-        await component.closeModal();
-        expect(component.open).toEqual(false);
-      });
-      it('When the closeModal method called, should called close event at once', async () => {
-        const component = new StripeModal();
-
-        component.open = true;
-        const mockEmitter = jest.fn();
-
-        component.close = {
-          emit: mockEmitter,
-        };
-        await component.closeModal();
-        expect(mockEmitter).toBeCalledTimes(1);
-      });
-    });
-    describe('#toggleModal', () => {
-      describe('Props open=true', () => {
-        let component = new StripeModal();
-        let mockEmitter = jest.fn();
-
-        beforeEach(() => {
-          component = new StripeModal();
-          mockEmitter = jest.fn();
-          component.open = true;
-          component.close = {
-            emit: mockEmitter,
-          };
-        });
-        it('should execute the close event', async () => {
-          await component.toggleModal();
-          expect(mockEmitter).toBeCalledTimes(1);
-        });
-        it('Should change the open props to be false', async () => {
-          await component.toggleModal();
-          expect(component.open).toEqual(false);
-        });
-      });
-      describe('Props open=false', () => {
-        let component = new StripeModal();
-        let mockEmitter = jest.fn();
-
-        beforeEach(() => {
-          component = new StripeModal();
-          mockEmitter = jest.fn();
-          component.open = false;
-          component.close = {
-            emit: mockEmitter,
-          };
-        });
-        it('should execute the close event', async () => {
-          await component.toggleModal();
-          expect(mockEmitter).toBeCalledTimes(0);
-        });
-        it('Should change the open props to be true', async () => {
-          await component.toggleModal();
-          expect(component.open).toEqual(true);
-        });
-      });
-    });
-  });
-  describe('Rendering test', () => {
+/**
+ * Component tests for StripeModal
+ *
+ * Following Kent Beck's test pyramid philosophy:
+ * - These tests verify component rendering and DOM interactions
+ * - Use newSpecPage for Stencil component context
+ * - For pure unit tests, see stripe-modal.unit.spec.ts
+ */
+describe('stripe-modal component tests', () => {
+  describe('Rendering', () => {
     it('renders', async () => {
       const page = await newSpecPage({
         components: [StripeModal],
@@ -120,6 +50,7 @@ describe('stripe-modal', () => {
 
       expect(page.root).toMatchSnapshot();
     });
+
     it("should match snapshot (showCloseButton='false')", async () => {
       const page = await newSpecPage({
         components: [StripeModal],
@@ -170,7 +101,7 @@ describe('stripe-modal', () => {
     });
   });
 
-  describe('Event emission test', () => {
+  describe('Event emission', () => {
     it('should emit close event with correct data when closeModal is called', async () => {
       const page = await newSpecPage({
         components: [StripeModal],
@@ -223,69 +154,7 @@ describe('stripe-modal', () => {
     });
   });
 
-  describe('Edge cases', () => {
-    it('should handle rapid open/close toggles', async () => {
-      const component = new StripeModal();
-      component.close = {
-        emit: jest.fn(),
-      };
-
-      component.open = false;
-      await component.toggleModal();
-      expect(component.open).toBe(true);
-
-      await component.toggleModal();
-      expect(component.open).toBe(false);
-
-      await component.toggleModal();
-      expect(component.open).toBe(true);
-
-      await component.toggleModal();
-      expect(component.open).toBe(false);
-    });
-
-    it('should handle multiple closeModal calls', async () => {
-      const component = new StripeModal();
-      const mockEmitter = jest.fn();
-      component.close = {
-        emit: mockEmitter,
-      };
-
-      component.open = true;
-      await component.closeModal();
-      await component.closeModal();
-      await component.closeModal();
-
-      expect(mockEmitter).toBeCalledTimes(3);
-      expect(component.open).toBe(false);
-    });
-
-    it('should handle multiple openModal calls', async () => {
-      const component = new StripeModal();
-
-      component.open = false;
-      await component.openModal();
-      expect(component.open).toBe(true);
-
-      await component.openModal();
-      expect(component.open).toBe(true);
-
-      await component.openModal();
-      expect(component.open).toBe(true);
-    });
-  });
-
-  describe('Props test', () => {
-    it('should have default open as false', () => {
-      const component = new StripeModal();
-      expect(component.open).toBe(false);
-    });
-
-    it('should have default showCloseButton as true', () => {
-      const component = new StripeModal();
-      expect(component.showCloseButton).toBe(true);
-    });
-
+  describe('Props reactivity', () => {
     it('should update open prop', async () => {
       const page = await newSpecPage({
         components: [StripeModal],
