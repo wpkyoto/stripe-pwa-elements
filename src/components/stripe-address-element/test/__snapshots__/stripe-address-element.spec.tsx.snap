@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`stripe-address-element rendering test api key and mode props 1`] = `
+exports[`stripe-address-element component tests Rendering api key and mode props 1`] = `
 <stripe-address-element class="undefined" mode="shipping" publishable-key="pk_test_xxx">
   <div class="stripe-payment-sheet-wrap">
     <form id="stripe-address-element-form">
@@ -21,7 +21,7 @@ exports[`stripe-address-element rendering test api key and mode props 1`] = `
 </stripe-address-element>
 `;
 
-exports[`stripe-address-element rendering test should load stripe after setting the publishable-key (snapshot) 1`] = `
+exports[`stripe-address-element component tests Rendering should load stripe after setting the publishable-key (snapshot) 1`] = `
 <stripe-address-element class="undefined" publishable-key="yyyy">
   <div class="stripe-payment-sheet-wrap">
     <form id="stripe-address-element-form">
@@ -42,7 +42,7 @@ exports[`stripe-address-element rendering test should load stripe after setting 
 </stripe-address-element>
 `;
 
-exports[`stripe-address-element rendering test with the api key 1`] = `
+exports[`stripe-address-element component tests Rendering with the api key 1`] = `
 <stripe-address-element class="undefined" publishable-key="pk_test_xxx">
   <div class="stripe-payment-sheet-wrap">
     <form id="stripe-address-element-form">

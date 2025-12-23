@@ -20,11 +20,19 @@ jest.mock('../../../utils/i18n', () => ({
   },
 }));
 
-// Mock service implementations
-let mockStripeService: jest.Mocked<IStripeService>;
-let mockLinkAuthenticationElementManager: jest.Mocked<ILinkAuthenticationElementManager>;
+/**
+ * Component tests for StripeLinkAuthenticationElement
+ *
+ * Following Kent Beck's test pyramid philosophy:
+ * - These tests verify component rendering and DOM interactions
+ * - Use newSpecPage for Stencil component context
+ * - For pure unit tests, see stripe-link-authentication-element.unit.spec.ts
+ */
+describe('stripe-link-authentication-element component tests', () => {
+  // Mock service implementations
+  let mockStripeService: jest.Mocked<IStripeService>;
+  let mockLinkAuthenticationElementManager: jest.Mocked<ILinkAuthenticationElementManager>;
 
-describe('stripe-link-authentication-element', () => {
   // Set up mocks before each test
   beforeEach(() => {
     // Create fresh mock implementations
@@ -67,178 +75,7 @@ describe('stripe-link-authentication-element', () => {
     jest.restoreAllMocks();
   });
 
-  describe('method test', () => {
-    let element: StripeLinkAuthenticationElement;
-
-    describe('#componentWillRender', () => {
-      beforeEach(() => {
-        element = new StripeLinkAuthenticationElement();
-        element.initStripe = jest.fn();
-      });
-
-      it.each([['' as const], ['failure' as const]])('If the publishableKey is not provided, should not call initStripe method(status: %s)', async loadingStatus => {
-        mockStripeService.state.loadStripeStatus = loadingStatus;
-        element.componentWillRender();
-        expect(element.initStripe).toHaveBeenCalledTimes(0);
-      });
-
-      it.each([['' as const], ['failure' as const]])(
-        'Should call initStripe method when the status is not a part of "success" or "loading" (status: %s)',
-        async loadingStatus => {
-          mockStripeService.state.publishableKey = 'pk_test_xxxx';
-          mockStripeService.state.loadStripeStatus = loadingStatus;
-          element.componentWillRender();
-          expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxxx', {
-            stripeAccount: undefined,
-          });
-        },
-      );
-
-      it.each([['success' as const], ['loading' as const]])(
-        'Should not call initStripe method when the status is a part of "success" or "loading" (status: %s)',
-        async loadingStatus => {
-          mockStripeService.state.publishableKey = 'pk_test_xxxx';
-          mockStripeService.state.loadStripeStatus = loadingStatus;
-          element.componentWillRender();
-          expect(element.initStripe).toHaveBeenCalledTimes(0);
-        },
-      );
-    });
-
-    describe('#setErrorMessage', () => {
-      beforeEach(() => {
-        element = new StripeLinkAuthenticationElement();
-      });
-
-      it('should set the certain error message', async () => {
-        const message = 'Error message is here';
-
-        await element.setErrorMessage(message);
-        expect(mockLinkAuthenticationElementManager.setError).toHaveBeenCalledWith(message);
-      });
-    });
-
-    describe('#getEmail', () => {
-      beforeEach(() => {
-        element = new StripeLinkAuthenticationElement();
-      });
-
-      it('should return the current email value', async () => {
-        mockLinkAuthenticationElementManager.getState.mockReturnValue({
-          errorMessage: '',
-          email: 'test@example.com',
-        });
-
-        const email = await element.getEmail();
-        expect(email).toBe('test@example.com');
-      });
-
-      it('should return undefined when no email is set', async () => {
-        mockLinkAuthenticationElementManager.getState.mockReturnValue({
-          errorMessage: '',
-          email: undefined,
-        });
-
-        const email = await element.getEmail();
-        expect(email).toBeUndefined();
-      });
-    });
-
-    describe('#initStripe', () => {
-      beforeEach(() => {
-        element = new StripeLinkAuthenticationElement();
-
-        // Mock successful initialization
-        mockStripeService.state.loadStripeStatus = 'success';
-        mockStripeService.initialize.mockResolvedValue(undefined);
-        mockLinkAuthenticationElementManager.initialize.mockResolvedValue({} as any);
-      });
-
-      it('should call stripeService.initialize with correct parameters', async () => {
-        await element.initStripe('pk_test_xxx');
-
-        expect(mockStripeService.initialize).toHaveBeenCalledWith('pk_test_xxx', {
-          stripeAccount: undefined,
-          applicationName: 'stripe-pwa-elements',
-        });
-      });
-
-      it('should call stripeService.initialize with account id', async () => {
-        await element.initStripe('pk_test_xxx', {
-          stripeAccount: 'acct_xxx',
-        });
-
-        expect(mockStripeService.initialize).toHaveBeenCalledWith('pk_test_xxx', {
-          stripeAccount: 'acct_xxx',
-          applicationName: 'stripe-pwa-elements',
-        });
-      });
-    });
-
-    describe('#updateStripeAccountId', () => {
-      beforeEach(() => {
-        element = new StripeLinkAuthenticationElement();
-        element.initStripe = jest.fn();
-        mockStripeService.state.publishableKey = 'pk_test_xxxx';
-      });
-
-      it('When call this, should call the #initStripe method only one time', async () => {
-        await element.updateStripeAccountId('acct_xxx');
-        expect(element.initStripe).toHaveBeenCalledTimes(1);
-      });
-
-      it('When call this, should call the #initStripe method with expected props', async () => {
-        await element.updateStripeAccountId('acct_xxx');
-        expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxxx', {
-          stripeAccount: 'acct_xxx',
-        });
-      });
-
-      it('Should not call initStripe when publishableKey is not set', async () => {
-        mockStripeService.state.publishableKey = undefined;
-        element.publishableKey = undefined;
-        await element.updateStripeAccountId('acct_xxx');
-        expect(element.initStripe).toHaveBeenCalledTimes(0);
-      });
-
-      it('Should fallback to publishableKey prop when service state is not initialized', async () => {
-        mockStripeService.state.publishableKey = undefined;
-        element.publishableKey = 'pk_prop_value';
-
-        await element.updateStripeAccountId('acct_xxx');
-        expect(element.initStripe).toHaveBeenCalledWith('pk_prop_value', {
-          stripeAccount: 'acct_xxx',
-        });
-      });
-    });
-
-    describe('#updatePublishableKey', () => {
-      beforeEach(() => {
-        element = new StripeLinkAuthenticationElement();
-        element.initStripe = jest.fn();
-      });
-
-      it('When call this, should call the #initStripe method only one time', async () => {
-        await element.updatePublishableKey('pk_test_xxx');
-        expect(element.initStripe).toHaveBeenCalledTimes(1);
-      });
-
-      it('When call this, should call the #initStripe method with expected props', async () => {
-        await element.updatePublishableKey('pk_test_xxx');
-        expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxx', undefined);
-      });
-
-      it('When call this, should call the #initStripe method with expected props (with options)', async () => {
-        element.stripeAccount = 'acct_xxx';
-        await element.updatePublishableKey('pk_test_xxx');
-        expect(element.initStripe).toHaveBeenCalledWith('pk_test_xxx', {
-          stripeAccount: 'acct_xxx',
-        });
-      });
-    });
-  });
-
-  describe('rendering test', () => {
+  describe('Rendering', () => {
     it('with the api key', async () => {
       const page = await newSpecPage({
         components: [StripeLinkAuthenticationElement],
