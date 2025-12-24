@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`stripe-modal Rendering test should match snapshot (open='true') 1`] = `
+exports[`stripe-modal component tests Rendering should match snapshot (open='true') 1`] = `
 <stripe-modal open="true">
   <template shadowrootmode="open">
     <div class="modal-row open">
@@ -15,7 +15,7 @@ exports[`stripe-modal Rendering test should match snapshot (open='true') 1`] = `
 </stripe-modal>
 `;
 
-exports[`stripe-modal Rendering test should match snapshot (showCloseButton='false') 1`] = `
+exports[`stripe-modal component tests Rendering should match snapshot (showCloseButton='false') 1`] = `
 <stripe-modal show-close-button="false">
   <template shadowrootmode="open">
     <div class="modal-row">
@@ -27,7 +27,7 @@ exports[`stripe-modal Rendering test should match snapshot (showCloseButton='fal
 </stripe-modal>
 `;
 
-exports[`stripe-modal Rendering test should match snapshot (showCloseButton='true') 1`] = `
+exports[`stripe-modal component tests Rendering should match snapshot (showCloseButton='true') 1`] = `
 <stripe-modal show-close-button="true">
   <template shadowrootmode="open">
     <div class="modal-row">

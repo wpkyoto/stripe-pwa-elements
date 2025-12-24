@@ -20,5 +20,8 @@ export const config: Config = {
   ],
   plugins: [
     sass()
-  ]
+  ],
+  testing: {
+    testPathIgnorePatterns: ['node_modules'],
+  },
 };

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`stripe-payment-element rendering test should load stripe after setting the publishable-key (snapshot) 1`] = `
+exports[`stripe-payment-element component tests Rendering should load stripe after setting the publishable-key (snapshot) 1`] = `
 <stripe-payment-element class="undefined" publishable-key="pk_test_yyyy">
   <div class="stripe-payment-sheet-wrap">
     <form id="stripe-payment-element">
@@ -26,7 +26,7 @@ exports[`stripe-payment-element rendering test should load stripe after setting 
 </stripe-payment-element>
 `;
 
-exports[`stripe-payment-element rendering test with only api key (button should be disabled) 1`] = `
+exports[`stripe-payment-element component tests Rendering with only api key (button should be disabled) 1`] = `
 <stripe-payment-element class="undefined" publishable-key="pk_test_xxx">
   <div class="stripe-payment-sheet-wrap">
     <form id="stripe-payment-element">
@@ -52,7 +52,7 @@ exports[`stripe-payment-element rendering test with only api key (button should 
 </stripe-payment-element>
 `;
 
-exports[`stripe-payment-element rendering test with the api key and client secret 1`] = `
+exports[`stripe-payment-element component tests Rendering with the api key and client secret 1`] = `
 <stripe-payment-element class="undefined" intent-client-secret="pi_xxx_secret_xxx" publishable-key="pk_test_xxx">
   <div class="stripe-payment-sheet-wrap">
     <form id="stripe-payment-element">
