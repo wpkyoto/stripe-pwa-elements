@@ -4,7 +4,6 @@
 :host {
   @include rest.rest;
   display: block;
-  box-sizing: border-box;
 }
 
 .modal-row {
