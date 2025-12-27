@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0" />
-    <title>Stencil Component Starter</title>
+    <title>Stripe Elements - 開発用テストファイル</title>
     <script type="module" src="/build/stripe-elements.esm.js"></script>
     <script nomodule src="/build/stripe-elements.js"></script>
   </head>
@@ -11,21 +11,26 @@
     <div id="stripe"></div>
 
     <script>
+      // 基本的なカード要素の例
       const targetElement = document.getElementById('stripe');
-      const paymentSheetElement = document.createElement('stripe-card-element');
-      targetElement.appendChild(paymentSheetElement);
+      const cardElement = document.createElement('stripe-card-element');
+      targetElement.appendChild(cardElement);
+      
       customElements
         .whenDefined('stripe-card-element')
         .then(() => {
-          paymentSheetElement.setAttribute('publishable-key', 'pk_test_51EMxG7KVC4SfzSeak35hZaAe91cpzKZE9eOQcVWpa7owYJeS30avCAF0lT1QUMKTbzepTIYgAgjly4AmgZuxxkcS00kQ40cBLe');
-          paymentSheetElement.setAttribute('zip', 'true');
-          paymentSheetElement.setAttribute('intent-client-secret', 'pi_3P03tlKzMYim9cy30Mrnv2xs_secret_xAOM1PdqEDq4mFfg1ff8pOjOm');
-          paymentSheetElement.setAttribute('show-payment-request-button', 'true');
-          //paymentSheetElement.setAttribute('sheet-title', 'Custom')
-          //paymentSheetElement.setAttribute('button-label', 'Custom')
-          // Wait for Stripe to load before setting payment request options
-          paymentSheetElement.addEventListener('stripeLoaded', () => {
-            paymentSheetElement.setPaymentRequestOption({
+          // Stripe公開可能キーを設定
+          cardElement.setAttribute('publishable-key', 'pk_test_51EMxG7KVC4SfzSeak35hZaAe91cpzKZE9eOQcVWpa7owYJeS30avCAF0lT1QUMKTbzepTIYgAgjly4AmgZuxxkcS00kQ40cBLe');
+          // 郵便番号フィールドを表示
+          cardElement.setAttribute('zip', 'true');
+          // PaymentIntentのクライアントシークレットを設定
+          cardElement.setAttribute('intent-client-secret', 'pi_3P03tlKzMYim9cy30Mrnv2xs_secret_xAOM1PdqEDq4mFfg1ff8pOjOm');
+          // Payment Request Button（Apple Pay/Google Pay）を表示
+          cardElement.setAttribute('show-payment-request-button', 'true');
+          
+          // Stripeが読み込まれた後にPayment Requestオプションを設定
+          cardElement.addEventListener('stripeLoaded', () => {
+            cardElement.setPaymentRequestOption({
               country: 'JP',
               currency: 'jpy',
               total: {
@@ -41,48 +46,29 @@
           console.error('Error initializing stripe-card-element:', e);
         });
 
-      /*
-      const paymentSheet = document.createElement('stripe-payment-sheet')
-      targetElement.appendChild(paymentSheet)
-      customElements.whenDefined('stripe-payment-sheet')
-      .then(() => {
-        paymentSheet.setAttribute(
-          'publishable-key',
-          'pk_test_51EMxG7KVC4SfzSeak35hZaAe91cpzKZE9eOQcVWpa7owYJeS30avCAF0lT1QUMKTbzepTIYgAgjly4AmgZuxxkcS00kQ40cBLe'
-        );
-        paymentSheet.setAttribute(
-          'show-payment-request-button',
-          'true'
-        )
-        paymentSheet.setPaymentRequestOption({
-            country: 'JP',
-            currency: 'jpy',
-            total: {
-              label: 'Total',
-              amount: 100,
-            },
-            requestShipping: false,
-            requestPayerEmail: true,
-          });
-      }).catch(e => {
-        console.log(e)
-      })
-      */
-      /*
-      const modalSheetElement = document.createElement('stripe-payment-sheet-modal');
-      targetElement.appendChild(modalSheetElement);
+      // モーダル内カード要素の例
+      const modalCardElement = document.createElement('stripe-card-element-modal');
+      targetElement.appendChild(modalCardElement);
+      
       customElements
-        .whenDefined('stripe-payment-sheet-modal')
+        .whenDefined('stripe-card-element-modal')
         .then(() => {
-          modalSheetElement.setAttribute('open', true);
-          modalSheetElement.setAttribute('publishable-key', 'pk_test_51EMxG7KVC4SfzSeak35hZaAe91cpzKZE9eOQcVWpa7owYJeS30avCAF0lT1QUMKTbzepTIYgAgjly4AmgZuxxkcS00kQ40cBLe');
-          return modalSheetElement.getStripePaymentSheetElement();
+          // モーダルを開く
+          modalCardElement.setAttribute('open', 'true');
+          // Stripe公開可能キーを設定
+          modalCardElement.setAttribute('publishable-key', 'pk_test_51EMxG7KVC4SfzSeak35hZaAe91cpzKZE9eOQcVWpa7owYJeS30avCAF0lT1QUMKTbzepTIYgAgjly4AmgZuxxkcS00kQ40cBLe');
+          
+          // 内部のstripe-card-elementを取得
+          return modalCardElement.getStripeCardElementElement();
         })
         .then(stripeElement => {
-          stripeElement.setAttribute('should-use-default-form-submit-action', false);
+          // デフォルトのフォーム送信アクションを無効化
+          stripeElement.setAttribute('should-use-default-form-submit-action', 'false');
 
+          // フォーム送信イベントをリッスン
           stripeElement.addEventListener('formSubmit', async props => {
             try {
+              // デバッグ用のエラーを発生させる
               throw new Error('debug');
             } catch (e) {
               console.log(e);
@@ -90,6 +76,8 @@
               stripeElement.updateProgress('failure');
             }
             return;
+            
+            // 実際の決済処理の例（コメントアウト）
             const {
               detail: { stripe, cardNumber, event },
             } = props;
@@ -101,7 +89,10 @@
             stripeElement.updateProgress('success');
           });
 
-          stripeElement.setAttribute('payment-intent-client-secret', 'dummy');
+          // PaymentIntentのクライアントシークレットを設定（最新の属性名を使用）
+          stripeElement.setAttribute('intent-client-secret', 'dummy');
+          
+          // デフォルトフォーム送信結果をリッスン
           stripeElement.addEventListener('defaultFormSubmitResult', async ({ detail }) => {
             if (detail instanceof Error) {
               console.error(detail);
@@ -117,40 +108,6 @@
           errorElement.innerText = e.message;
           targetElement.appendChild(errorElement);
         });
-
-      /*
-      const modalElement = document.createElement('stripe-sheet');
-      modalElement.setAttribute('open', true);
-      const stripeElement = document.createElement('stripe-payment-sheet');
-      const stripePaymentRequestElement = document.createElement('stripe-payment-request-button');
-      modalElement.appendChild(stripePaymentRequestElement);
-      modalElement.appendChild(stripeElement);
-      targetElement.appendChild(modalElement);
-
-      customElements
-        .whenDefined('stripe-payment-request-button')
-        .then(() => {
-          return stripePaymentRequestElement.initStripe('pk_test_51EMxG7KVC4SfzSeak35hZaAe91cpzKZE9eOQcVWpa7owYJeS30avCAF0lT1QUMKTbzepTIYgAgjly4AmgZuxxkcS00kQ40cBLe');
-        })
-        .then(() => {
-          stripePaymentRequestElement.setPaymentRequestOption({
-            country: 'JP',
-            currency: 'jpy',
-            total: {
-              label: 'Total',
-              amount: 100,
-            },
-            requestShipping: false,
-            requestPayerEmail: true,
-          });
-        })
-        .catch(e => {
-          console.log(e);
-          const errorElement = document.createElement('p');
-          errorElement.innerText = e.message;
-          targetElement.appendChild(errorElement);
-        });
-        */
     </script>
     <style>
       body {
