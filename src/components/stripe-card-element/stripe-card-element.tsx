@@ -630,7 +630,7 @@ export class StripeCardElement {
                       name="zip"
                       type="text"
                       inputmode="numeric"
-                      class="stripe-input-box StripeElement"
+                      class="StripeElement"
                       style={{ width: '100%' }}
                       placeholder={i18n.t('Postal Code')}
                       value={this.zipCode}

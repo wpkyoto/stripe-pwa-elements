@@ -11,8 +11,6 @@
   .StripeElement {
     padding: 8px 16px;
     min-height: 64px;
-    border-bottom: 1px solid var(--color-input-border);
-    border-radius: 4px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -22,11 +20,20 @@
   }
   .stripe-input-box {
     background-color: #fff;
-    border-radius: 2px;
-    filter: drop-shadow(0 0 1px var(--color-input-border));
+    border-radius: 6px;
+    border: 1px solid var(--color-input-border);
+    overflow: hidden;
+    filter: drop-shadow(0 0 2px var(--color-input-border));
+
+    & > * {
+      border-bottom: 1px solid var(--color-input-border);
+      &:last-child {
+        border-bottom: none;
+      }
+    }
   }
   .stripe-input-column {
-    .StripeElement {
+    & > * {
       border-right: 1px solid var(--color-input-border);
       &:last-child {
         border-right: none;
@@ -62,7 +69,7 @@
     text-align: center;
     padding: 16px 16px;
     font-size: 18px;
-    border-radius: 8px;
+    border-radius: 6px;
     min-height: 42px;
     &:disabled {
       color: var(--color-button-text-disabled);
