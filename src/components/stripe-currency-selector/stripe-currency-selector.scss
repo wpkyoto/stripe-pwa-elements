@@ -1,10 +1,11 @@
 @use '../../style/rest.scss';
 @use '../../style/theme.scss';
 
-@include rest.rest;
+:host {
+  @include rest.rest;
 
-stripe-currency-selector {
   display: block;
+  box-sizing: border-box;
   width: 100%;
 }
 
