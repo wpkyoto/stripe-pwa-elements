@@ -122,7 +122,7 @@ exports[`stripe-card-element component tests Rendering with the api key 1`] = `
         <fieldset class="stripe-input-box">
           <div>
             <label>
-              <input class="StripeElement stripe-input-box" id="zip" inputmode="numeric" name="zip" placeholder="Postal Code" type="text" value="" style="width: 100%;">
+              <input class="StripeElement" id="zip" inputmode="numeric" name="zip" placeholder="Postal Code" type="text" value="" style="width: 100%;">
             </label>
           </div>
         </fieldset>
