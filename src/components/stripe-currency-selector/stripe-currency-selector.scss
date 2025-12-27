@@ -1,7 +1,7 @@
-@import '../../style/rest.scss';
-@import '../../style/theme.scss';
+@use '../../style/rest.scss';
+@use '../../style/theme.scss';
 
-@include rest;
+@include rest.rest;
 
 stripe-currency-selector {
   display: block;
