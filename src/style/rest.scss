@@ -1,5 +1,7 @@
 /* Remove all the styles of the "User-Agent-Stylesheet", except for the 'display' property */
 @mixin rest {
+  box-sizing: border-box;
+
   *:where(:not(iframe, canvas, img, svg, video):not(svg *)) {
     all: unset;
     display: revert;
