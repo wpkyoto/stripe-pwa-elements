@@ -26,3 +26,4 @@ UserInterfaceState.xcuserstate
 .env
 
 example/stripe-elements/
+RELEASE_NOTES_*.md
