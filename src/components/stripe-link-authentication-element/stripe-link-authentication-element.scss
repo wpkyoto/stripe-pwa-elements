@@ -1,7 +1,9 @@
 @import '../../style/theme';
+@import '../../style/rest';
 
 .stripe-link-authentication-wrap {
-  @import '../../style/rest';
+  @include rest;
+
   display: block;
   width: 100%;
   background: #fff;

@@ -1,6 +1,8 @@
 @import '../../style/rest.scss';
 @import '../../style/theme.scss';
 
+@include rest;
+
 stripe-currency-selector {
   display: block;
   width: 100%;

@@ -1,12 +1,14 @@
 /* Remove all the styles of the "User-Agent-Stylesheet", except for the 'display' property */
-*:where(:not(iframe, canvas, img, svg, video):not(svg *)) {
-  all: unset;
-  display: revert;
-  background: none;
-  border: none;
-  font-family: 'Roboto', sans-serif;
-  box-sizing: border-box;
-}
-button {
-  cursor: pointer;
+@mixin rest {
+  *:where(:not(iframe, canvas, img, svg, video):not(svg *)) {
+    all: unset;
+    display: revert;
+    background: none;
+    border: none;
+    font-family: 'Roboto', sans-serif;
+    box-sizing: border-box;
+  }
+  button {
+    cursor: pointer;
+  }
 }

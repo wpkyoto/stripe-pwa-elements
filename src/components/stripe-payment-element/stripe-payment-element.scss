@@ -1,6 +1,9 @@
 @import '../../style/theme';
+@import '../../style/rest';
+
 .stripe-payment-sheet-wrap {
-  @import '../../style/rest';
+  @include rest;
+
   display: block;
   width: 100%;
   background: #fff;
