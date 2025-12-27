@@ -1,5 +1,5 @@
-@use '../../style/rest.scss';
 @use '../../style/theme.scss';
+@use '../../style/rest.scss';
 
 :host {
   @include rest.rest;
