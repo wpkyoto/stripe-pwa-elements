@@ -1,7 +1,9 @@
-@import '../../style/rest.scss';
-@import '../../style/theme.scss';
+@use '../../style/theme.scss';
+@use '../../style/rest.scss';
 
-stripe-currency-selector {
+:host {
+  @include rest.rest;
+
   display: block;
   width: 100%;
 }

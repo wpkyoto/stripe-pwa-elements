@@ -1,7 +1,8 @@
-@import '../../style/rest';
-@import '../../style/theme';
+@use '../../style/theme';
+@use '../../style/rest';
 
 :host {
+  @include rest.rest;
   display: block;
 }
 
