@@ -3,7 +3,9 @@
 
 .stripe-payment-sheet-wrap {
   @include rest.rest;
+
   display: block;
+  box-sizing: border-box;
   width: 100%;
   background: #fff;
   padding: 32px 16px;
