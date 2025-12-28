@@ -71,6 +71,11 @@ export class StripeModal {
   }
 
   private openModalAnimation() {
+    if (!this.el.shadowRoot) {
+      this.renderedOpen = true;
+      return;
+    }
+
     const modalChild = this.el.shadowRoot.querySelector('.modal-child') as HTMLElement;
 
     modalChild.classList.add('loading');
