@@ -3,7 +3,7 @@ import { StripeDidLoadedHandler, FormSubmitHandler, ProgressStatus, PaymentReque
 
 @Component({
   tag: 'stripe-card-element-modal',
-  styleUrl: 'stripe-card-element-modal.css',
+  styleUrl: 'stripe-card-element-modal.scss',
   shadow: false,
 })
 export class StripeCardElementModal {

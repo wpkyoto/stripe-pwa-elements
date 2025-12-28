@@ -15,7 +15,7 @@
       const targetElement = document.getElementById('stripe');
       const cardElement = document.createElement('stripe-card-element');
       targetElement.appendChild(cardElement);
-      
+
       customElements
         .whenDefined('stripe-card-element')
         .then(() => {
@@ -27,7 +27,7 @@
           cardElement.setAttribute('intent-client-secret', 'pi_3P03tlKzMYim9cy30Mrnv2xs_secret_xAOM1PdqEDq4mFfg1ff8pOjOm');
           // Payment Request Button（Apple Pay/Google Pay）を表示
           cardElement.setAttribute('show-payment-request-button', 'true');
-          
+
           // Stripeが読み込まれた後にPayment Requestオプションを設定
           cardElement.addEventListener('stripeLoaded', () => {
             cardElement.setPaymentRequestOption({
@@ -47,67 +47,69 @@
         });
 
       // モーダル内カード要素の例
-      const modalCardElement = document.createElement('stripe-card-element-modal');
-      targetElement.appendChild(modalCardElement);
-      
-      customElements
-        .whenDefined('stripe-card-element-modal')
-        .then(() => {
-          // モーダルを開く
-          modalCardElement.setAttribute('open', 'true');
-          // Stripe公開可能キーを設定
-          modalCardElement.setAttribute('publishable-key', 'pk_test_51EMxG7KVC4SfzSeak35hZaAe91cpzKZE9eOQcVWpa7owYJeS30avCAF0lT1QUMKTbzepTIYgAgjly4AmgZuxxkcS00kQ40cBLe');
-          
-          // 内部のstripe-card-elementを取得
-          return modalCardElement.getStripeCardElementElement();
-        })
-        .then(stripeElement => {
-          // デフォルトのフォーム送信アクションを無効化
-          stripeElement.setAttribute('should-use-default-form-submit-action', 'false');
+      setTimeout(() => {
+        const modalCardElement = document.createElement('stripe-card-element-modal');
+        targetElement.appendChild(modalCardElement);
 
-          // フォーム送信イベントをリッスン
-          stripeElement.addEventListener('formSubmit', async props => {
-            try {
-              // デバッグ用のエラーを発生させる
-              throw new Error('debug');
-            } catch (e) {
-              console.log(e);
-              stripeElement.setErrorMessage(`Error: ${e.message}`);
-              stripeElement.updateProgress('failure');
-            }
-            return;
-            
-            // 実際の決済処理の例（コメントアウト）
-            const {
-              detail: { stripe, cardNumber, event },
-            } = props;
-            const result = await stripe.createPaymentMethod({
-              type: 'card',
-              card: cardNumber,
+        customElements
+          .whenDefined('stripe-card-element-modal')
+          .then(() => {
+            // モーダルを開く
+            modalCardElement.setAttribute('open', 'true');
+            // Stripe公開可能キーを設定
+            modalCardElement.setAttribute('publishable-key', 'pk_test_51EMxG7KVC4SfzSeak35hZaAe91cpzKZE9eOQcVWpa7owYJeS30avCAF0lT1QUMKTbzepTIYgAgjly4AmgZuxxkcS00kQ40cBLe');
+
+            // 内部のstripe-card-elementを取得
+            return modalCardElement.getStripeCardElementElement();
+          })
+          .then(stripeElement => {
+            // デフォルトのフォーム送信アクションを無効化
+            stripeElement.setAttribute('should-use-default-form-submit-action', 'false');
+
+            // フォーム送信イベントをリッスン
+            stripeElement.addEventListener('formSubmit', async props => {
+              try {
+                // デバッグ用のエラーを発生させる
+                throw new Error('debug');
+              } catch (e) {
+                console.log(e);
+                stripeElement.setErrorMessage(`Error: ${e.message}`);
+                stripeElement.updateProgress('failure');
+              }
+              return;
+
+              // 実際の決済処理の例（コメントアウト）
+              const {
+                detail: { stripe, cardNumber, event },
+              } = props;
+              const result = await stripe.createPaymentMethod({
+                type: 'card',
+                card: cardNumber,
+              });
+              console.log(result);
+              stripeElement.updateProgress('success');
             });
-            console.log(result);
-            stripeElement.updateProgress('success');
-          });
 
-          // PaymentIntentのクライアントシークレットを設定（最新の属性名を使用）
-          stripeElement.setAttribute('intent-client-secret', 'dummy');
-          
-          // デフォルトフォーム送信結果をリッスン
-          stripeElement.addEventListener('defaultFormSubmitResult', async ({ detail }) => {
-            if (detail instanceof Error) {
-              console.error(detail);
-              stripeElement.setErrorMessage(`Error: ${detail.message}`);
-            } else {
-              console.log(detail);
-            }
+            // PaymentIntentのクライアントシークレットを設定（最新の属性名を使用）
+            stripeElement.setAttribute('intent-client-secret', 'dummy');
+
+            // デフォルトフォーム送信結果をリッスン
+            stripeElement.addEventListener('defaultFormSubmitResult', async ({ detail }) => {
+              if (detail instanceof Error) {
+                console.error(detail);
+                stripeElement.setErrorMessage(`Error: ${detail.message}`);
+              } else {
+                console.log(detail);
+              }
+            });
+          })
+          .catch(e => {
+            console.log(e);
+            const errorElement = document.createElement('p');
+            errorElement.innerText = e.message;
+            targetElement.appendChild(errorElement);
           });
-        })
-        .catch(e => {
-          console.log(e);
-          const errorElement = document.createElement('p');
-          errorElement.innerText = e.message;
-          targetElement.appendChild(errorElement);
-        });
+      }, 1000);
     </script>
     <style>
       body {
