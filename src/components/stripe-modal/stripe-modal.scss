@@ -7,10 +7,15 @@
 }
 
 .modal-row {
-  display: none;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform;
 }
 
 .modal-row.open {
+  opacity: 1;
+  pointer-events: auto;
+
   position: fixed;
   top: 0;
   left: 0;
@@ -23,8 +28,45 @@
   gap: 1ch;
   background: rgba(0, 0, 0, 0.3);
 }
+
+.modal-row {
+  .modal-child {
+    transform: translateY(100%);
+    transition: transform 420ms ease;
+    position: relative;
+
+    .modal-loading {
+      display: none;
+      position: absolute;
+      top: 160px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 24px;
+      height: 24px;
+    }
+    &.loading .modal-loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      svg {
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    &.loading .modal-content {
+      visibility: hidden;
+    }
+  }
+
+  &.open .modal-child {
+    transform: translateY(0%);
+  }
+}
+
 .modal-child {
-  padding: 1.5rem;
+  padding: 16px 8px 24px;
   background-color: #fff;
   width: 100%;
 }
