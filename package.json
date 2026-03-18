@@ -17,6 +17,9 @@
   "scripts": {
     "build": "stencil build --docs",
     "start": "stencil build --dev --watch --serve",
+    "docs:dev": "npm --prefix docs run dev",
+    "docs:build": "npm --prefix docs run build",
+    "docs:preview": "npm --prefix docs run preview",
     "lint": "eslint src/**/*{.ts,.tsx}",
     "fmt": "prettier-eslint --write $PWD/'src/{components, utils}/**/*{.ts,.tsx,.js}'",
     "test": "stencil test --spec",
