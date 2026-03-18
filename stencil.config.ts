@@ -23,5 +23,6 @@ export const config: Config = {
   ],
   testing: {
     testPathIgnorePatterns: ['node_modules'],
+    setupFilesAfterEnv: ['<rootDir>/src/utils/test-setup.ts'],
   },
 };
