@@ -1,7 +1,7 @@
 {
   "name": "stripe-pwa-elements",
   "version": "3.2.0",
-  "description": "Web component of Stripe elements",
+  "description": "Framework-agnostic Stripe payment web components for any web app or PWA",
   "main": "dist/index.cjs.js",
   "module": "dist/index.js",
   "es2015": "dist/esm/index.mjs",
@@ -45,8 +45,18 @@
   },
   "keywords": [
     "stripe",
-    "web component"
+    "web-component",
+    "payment",
+    "pwa",
+    "stencil",
+    "apple-pay",
+    "google-pay",
+    "card-element",
+    "payment-element",
+    "checkout",
+    "web-components"
   ],
+  "homepage": "https://github.com/wpkyoto/stripe-pwa-elements#readme",
   "bugs": {
     "url": "https://github.com/wpkyoto/stripe-pwa-elements/issues"
   },
