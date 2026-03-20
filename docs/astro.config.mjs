@@ -16,14 +16,17 @@ export default defineConfig({
 			sidebar: [
 				{
 					label: 'Getting Started',
-					items: [{ label: 'Overview', slug: '' }],
+					translations: { ja: 'はじめに' },
+					items: [{ label: 'Overview', slug: '', translations: { ja: '概要' } }],
 				},
 				{
 					label: 'Guides',
+					translations: { ja: 'ガイド' },
 					autogenerate: { directory: 'guides' },
 				},
 				{
 					label: 'Components',
+					translations: { ja: 'コンポーネント' },
 					autogenerate: { directory: 'components' },
 				},
 			],
