@@ -6,5 +6,4 @@ description: Integration guides.
 ## Guides
 
 - Getting Started: /en/guides/getting-started/
-- Example: /en/guides/example/
 
