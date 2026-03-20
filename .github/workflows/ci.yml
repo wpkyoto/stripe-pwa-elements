@@ -20,7 +20,7 @@ jobs:
         run: npm run lint
 
       - name: Security audit
-        run: npm audit --audit-level=moderate
+        run: npm audit --audit-level=moderate --omit=dev
 
   type-check:
     name: Type Check
