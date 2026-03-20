@@ -5,6 +5,68 @@ description: Component API reference.
 
 > このページは `src/components/stripe-card-element/readme.md` から自動生成されています。
 
+## 使用例
+
+### initStripe
+
+Get Stripe.js, and initialize elements
+
+```js
+const stripeElement = document.createElement('stripe-card-element');
+customElements
+ .whenDefined('stripe-card-element')
+ .then(() => {
+   tripeElement.initStripe('pk_test_XXXXXXXXX')
+ })
+```
+
+### intentClientSecret
+
+The client secret from paymentIntent.create response
+
+```js
+const stripeElement = document.createElement('stripe-card-element');
+customElements
+ .whenDefined('stripe-card-element')
+ .then(() => {
+    stripeElement.setAttribute('intent-client-secret', 'dummy')
+  })
+```
+
+```html
+<stripe-card-element intent-client-secret="dummy" />
+```
+
+### stripeLoaded
+
+Stripe Client loaded event
+
+```js
+const stripeElement = document.createElement('stripe-card-element');
+customElements
+ .whenDefined('stripe-card-element')
+ .then(() => {
+    stripeElement
+     .addEventListener('stripeLoaded', async ({ detail: {stripe} }) => {
+      stripe
+        .createSource({
+          type: 'ideal',
+          amount: 1099,
+          currency: 'eur',
+          owner: {
+            name: 'Jenny Rosen',
+          },
+          redirect: {
+            return_url: 'https://shop.example.com/crtA6B28E1',
+          },
+        })
+        .then(function(result) {
+          // Handle result.error or result.source
+        });
+      });
+  })
+```
+
 <!-- Auto Generated Below -->
 
 

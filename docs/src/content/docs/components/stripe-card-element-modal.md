@@ -5,6 +5,33 @@ description: Component API reference.
 
 > このページは `src/components/stripe-card-element-modal/readme.md` から自動生成されています。
 
+## 使用例
+
+### intentClientSecret
+
+The client secret from paymentIntent.create response
+
+```js
+const stripeElement = document.createElement('stripe-card-element');
+customElements
+ .whenDefined('stripe-card-element')
+ .then(() => {
+    stripeElement.setAttribute('intent-client-secret', 'dummy')
+  })
+```
+
+```html
+<stripe-card-element intent-client-secret="dummy" />
+```
+
+### intentType
+
+Default submit handle type.
+
+```html
+<stripe-card-element intent-type="setup" />
+```
+
 <!-- Auto Generated Below -->
 
 

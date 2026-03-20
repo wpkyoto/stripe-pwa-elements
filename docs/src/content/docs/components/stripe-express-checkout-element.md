@@ -5,6 +5,147 @@ description: Component API reference.
 
 > このページは `src/components/stripe-express-checkout-element/readme.md` から自動生成されています。
 
+## 使用例
+
+```html
+<stripe-express-checkout-element
+  publishable-key="pk_test_..."
+  client-secret="pi_..."
+  amount="1099"
+  currency="usd"
+/>
+```
+
+### clientSecret
+
+The client secret from paymentIntent.create or setupIntent.create response
+
+```js
+const element = document.createElement('stripe-express-checkout-element');
+customElements
+ .whenDefined('stripe-express-checkout-element')
+ .then(() => {
+    element.setAttribute('client-secret', 'pi_xxx_secret_xxx')
+  })
+```
+
+### updateProgress
+
+Update the progress status
+
+```js
+const element = document.createElement('stripe-express-checkout-element');
+customElements
+ .whenDefined('stripe-express-checkout-element')
+ .then(() => {
+   element.updateProgress('success')
+ })
+```
+
+### setErrorMessage
+
+Set error message
+
+```js
+const element = document.createElement('stripe-express-checkout-element');
+customElements
+ .whenDefined('stripe-express-checkout-element')
+ .then(() => {
+   element.setErrorMessage('Payment failed')
+ })
+```
+
+### initStripe
+
+Get Stripe.js, and initialize elements
+
+```js
+const element = document.createElement('stripe-express-checkout-element');
+customElements
+ .whenDefined('stripe-express-checkout-element')
+ .then(() => {
+   element.initStripe('pk_test_XXXXXXXXX')
+ })
+```
+
+### updateElementOptions
+
+Update element options dynamically
+
+```js
+const element = document.createElement('stripe-express-checkout-element');
+customElements
+ .whenDefined('stripe-express-checkout-element')
+ .then(async () => {
+   await element.initStripe('pk_test_xxx')
+   element.updateElementOptions({ amount: 2000 })
+ })
+```
+
+### stripeLoaded
+
+Stripe Client loaded event
+
+```js
+const element = document.createElement('stripe-express-checkout-element');
+customElements
+ .whenDefined('stripe-express-checkout-element')
+ .then(() => {
+    element.addEventListener('stripeLoaded', async ({ detail: {stripe} }) => {
+      console.log('Stripe loaded', stripe)
+    });
+  })
+```
+
+### confirm
+
+Express Checkout confirm event
+
+```js
+const element = document.createElement('stripe-express-checkout-element');
+customElements
+ .whenDefined('stripe-express-checkout-element')
+ .then(() => {
+    element.addEventListener('confirm', async ({ detail }) => {
+      console.log('Payment confirmed', detail)
+    })
+  })
+```
+
+### expressCheckoutClick
+
+Express Checkout click event
+
+```js
+const element = document.createElement('stripe-express-checkout-element');
+customElements
+ .whenDefined('stripe-express-checkout-element')
+ .then(() => {
+    element.addEventListener('expressCheckoutClick', async ({ detail }) => {
+      console.log('Button clicked', detail)
+    })
+  })
+```
+
+### defaultConfirmResult
+
+Receive the result of default confirm action
+
+```js
+const element = document.createElement('stripe-express-checkout-element');
+customElements
+ .whenDefined('stripe-express-checkout-element')
+ .then(() => {
+    element.addEventListener('defaultConfirmResult', async ({detail}) => {
+      if (detail instanceof Error) {
+        console.error(detail)
+      } else {
+        console.log(detail)
+      }
+    })
+  })
+```
+
 <!-- Auto Generated Below -->
 
 

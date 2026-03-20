@@ -5,5 +5,6 @@ description: Integration guides.
 
 ## Guides
 
-- Getting Started: /en/guides/getting-started/
+- [Getting Started](/en/guides/getting-started/)
+- [Payment Flows](/en/guides/payment-flows/)
 

@@ -1,0 +1,139 @@
+---
+title: Payment Flows
+description: Diagrams for PaymentIntent, SetupIntent, and Checkout Session flows.
+---
+
+This guide explains the main payment flows used with stripe-pwa-elements.
+
+## PaymentIntent Flow
+
+Use this for immediate payments. Works with `<stripe-card-element>` or `<stripe-payment-element>`.
+
+```mermaid
+sequenceDiagram
+    participant Server
+    participant Client as Browser
+    participant Stripe
+
+    Server->>Stripe: Create PaymentIntent
+    Stripe-->>Server: Return client_secret
+    Server-->>Client: Pass client_secret to frontend
+    Client->>Client: Set client_secret on Web Component
+    Client->>Client: User enters card details
+    Client->>Stripe: stripe.confirmCardPayment / confirmPayment
+    Stripe-->>Client: Result (success or error)
+    Client->>Server: Notify result (Webhook recommended)
+```
+
+### Code Example
+
+```html
+<stripe-payment-element
+  publishable-key="pk_test_xxxxx"
+  intent-client-secret="pi_xxxxx_secret_xxxxx"
+></stripe-payment-element>
+```
+
+```js
+const el = document.querySelector('stripe-payment-element');
+el.addEventListener('defaultFormSubmitResult', ({ detail }) => {
+  if (detail instanceof Error) {
+    console.error(detail);
+  } else {
+    console.log('Success:', detail);
+  }
+});
+```
+
+## SetupIntent Flow
+
+Use this to save card details for future payments. Set `intent-type="setup"`.
+
+```mermaid
+sequenceDiagram
+    participant Server
+    participant Client as Browser
+    participant Stripe
+
+    Server->>Stripe: Create SetupIntent
+    Stripe-->>Server: Return client_secret
+    Server-->>Client: Pass client_secret to frontend
+    Client->>Client: Set client_secret + intent-type="setup" on Web Component
+    Client->>Client: User enters card details
+    Client->>Stripe: stripe.confirmCardSetup / confirmSetup
+    Stripe-->>Client: Result (success or error)
+    Client->>Server: Notify result (Webhook recommended)
+```
+
+### Code Example
+
+```html
+<stripe-card-element
+  publishable-key="pk_test_xxxxx"
+  intent-client-secret="seti_xxxxx_secret_xxxxx"
+  intent-type="setup"
+></stripe-card-element>
+```
+
+## Checkout Session Flow
+
+An integrated payment flow using Stripe Checkout. Use `<stripe-payment-element>` with the `initCheckoutSession` method.
+
+```mermaid
+sequenceDiagram
+    participant Server
+    participant Client as Browser
+    participant Stripe
+
+    Server->>Stripe: Create Checkout Session
+    Stripe-->>Server: Return client_secret
+    Server-->>Client: Pass client_secret to frontend
+    Client->>Client: initCheckoutSession(publishableKey, options)
+    Client->>Client: User enters payment details
+    Client->>Stripe: checkout.confirm()
+    Stripe-->>Client: Redirect or result
+```
+
+### Code Example
+
+```js
+const el = document.querySelector('stripe-payment-element');
+await customElements.whenDefined('stripe-payment-element');
+await el.initCheckoutSession('pk_test_xxxxx', {
+  checkoutSessionClientSecret: 'cs_xxxxx_secret_xxxxx',
+});
+```
+
+## Component Selection Guide
+
+Choose the right component for your use case.
+
+```mermaid
+flowchart TD
+    Start[Accept payments] --> Q1{Apple Pay / Google Pay<br/>only?}
+    Q1 -->|Yes| Express[stripe-express-checkout-element]
+    Q1 -->|No| Q2{Card payments only?}
+    Q2 -->|Yes| Q3{Show in modal?}
+    Q3 -->|Yes| CardModal[stripe-card-element-modal]
+    Q3 -->|No| Card[stripe-card-element]
+    Q2 -->|No| Q4{Multiple payment methods?}
+    Q4 -->|Yes| Payment[stripe-payment-element]
+    Q4 -->|No| Q5{Stripe Link?}
+    Q5 -->|Yes| Link[stripe-link-authentication-element<br/>+ stripe-payment-element]
+    Q5 -->|No| Payment
+```
+
+| Component | Use Case |
+| --- | --- |
+| `stripe-card-element` | Card-only payments (separate card number, expiry, CVC fields) |
+| `stripe-card-element-modal` | Card payments in a modal |
+| `stripe-payment-element` | Multiple payment methods in a unified form (cards, bank transfers, wallets, etc.) |
+| `stripe-express-checkout-element` | One-click payments with Apple Pay / Google Pay / Link |
+| `stripe-link-authentication-element` | Email authentication with Stripe Link |
+| `stripe-address-element` | Address collection |
+| `stripe-currency-selector` | Currency selection for Adaptive Pricing |
+
+## Next
+
+- See [Components](/en/components/) for detailed API reference
+- See [Getting Started](/en/guides/getting-started/) for basic setup

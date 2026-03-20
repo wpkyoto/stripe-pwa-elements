@@ -5,6 +5,77 @@ description: Component API reference.
 
 > このページは `src/components/stripe-currency-selector/readme.md` から自動生成されています。
 
+## 使用例
+
+### initStripe
+
+Get Stripe.js, and initialize elements
+
+```js
+const stripeCurrencySelector = document.createElement('stripe-currency-selector');
+customElements
+ .whenDefined('stripe-currency-selector')
+ .then(() => {
+   stripeCurrencySelector.initStripe('pk_test_XXXXXXXXX')
+ })
+```
+
+### setErrorMessage
+
+Set error message
+
+```js
+const stripeCurrencySelector = document.createElement('stripe-currency-selector');
+customElements
+ .whenDefined('stripe-currency-selector')
+ .then(() => {
+   stripeCurrencySelector.setErrorMessage('Invalid currency selected');
+  });
+```
+
+### getSelectedCurrency
+
+Get the selected currency
+
+```js
+const stripeCurrencySelector = document.querySelector('stripe-currency-selector');
+const currency = await stripeCurrencySelector.getSelectedCurrency();
+console.log('Selected currency:', currency);
+```
+
+### stripeLoaded
+
+Stripe Client loaded event
+
+```js
+const stripeCurrencySelector = document.createElement('stripe-currency-selector');
+customElements
+ .whenDefined('stripe-currency-selector')
+ .then(() => {
+    stripeCurrencySelector
+     .addEventListener('stripeLoaded', async ({ detail: {stripe} }) => {
+       console.log('Stripe loaded:', stripe);
+      });
+  })
+```
+
+### currencyChange
+
+Currency change event
+
+```js
+const stripeCurrencySelector = document.createElement('stripe-currency-selector');
+customElements
+ .whenDefined('stripe-currency-selector')
+ .then(() => {
+    stripeCurrencySelector
+      .addEventListener('currencyChange', async props => {
+        const { detail: { currency } } = props;
+        console.log('Currency changed:', currency);
+      })
+  })
+```
+
 <!-- Auto Generated Below -->
 
 

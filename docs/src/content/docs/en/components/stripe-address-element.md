@@ -5,6 +5,101 @@ description: Component API reference.
 
 > This page is auto-generated from `src/components/stripe-address-element/readme.md`.
 
+## Usage Examples
+
+### initStripe
+
+Get Stripe.js, and initialize elements
+
+```js
+const stripeElement = document.createElement('stripe-address-element');
+customElements
+ .whenDefined('stripe-address-element')
+ .then(() => {
+   stripeElement.initStripe('pk_test_XXXXXXXXX')
+ })
+```
+
+### updateProgress
+
+Update the form submit progress
+
+```js
+const stripeElement = document.createElement('stripe-address-element');
+customElements
+ .whenDefined('stripe-address-element')
+ .then(() => {
+   stripeElement.addEventListener('formSubmit', async props => {
+     const { detail: { address } } = props;
+     console.log('Address:', address);
+     stripeElement.updateProgress('success')
+   });
+})
+```
+
+### setErrorMessage
+
+Set error message
+
+```js
+const stripeElement = document.createElement('stripe-address-element');
+customElements
+ .whenDefined('stripe-address-element')
+ .then(() => {
+   stripeElement.addEventListener('formSubmit', async props => {
+     try {
+       throw new Error('debug')
+     } catch (e) {
+       stripeElement.setErrorMessage(`Error: ${e.message}`)
+       stripeElement.updateProgress('failure')
+     }
+  });
+})
+```
+
+### getValue
+
+Get the current address value
+
+```js
+const stripeElement = document.querySelector('stripe-address-element');
+const addressValue = await stripeElement.getValue();
+console.log('Address:', addressValue);
+```
+
+### stripeLoaded
+
+Stripe Client loaded event
+
+```js
+const stripeElement = document.createElement('stripe-address-element');
+customElements
+ .whenDefined('stripe-address-element')
+ .then(() => {
+    stripeElement
+     .addEventListener('stripeLoaded', async ({ detail: {stripe} }) => {
+       console.log('Stripe loaded:', stripe);
+      });
+  })
+```
+
+### formSubmit
+
+Form submit event
+
+```js
+const stripeElement = document.createElement('stripe-address-element');
+customElements
+ .whenDefined('stripe-address-element')
+ .then(() => {
+    stripeElement
+      .addEventListener('formSubmit', async props => {
+        const { detail: { address } } = props;
+        console.log('Address submitted:', address);
+      })
+  })
+```
+
 <!-- Auto Generated Below -->
 
 

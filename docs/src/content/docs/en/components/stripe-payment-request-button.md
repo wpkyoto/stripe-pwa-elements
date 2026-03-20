@@ -5,6 +5,84 @@ description: Component API reference.
 
 > This page is auto-generated from `src/components/stripe-payment-request-button/readme.md`.
 
+## Usage Examples
+
+### paymentMethodEventHandler
+
+Set handler of the `paymentRequest.on('paymentmethod'` event.
+
+```js
+element.setPaymentMethodEventHandler(async (event, stripe) => {
+// Confirm the PaymentIntent with the payment method returned from the payment request.
+  const {error} = await stripe.confirmCardPayment(
+    paymentIntent.client_secret,
+    {
+     payment_method: event.paymentMethod.id,
+     shipping: {
+       name: event.shippingAddress.recipient,
+       phone: event.shippingAddress.phone,
+       address: {
+         line1: event.shippingAddress.addressLine[0],
+         city: event.shippingAddress.city,
+         postal_code: event.shippingAddress.postalCode,
+         state: event.shippingAddress.region,
+         country: event.shippingAddress.country,
+       },
+     },
+   },
+   {handleActions: false}
+ );
+```
+
+### shippingOptionEventHandler
+
+Set handler of the `paymentRequest.on('shippingoptionchange')` event
+
+```js
+element.setPaymentRequestShippingOptionEventHandler(async (event, stripe) => {
+  event.updateWith({status: 'success'});
+ })
+```
+
+### shippingAddressEventHandler
+
+Set handler of the `paymentRequest.on('shippingaddresschange')` event
+
+```js
+element.setPaymentRequestShippingAddressEventHandler(async (event, stripe) => {
+  const response = await store.updatePaymentIntentWithShippingCost(
+    paymentIntent.id,
+    store.getLineItems(),
+    event.shippingOption
+  );
+ })
+```
+
+### stripeLoaded
+
+Stripe Client loaded event
+
+```js
+stripeElement
+ .addEventListener('stripeLoaded', async ({ detail: {stripe} }) => {
+  stripe
+    .createSource({
+      type: 'ideal',
+      amount: 1099,
+      currency: 'eur',
+      owner: {
+        name: 'Jenny Rosen',
+      },
+      redirect: {
+        return_url: 'https://shop.example.com/crtA6B28E1',
+      },
+    })
+    .then(function(result) {
+      // Handle result.error or result.source
+    });
+  });
+```
+
 <!-- Auto Generated Below -->
 
 
