@@ -1,0 +1,39 @@
+---
+title: stripe-pwa-elements
+description: Stencil 製の Stripe Elements Web Components（PWA向け）ドキュメント。
+template: splash # Remove or comment out this line to display the site sidebar on this page.
+hero:
+  tagline: Stripe の決済UIを Web Components として提供します。
+  image:
+    file: ../../assets/houston.webp
+  actions:
+    - text: Getting Started
+      link: /guides/getting-started/
+      icon: right-arrow
+    - text: GitHub
+      link: https://github.com/wpkyoto/stripe-pwa-elements
+      icon: external
+      variant: minimal
+---
+
+import { LinkCard, CardGrid } from '@astrojs/starlight/components';
+
+## はじめに
+
+<CardGrid stagger>
+	<LinkCard
+		title="導入"
+		description="インストール手順と最小の利用例を確認します。"
+		href="/guides/getting-started/"
+	/>
+	<LinkCard
+		title="ガイド"
+		description="PaymentIntent/SetupIntent、イベント、i18n、スタイリングをまとめます。"
+		href="/guides/"
+	/>
+	<LinkCard
+		title="コンポーネントAPI"
+		description="各コンポーネントの Props / Events / Methods を参照できます。"
+		href="/components/"
+	/>
+</CardGrid>
