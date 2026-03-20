@@ -21,6 +21,14 @@ function toTitleFromDirName(dirName) {
   return `<${dirName}>`;
 }
 
+function localeOutDir(docsRoot, locale) {
+  if (locale === 'root') {
+    return path.join(docsRoot, 'src', 'content', 'docs', 'components');
+  }
+
+  return path.join(docsRoot, 'src', 'content', 'docs', locale, 'components');
+}
+
 async function fileExists(p) {
   try {
     const s = await stat(p);
@@ -34,14 +42,17 @@ async function main() {
   const docsRoot = process.cwd();
   const repoRoot = path.resolve(docsRoot, '..');
   const componentsRoot = path.join(repoRoot, 'src', 'components');
-  const outDir = path.join(docsRoot, 'src', 'content', 'docs', 'components');
+  const locales = ['root', 'en'];
+  const outDirs = locales.map(locale => ({ locale, outDir: localeOutDir(docsRoot, locale) }));
 
-  await mkdir(outDir, { recursive: true });
+  for (const { outDir } of outDirs) {
+    await mkdir(outDir, { recursive: true });
+  }
 
   const entries = await readdir(componentsRoot, { withFileTypes: true });
   const componentDirs = entries.filter(e => e.isDirectory()).map(e => e.name).sort();
 
-  const written = [];
+  const written = {};
 
   for (const dirName of componentDirs) {
     const srcReadme = path.join(componentsRoot, dirName, 'readme.md');
@@ -53,15 +64,24 @@ async function main() {
     const body = stripMermaidStyleLines(stripLeadingH1(raw)).trim();
     const title = toTitleFromDirName(dirName);
 
-    const outPath = path.join(outDir, `${dirName}.md`);
-    const out = `---\ntitle: ${title}\ndescription: Component API reference.\n---\n\n> このページは \`${path.relative(repoRoot, srcReadme)}\` から自動生成されています。\n\n${body}\n`;
+    for (const { locale, outDir } of outDirs) {
+      const outPath = path.join(outDir, `${dirName}.md`);
+      const notice =
+        locale === 'en'
+          ? `> This page is auto-generated from \`${path.relative(repoRoot, srcReadme)}\`.\n\n`
+          : `> このページは \`${path.relative(repoRoot, srcReadme)}\` から自動生成されています。\n\n`;
 
-    await writeFile(outPath, out, 'utf8');
-    written.push(path.relative(docsRoot, outPath));
+      const out = `---\ntitle: ${title}\ndescription: Component API reference.\n---\n\n${notice}${body}\n`;
+
+      await writeFile(outPath, out, 'utf8');
+      written[locale] ||= [];
+      written[locale].push(path.relative(docsRoot, outPath));
+    }
   }
 
   // Keep a lightweight manifest for debugging/CI logs.
-  const manifestPath = path.join(outDir, '_manifest.json');
+  // Note: This file is gitignored.
+  const manifestPath = path.join(localeOutDir(docsRoot, 'root'), '_manifest.json');
   await writeFile(manifestPath, JSON.stringify({ generatedAt: new Date().toISOString(), files: written }, null, 2) + '\n', 'utf8');
 }
 

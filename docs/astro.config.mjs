@@ -7,6 +7,11 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: 'stripe-pwa-elements',
+			defaultLocale: 'root',
+			locales: {
+				root: { label: '日本語', lang: 'ja' },
+				en: { label: 'English' },
+			},
 			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/wpkyoto/stripe-pwa-elements' }],
 			sidebar: [
 				{
