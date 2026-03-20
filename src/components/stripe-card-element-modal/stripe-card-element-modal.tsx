@@ -57,9 +57,9 @@ export class StripeCardElementModal {
    *
    * @example
    * ```
-   * const stripeElement = document.createElement('stripe-card-element');
+   * const stripeElement = document.createElement('stripe-card-element-modal');
    * customElements
-   *  .whenDefined('stripe-card-element')
+   *  .whenDefined('stripe-card-element-modal')
    *  .then(() => {
    *     stripeElement.setAttribute('intent-client-secret', 'dummy')
    *   })
@@ -67,7 +67,7 @@ export class StripeCardElementModal {
    *
    * @example
    * ```
-   * <stripe-card-element intent-client-secret="dummy" />
+   * <stripe-card-element-modal intent-client-secret="dummy" />
    * ```
    */
   @Prop() intentClientSecret?: string;
@@ -84,7 +84,7 @@ export class StripeCardElementModal {
    * If you want to use `setupIntent`, should update this attribute.
    * @example
    * ```
-   * <stripe-card-element intent-type="setup" />
+   * <stripe-card-element-modal intent-type="setup" />
    * ```
    */
   @Prop() intentType: IntentType = 'payment';

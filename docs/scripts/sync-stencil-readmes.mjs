@@ -60,9 +60,7 @@ function extractExamples(source) {
     const descLines = comment.split('\n').map(l => l.replace(/^\s*\*\s?/, '').trim()).filter(l => l && !l.startsWith('@'));
     const description = descLines[0] || '';
 
-    // Find @example blocks
-    const examplePattern = /@example\s*\n\s*\*\s*```([^`]*(?:``[^`])*)*```/g;
-    // Simpler approach: split by @example and extract code blocks
+    // Find @example blocks by splitting on @example and extracting code blocks
     const parts = comment.split('@example');
     for (let i = 1; i < parts.length; i++) {
       const part = parts[i];

@@ -12,16 +12,16 @@ description: Component API reference.
 The client secret from paymentIntent.create response
 
 ```js
-const stripeElement = document.createElement('stripe-card-element');
+const stripeElement = document.createElement('stripe-card-element-modal');
 customElements
- .whenDefined('stripe-card-element')
+ .whenDefined('stripe-card-element-modal')
  .then(() => {
     stripeElement.setAttribute('intent-client-secret', 'dummy')
   })
 ```
 
 ```html
-<stripe-card-element intent-client-secret="dummy" />
+<stripe-card-element-modal intent-client-secret="dummy" />
 ```
 
 ### intentType
@@ -29,7 +29,7 @@ customElements
 Default submit handle type.
 
 ```html
-<stripe-card-element intent-type="setup" />
+<stripe-card-element-modal intent-type="setup" />
 ```
 
 <!-- Auto Generated Below -->
