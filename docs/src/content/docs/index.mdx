@@ -8,7 +8,7 @@ hero:
     file: ../../assets/houston.webp
   actions:
     - text: Getting Started
-      link: /
+      link: /guides/getting-started/
       icon: right-arrow
     - text: GitHub
       link: https://github.com/wpkyoto/stripe-pwa-elements
@@ -16,18 +16,24 @@ hero:
       variant: minimal
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+import { LinkCard, CardGrid } from '@astrojs/starlight/components';
 
 ## はじめに
 
 <CardGrid stagger>
-	<Card title="導入" icon="add-document">
-		インストール手順と最小の利用例を確認します。
-	</Card>
-	<Card title="ガイド" icon="document">
-		PaymentIntent/SetupIntent、イベント、i18n、スタイリングをまとめます。
-	</Card>
-	<Card title="コンポーネントAPI" icon="open-book">
-		各コンポーネントの Props / Events / Methods を参照できます。
-	</Card>
+	<LinkCard
+		title="導入"
+		description="インストール手順と最小の利用例を確認します。"
+		href="/guides/getting-started/"
+	/>
+	<LinkCard
+		title="ガイド"
+		description="PaymentIntent/SetupIntent、イベント、i18n、スタイリングをまとめます。"
+		href="/guides/"
+	/>
+	<LinkCard
+		title="コンポーネントAPI"
+		description="各コンポーネントの Props / Events / Methods を参照できます。"
+		href="/components/"
+	/>
 </CardGrid>

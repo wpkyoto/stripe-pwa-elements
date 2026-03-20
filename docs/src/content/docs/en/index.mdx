@@ -16,19 +16,25 @@ hero:
       variant: minimal
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+import { LinkCard, CardGrid } from '@astrojs/starlight/components';
 
 ## Start here
 
 <CardGrid stagger>
-	<Card title="Install & Quickstart" icon="add-document">
-		How to install and use the components in the simplest way.
-	</Card>
-	<Card title="Guides" icon="document">
-		Intent flows, events, i18n, and styling.
-	</Card>
-	<Card title="Component API" icon="open-book">
-		Props / Events / Methods for each component.
-	</Card>
+	<LinkCard
+		title="Install & Quickstart"
+		description="How to install and use the components in the simplest way."
+		href="/en/guides/getting-started/"
+	/>
+	<LinkCard
+		title="Guides"
+		description="Intent flows, events, i18n, and styling."
+		href="/en/guides/"
+	/>
+	<LinkCard
+		title="Component API"
+		description="Props / Events / Methods for each component."
+		href="/en/components/"
+	/>
 </CardGrid>
 
