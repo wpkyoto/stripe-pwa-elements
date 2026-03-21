@@ -5,6 +5,166 @@ description: Component API reference.
 
 > This page is auto-generated from `src/components/stripe-payment-element/readme.md`.
 
+## Usage Examples
+
+### initStripe
+
+Get Stripe.js, and initialize elements
+
+```js
+const stripeElement = document.createElement('stripe-payment-element');
+customElements
+ .whenDefined('stripe-payment-element')
+ .then(() => {
+   stripeElement.initStripe('pk_test_XXXXXXXXX')
+ })
+```
+
+### initStripeWithCheckoutSession
+
+Get Stripe.js and initialize with Checkout Session mode
+
+```js
+const stripeElement = document.createElement('stripe-payment-element');
+customElements
+ .whenDefined('stripe-payment-element')
+ .then(() => {
+   stripeElement.initStripeWithCheckoutSession(
+     'pk_test_XXXXXXXXX',
+     'cs_xxx_secret_xxx'
+   )
+ })
+```
+
+### updateProgress
+
+Update the form submit progress
+
+```js
+const stripeElement = document.createElement('stripe-payment-element');
+customElements
+ .whenDefined('stripe-payment-element')
+ .then(() => {
+   stripeElement.updateProgress('success')
+ })
+```
+
+### setErrorMessage
+
+Set error message
+
+```js
+const stripeElement = document.createElement('stripe-payment-element');
+customElements
+ .whenDefined('stripe-payment-element')
+ .then(() => {
+   stripeElement.setErrorMessage('Payment failed')
+ })
+```
+
+### intentClientSecret
+
+The client secret from paymentIntent.create or setupIntent.create response
+
+```js
+const stripeElement = document.createElement('stripe-payment-element');
+customElements
+ .whenDefined('stripe-payment-element')
+ .then(() => {
+    stripeElement.setAttribute('intent-client-secret', 'pi_xxx_secret_xxx')
+  })
+```
+
+```html
+<stripe-payment-element intent-client-secret="pi_xxx_secret_xxx" />
+```
+
+### checkoutSessionClientSecret
+
+The client secret from checkout session response
+
+```js
+const stripeElement = document.createElement('stripe-payment-element');
+customElements
+ .whenDefined('stripe-payment-element')
+ .then(() => {
+    stripeElement.initStripeWithCheckoutSession('pk_test_xxx', 'cs_xxx_secret_xxx')
+  })
+```
+
+### stripeLoaded
+
+Stripe Client loaded event
+
+```js
+const stripeElement = document.createElement('stripe-payment-element');
+customElements
+ .whenDefined('stripe-payment-element')
+ .then(() => {
+    stripeElement
+     .addEventListener('stripeLoaded', async ({ detail: {stripe} }) => {
+       console.log('Stripe loaded:', stripe);
+      });
+  })
+```
+
+### formSubmit
+
+Form submit event
+
+```js
+const stripeElement = document.createElement('stripe-payment-element');
+customElements
+ .whenDefined('stripe-payment-element')
+ .then(() => {
+    stripeElement
+      .addEventListener('formSubmit', async props => {
+        const { detail: { stripe, elements } } = props;
+        console.log('Form submitted', stripe, elements);
+      })
+  })
+```
+
+### defaultFormSubmitResult
+
+Receive the result of defaultFormSubmit event
+
+```js
+const stripeElement = document.createElement('stripe-payment-element');
+customElements
+ .whenDefined('stripe-payment-element')
+ .then(() => {
+    stripeElement.addEventListener('defaultFormSubmitResult', async ({detail}) => {
+      if (detail instanceof Error) {
+        console.error(detail)
+      } else {
+        console.log(detail)
+      }
+    })
+  })
+```
+
+### checkoutSessionConfirmResult
+
+Receive the result of checkout session confirm
+
+```js
+const stripeElement = document.createElement('stripe-payment-element');
+customElements
+ .whenDefined('stripe-payment-element')
+ .then(() => {
+    stripeElement.addEventListener('checkoutSessionConfirmResult', async ({detail}) => {
+      if (detail instanceof Error) {
+        console.error(detail)
+      } else if (detail.type === 'success') {
+        console.log('Payment successful:', detail.session)
+      } else {
+        console.error('Payment failed:', detail.error)
+      }
+    })
+  })
+```
+
 <!-- Auto Generated Below -->
 
 

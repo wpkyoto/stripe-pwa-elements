@@ -72,7 +72,7 @@ export class StripeCardElement {
    * customElements
    *  .whenDefined('stripe-card-element')
    *  .then(() => {
-   *    tripeElement.initStripe('pk_test_XXXXXXXXX')
+   *    stripeElement.initStripe('pk_test_XXXXXXXXX')
    *  })
    * ```
    */
@@ -130,6 +130,7 @@ export class StripeCardElement {
    *      stripeElement.updateProgress('success')
    *    });
    * })
+   * ```
    */
   @Method()
   public async updateProgress(progress: ProgressStatus) {
@@ -163,6 +164,7 @@ export class StripeCardElement {
    *      }
    *   });
    * })
+   * ```
    */
   @Method()
   public async setErrorMessage(errorMessage: string) {
@@ -337,6 +339,7 @@ export class StripeCardElement {
    *         console.log(result);
    *       })
    *   })
+   * ```
    */
   @Event() formSubmit: EventEmitter<FormSubmitEvent>;
   private async formSubmitEventHandler() {
@@ -372,6 +375,7 @@ export class StripeCardElement {
    *       }
    *     })
    *   })
+   * ```
    */
   @Event() defaultFormSubmitResult: EventEmitter<DefaultFormSubmitResult>;
   private async defaultFormSubmitResultHandler(result: DefaultFormSubmitResult) {

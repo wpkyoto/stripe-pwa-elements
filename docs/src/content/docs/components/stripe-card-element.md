@@ -5,6 +5,157 @@ description: Component API reference.
 
 > このページは `src/components/stripe-card-element/readme.md` から自動生成されています。
 
+## 使用例
+
+### initStripe
+
+Get Stripe.js, and initialize elements
+
+```js
+const stripeElement = document.createElement('stripe-card-element');
+customElements
+ .whenDefined('stripe-card-element')
+ .then(() => {
+   stripeElement.initStripe('pk_test_XXXXXXXXX')
+ })
+```
+
+### updateProgress
+
+Update the form submit progress
+
+```js
+const stripeElement = document.createElement('stripe-card-element');
+customElements
+ .whenDefined('stripe-card-element')
+ .then(() => {
+   // You must set the attributes to stop running default form submit action when you want to listen the 'formSubmit' event.
+   stripeElement.setAttribute('should-use-default-form-submit-action', false)
+   stripeElement.addEventListener('formSubmit', async props => {
+     const {
+       detail: { stripe, cardNumber, event },
+     } = props;
+     const result = await stripe.createPaymentMethod({
+       type: 'card',
+       card: cardNumber,
+     });
+     console.log(result);
+     stripeElement.updateProgress('success')
+   });
+})
+```
+
+### setErrorMessage
+
+Set error message
+
+```js
+const stripeElement = document.createElement('stripe-card-element');
+customElements
+ .whenDefined('stripe-card-element')
+ .then(() => {
+   // You must set the attributes to stop running default form submit action when you want to listen the 'formSubmit' event.
+   stripeElement.setAttribute('should-use-default-form-submit-action', false)
+   stripeElement.addEventListener('formSubmit', async props => {
+     try {
+       throw new Error('debug')
+     } catch (e) {
+       stripeElement.setErrorMessage(`Error: ${e.message}`)
+       stripeElement.updateProgress('failure')
+     }
+  });
+})
+```
+
+### intentClientSecret
+
+The client secret from paymentIntent.create response
+
+```js
+const stripeElement = document.createElement('stripe-card-element');
+customElements
+ .whenDefined('stripe-card-element')
+ .then(() => {
+    stripeElement.setAttribute('intent-client-secret', 'dummy')
+  })
+```
+
+```html
+<stripe-card-element intent-client-secret="dummy" />
+```
+
+### stripeLoaded
+
+Stripe Client loaded event
+
+```js
+const stripeElement = document.createElement('stripe-card-element');
+customElements
+ .whenDefined('stripe-card-element')
+ .then(() => {
+    stripeElement
+     .addEventListener('stripeLoaded', async ({ detail: {stripe} }) => {
+      stripe
+        .createSource({
+          type: 'ideal',
+          amount: 1099,
+          currency: 'eur',
+          owner: {
+            name: 'Jenny Rosen',
+          },
+          redirect: {
+            return_url: 'https://shop.example.com/crtA6B28E1',
+          },
+        })
+        .then(function(result) {
+          // Handle result.error or result.source
+        });
+      });
+  })
+```
+
+### formSubmit
+
+Form submit event
+
+```js
+const stripeElement = document.createElement('stripe-card-element');
+customElements
+ .whenDefined('stripe-card-element')
+ .then(() => {
+    stripeElement
+      .addEventListener('formSubmit', async props => {
+        const {
+          detail: { stripe, cardNumber, event },
+        } = props;
+        const result = await stripe.createPaymentMethod({
+          type: 'card',
+          card: cardNumber,
+        });
+        console.log(result);
+      })
+  })
+```
+
+### defaultFormSubmitResult
+
+Recieve the result of defaultFormSubmit event
+
+```js
+const stripeElement = document.createElement('stripe-card-element');
+customElements
+ .whenDefined('stripe-card-element')
+ .then(() => {
+    stripeElement.addEventListener('defaultFormSubmitResult', async ({detail}) => {
+      if (detail instanceof Error) {
+        console.error(detail)
+      } else {
+        console.log(detail)
+      }
+    })
+  })
+```
+
 <!-- Auto Generated Below -->
 
 
